@@ -1,0 +1,21 @@
+
+v1.0
+
+    - Scans for visible wireless networks and stores them in sqlite3 DB, in the
+      sdcard.
+    - Visualize networks around your position with maps.
+    - Needs GPS position found to work, either for maps and for scanning wifis.
+
+v1.1
+
+    - Saves last position visited and resets it when application is restarted.
+      This will not make a scan for wifis, but stored ones will be visible on
+      the map anyway.
+
+    - Can change the meters span that triggers a scan, and the max wifis visible
+      on the map.
+      
+    - WiFis SSID now are displayed near the dots. This can be toggled by menu.
+    
+    - "Follow ME", can be disabled, but is not saved to preferences: at startup
+      it needs the position or it will remain in coords 0,0
