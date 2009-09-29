@@ -84,7 +84,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int DEFAULT_ZOOM_LEVEL = 17;
 
-	private static final int[] MAX_WIFI_VISIBLE_DATA = new int[] { 50, 500, 5000 };
+	private static final int[] MAX_WIFI_VISIBLE_DATA = new int[] { 30, 300, 3000 };
 
 	private static final String CONF_MAX_WIFI_VISIBLE = "max_wifi_visible";
 

@@ -46,7 +46,7 @@ public class Locales
 
 	public String MESSAGE_STATISTICS_OPEN = "\nOf which open: ";
 
-	public CharSequence[] MAX_WIFI_VISIBLE_LABEL = { "50", "500", "5000" };
+	public CharSequence[] MAX_WIFI_VISIBLE_LABEL = { "30", "300", "3000" };
 
 	public CharSequence[] GPS_QUERIES_METERS_LABEL = { "Short (10 meters)", "Medium (50 meters)", "Long (200 meters)" };
 
@@ -80,7 +80,7 @@ public class Locales
 		l.MESSAGE_STATISTICS = "Statistiche:";
 		l.MESSAGE_STATISTICS_COUNT = "\nTotale WiFi in database: ";
 		l.MESSAGE_STATISTICS_OPEN = "\nDi cui aperte: ";
-		l.MAX_WIFI_VISIBLE_LABEL = new CharSequence[] { "50", "500", "5000" };
+		l.MAX_WIFI_VISIBLE_LABEL = new CharSequence[] { "30", "300", "3000" };
 		l.GPS_QUERIES_METERS_LABEL = new CharSequence[] { "Corto (10 metri)", "Medio (50 metri)", "Lungo (200 metri)" };
 		localizations.put(Locale.ITALIAN, l);
 	}
