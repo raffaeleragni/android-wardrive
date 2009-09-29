@@ -18,3 +18,7 @@
    
  - Realize a method to synchronize the databases, maybe phone to phone, maybe
    via bluetooth
+   
+ - On Touch event seems to make application crash sometimes, maybe when clicking
+   the empty.png rendered 1x1 transparent png image that the systems assumes
+   taking over the clickable area.
