@@ -15,3 +15,6 @@
    number of wifis inside it?)
    Another solution: scan the mapview as sectors and query the database for a
    count(bssid) for that rectangle. Something like 4x4 sectors.
+   
+ - Realize a method to synchronize the databases, maybe phone to phone, maybe
+   via bluetooth
