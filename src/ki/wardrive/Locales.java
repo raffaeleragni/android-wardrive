@@ -69,11 +69,11 @@ public class Locales
 		// Localized ones
 		l = new Locales();
 		l.MENU_QUIT_LABEL = "Esci";
-		l.MENU_STATS_LABEL = "Statistiche";
-		l.MENU_MAX_WIFI_VISIBLE_LABEL = "Massime WiFi visibili";
-		l.MENU_GPS_QUERIES_METERS_LABEL = "Richieste GPS";
-		l.MENU_TOGGLE_LABELS_LABEL = "Togli/metti nomi WiFi";
-		l.MENU_TOGGLE_FOLLOW_ME_LABEL = "Togli/metti inseguimento";
+		l.MENU_STATS_LABEL = "Dati";
+		l.MENU_MAX_WIFI_VISIBLE_LABEL = "WiFi";
+		l.MENU_GPS_QUERIES_METERS_LABEL = "GPS";
+		l.MENU_TOGGLE_LABELS_LABEL = "Nomi WiFi";
+		l.MENU_TOGGLE_FOLLOW_ME_LABEL = "Traccia";
 		l.MESSAGE_STATISTICS = "Statistiche:";
 		l.MESSAGE_STATISTICS_COUNT = "\nTotale WiFi in database: ";
 		l.MESSAGE_STATISTICS_OPEN = "\nDi cui aperte: ";
