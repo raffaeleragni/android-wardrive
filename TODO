@@ -12,4 +12,6 @@
    number. 50 WiFis are already too much to show and slows the scrolling a lot.
    Possible solution: show aggregates dots that sums up more wifi and they can
    be clicked to view the list. (maybe a dot whose radius is parametric to the
-   number of wifis inside it?) 
+   number of wifis inside it?)
+   Another solution: scan the mapview as sectors and query the database for a
+   count(bssid) for that rectangle. Something like 4x4 sectors.
