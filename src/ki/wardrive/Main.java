@@ -575,7 +575,7 @@ public class Main extends MapActivity implements LocationListener
 		int e6lon = (int) (location.getLongitude() * 1E6);
 		GeoPoint p = new GeoPoint(e6lat, e6lon);
 		ArrayList<OverlayItem> me = new ArrayList<OverlayItem>();
-		me.add(new OverlayItem(p, "ME", ""));
+		me.add(new OverlayItem(p, Locales.get(language).GPS_LABEL_ME, ""));
 		overlays_me.setItems(me);
 		if (follow_me)
 		{

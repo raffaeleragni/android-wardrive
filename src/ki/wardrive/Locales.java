@@ -26,6 +26,8 @@ public class Locales
 
 	public static HashMap<Locale, Locales> localizations = new HashMap<Locale, Locales>();
 
+	public String GPS_LABEL_ME = "ME";
+	
 	public String MENU_QUIT_LABEL = "Quit";
 
 	public String MENU_STATS_LABEL = "Stats";
@@ -68,6 +70,7 @@ public class Locales
 
 		// Localized ones
 		l = new Locales();
+		l.GPS_LABEL_ME = "ME";
 		l.MENU_QUIT_LABEL = "Esci";
 		l.MENU_STATS_LABEL = "Dati";
 		l.MENU_MAX_WIFI_VISIBLE_LABEL = "WiFi";
