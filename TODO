@@ -22,3 +22,7 @@
  - On Touch event seems to make application crash sometimes, maybe when clicking
    the empty.png rendered 1x1 transparent png image that the systems assumes
    taking over the clickable area.
+   
+ - Put the query of the visible wifis directly on the Overlays.draw, maybe
+   becoming it another inner class of Main. It's useless to make an array by
+   cycle and then cycling the same items to read it, when it's always rebuilt.
