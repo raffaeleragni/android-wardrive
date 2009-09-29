@@ -28,15 +28,15 @@ public class Locales
 
 	public String MENU_QUIT_LABEL = "Quit";
 
-	public String MENU_STATS_LABEL = "Statistics";
+	public String MENU_STATS_LABEL = "Stats";
 
-	public String MENU_MAX_WIFI_VISIBLE_LABEL = "Max WiFis visible";
+	public String MENU_MAX_WIFI_VISIBLE_LABEL = "WiFis";
 
-	public String MENU_GPS_QUERIES_METERS_LABEL = "GPS Queries";
+	public String MENU_GPS_QUERIES_METERS_LABEL = "GPS";
 
-	public String MENU_TOGGLE_LABELS_LABEL = "Toggle labels";
+	public String MENU_TOGGLE_LABELS_LABEL = "Labels";
 
-	public String MENU_TOGGLE_FOLLOW_ME_LABEL = "Toggle follow me";
+	public String MENU_TOGGLE_FOLLOW_ME_LABEL = "Follow";
 
 	public String MESSAGE_STATISTICS = "Statistics:";
 
