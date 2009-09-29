@@ -7,3 +7,9 @@
    
  - Make the points clickable to show other information, or for showing
    information of all the wifi that are in the same spot.
+   
+ - Find a better method to render >50 wifis instead of asking the user a maximum
+   number. 50 WiFis are already too much to show and slows the scrolling a lot.
+   Possible solution: show aggregates dots that sums up more wifi and they can
+   be clicked to view the list. (maybe a dot whose radius is parametric to the
+   number of wifis inside it?) 
