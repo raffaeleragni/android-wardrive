@@ -1,0 +1,9 @@
+
+ - Add the function to view a report of the Wifi, or currently visible ones
+   as a list.
+   
+ - Alternatively find a way to display better names so that can all be read
+   (very difficult if there are too many, generally more than 4)
+   
+ - Make the points clickable to show other information, or for showing
+   information of all the wifi that are in the same spot.
