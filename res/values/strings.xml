@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">wardrive</string>
+    <string name="GPS_LABEL_ME">ME</string>
+    <string name="MENU_QUIT_LABEL">Quit</string>
+    <string name="MENU_STATS_LABEL">Stats</string>
+    <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFis</string>
+    <string name="MENU_GPS_QUERIES_METERS_LABEL">GPS</string>
+    <string name="MENU_TOGGLE_LABELS_LABEL">Labels</string>
+    <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">Follow</string>
+    <string name="MESSAGE_STATISTICS">Statistics:</string>
+    <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>
+    <string name="MESSAGE_STATISTICS_OPEN">\nOf which open: </string>
+    <string-array name="GPS_QUERIES_METERS_LABEL">
+    	<item>Short (10 meters)</item>
+    	<item>Medium (50 meters)</item>
+    	<item>Long (200 meters)</item>
+    </string-array>
 </resources>

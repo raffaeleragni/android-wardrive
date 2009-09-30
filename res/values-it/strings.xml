@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">wardrive</string>
+    <string name="GPS_LABEL_ME">IO</string>
+    <string name="MENU_QUIT_LABEL">Esci</string>
+    <string name="MENU_STATS_LABEL">Dati</string>
+    <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFi</string>
+    <string name="MENU_GPS_QUERIES_METERS_LABEL">GPS</string>
+    <string name="MENU_TOGGLE_LABELS_LABEL">Nomi WiFi</string>
+    <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">Traccia</string>
+    <string name="MESSAGE_STATISTICS">Statistiche:</string>
+    <string name="MESSAGE_STATISTICS_COUNT">\nTotale WiFi in database: </string>
+    <string name="MESSAGE_STATISTICS_OPEN">\nDi cui aperte: </string>
+    <string-array name="GPS_QUERIES_METERS_LABEL">
+    	<item>Corto (10 metri)</item>
+    	<item>Medio (50 metri)</item>
+    	<item>Lungo (200 metri)</item>
+    </string-array>
+</resources>

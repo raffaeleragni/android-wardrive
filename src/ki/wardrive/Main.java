@@ -18,7 +18,6 @@
 package ki.wardrive;
 
 import java.util.List;
-import java.util.Locale;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -54,6 +53,16 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
+/**
+ * Wardriving app, stores scans in sqlite db on the sdcard and displays found
+ * netwokrs around in the map.
+ * Automatically turns on: WiFi, GPS, Internet (for google maps). Needs a valid
+ * GPS location to make scans working.
+ * Green dots are open WiFis, red for non-open ones. The blue dot is the user's
+ * position.
+ * 
+ * @author Raffaele Ragni raffaele.ragni@gmail.com
+ */
 public class Main extends MapActivity implements LocationListener
 {
 	public enum OverlayType
@@ -171,8 +180,6 @@ public class Main extends MapActivity implements LocationListener
 
 	private SQLiteDatabase database;
 
-	private Locale language = Locale.ENGLISH;
-
 	//
 	// Location Related
 	//
@@ -232,6 +239,9 @@ public class Main extends MapActivity implements LocationListener
 		mapview.getOverlays().add(overlays_closed);
 		mapview.getOverlays().add(overlays_opened);
 		mapview.getOverlays().add(overlays_me);
+
+		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+		wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "");
 	}
 
 	@Override
@@ -239,10 +249,7 @@ public class Main extends MapActivity implements LocationListener
 	{
 		super.onResume();
 
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "");
 		wake_lock.acquire();
-
 		start_services();
 	}
 
@@ -268,6 +275,7 @@ public class Main extends MapActivity implements LocationListener
 		}
 		settings_editor.commit();
 
+		wake_lock.release();
 		stop_services();
 
 		super.onStop();
@@ -280,19 +288,18 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		menu.add(0, MENU_QUIT, 0, Locales.get(language).MENU_QUIT_LABEL);
-		menu.add(0, MENU_STATS, 0, Locales.get(language).MENU_STATS_LABEL);
-		menu.add(0, MENU_GPS_QUERIES_METERS, 0, Locales.get(language).MENU_GPS_QUERIES_METERS_LABEL);
-		menu.add(0, MENU_TOGGLE_LABELS, 0, Locales.get(language).MENU_TOGGLE_LABELS_LABEL);
-		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, Locales.get(language).MENU_TOGGLE_FOLLOW_ME_LABEL);
+		menu.add(0, MENU_QUIT, 0, R.string.MENU_QUIT_LABEL);
+		menu.add(0, MENU_STATS, 0, R.string.MENU_STATS_LABEL);
+		menu.add(0, MENU_GPS_QUERIES_METERS, 0, R.string.MENU_GPS_QUERIES_METERS_LABEL);
+		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL);
+		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, R.string.MENU_TOGGLE_FOLLOW_ME_LABEL);
 		return true;
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId())
-		{
+		switch (item.getItemId()) {
 			case MENU_QUIT:
 			{
 				finish();
@@ -329,8 +336,7 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
-		switch (id)
-		{
+		switch (id) {
 			case DIALOG_STATS:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -340,8 +346,8 @@ public class Main extends MapActivity implements LocationListener
 			case DIALOG_GPS_QUERIES_METERS:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle(Locales.get(language).MENU_GPS_QUERIES_METERS_LABEL);
-				builder.setSingleChoiceItems(Locales.get(language).GPS_QUERIES_METERS_LABEL, GPS_QUERIES_METERS,
+				builder.setTitle(R.string.MENU_GPS_QUERIES_METERS_LABEL);
+				builder.setSingleChoiceItems(R.array.GPS_QUERIES_METERS_LABEL, GPS_QUERIES_METERS,
 						new DialogInterface.OnClickListener()
 						{
 							public void onClick(DialogInterface dialog, int item)
@@ -362,7 +368,7 @@ public class Main extends MapActivity implements LocationListener
 	private String print_stats()
 	{
 		StringBuffer sb = new StringBuffer();
-		sb.append(Locales.get(language).MESSAGE_STATISTICS);
+		sb.append(getResources().getString(R.string.MESSAGE_STATISTICS));
 
 		if (database != null)
 		{
@@ -372,14 +378,14 @@ public class Main extends MapActivity implements LocationListener
 				c = database.rawQuery(SELECT_COUNT_WIFIS, null);
 				if (c.moveToFirst())
 				{
-					sb.append(Locales.get(language).MESSAGE_STATISTICS_COUNT);
+					sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
 					sb.append(c.getInt(0));
 				}
 				c.close();
 				c = database.rawQuery(SELECT_COUNT_OPEN, null);
 				if (c.moveToFirst())
 				{
-					sb.append(Locales.get(language).MESSAGE_STATISTICS_OPEN);
+					sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
 					sb.append(c.getInt(0));
 				}
 			}
@@ -480,25 +486,15 @@ public class Main extends MapActivity implements LocationListener
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			boolean catched = false;
-			double lat = 0, lon = 0, alt = 0;
-
 			synchronized (LAST_LOCATION_LOCK)
 			{
 				if (last_location != null)
 				{
-					lat = last_location.getLatitude();
-					lon = last_location.getLongitude();
-					alt = last_location.getAltitude();
-					catched = true;
-				}
-
-				if (catched)
-				{
 					List<ScanResult> results = wifi_manager.getScanResults();
 					for (ScanResult result : results)
 					{
-						process_wifi_result(result, lat, lon, alt);
+						process_wifi_result(result, last_location.getLatitude(), last_location.getLongitude(), last_location
+								.getAltitude());
 					}
 				}
 			}
@@ -511,6 +507,7 @@ public class Main extends MapActivity implements LocationListener
 
 		boolean toadd = false;
 		boolean toupdate = false;
+		boolean toupdate_coords = false;
 		try
 		{
 			cursor = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_LEVEL },
@@ -521,7 +518,8 @@ public class Main extends MapActivity implements LocationListener
 			}
 			else
 			{
-				toupdate = result.level > cursor.getInt(0);
+				toupdate = true;
+				toupdate_coords = result.level > cursor.getInt(0);
 			}
 		}
 		finally
@@ -550,11 +548,14 @@ public class Main extends MapActivity implements LocationListener
 			values.put(TABLE_NETWORKS_FIELD_SSID, result.SSID);
 			values.put(TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
 			values.put(TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
-			values.put(TABLE_NETWORKS_FIELD_LEVEL, result.level);
-			values.put(TABLE_NETWORKS_FIELD_LAT, lat);
-			values.put(TABLE_NETWORKS_FIELD_LON, lon);
-			values.put(TABLE_NETWORKS_FIELD_ALT, alt);
 			values.put(TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
+			if (toupdate_coords)
+			{
+				values.put(TABLE_NETWORKS_FIELD_LAT, lat);
+				values.put(TABLE_NETWORKS_FIELD_LON, lon);
+				values.put(TABLE_NETWORKS_FIELD_ALT, alt);
+				values.put(TABLE_NETWORKS_FIELD_LEVEL, result.level);
+			}
 
 			database.update(TABLE_NETWORKS, values, TABLE_NETWORKS_FIELD_BSSID_EQUALS, new String[] { result.BSSID });
 		}
@@ -663,7 +664,7 @@ public class Main extends MapActivity implements LocationListener
 				if (last_location != null)
 				{
 					draw_single(canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
-							.getLongitude() * 1E6)), Locales.get(language).GPS_LABEL_ME);
+							.getLongitude() * 1E6)), getResources().getString(R.string.GPS_LABEL_ME));
 				}
 				return;
 			}

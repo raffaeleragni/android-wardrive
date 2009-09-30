@@ -26,3 +26,9 @@ v1.2
       on a bigger dot, still divided between red and green.
       Should improve performance with big numbers (100+).
       This is activated also only when on a zoom level far enough.
+    
+    - WiFis are updated in a better way. Before all the record was updated only
+      when a bigger level (signal strenght) was found. Now for that case only
+      "lan, lon, alt, level" are updated, while all other information are always
+      updated (frequency, capabilities, ssid...) when the wifi is detected,
+      even if ad worse level.
