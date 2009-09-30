@@ -595,8 +595,6 @@ public class Main extends MapActivity implements LocationListener
 
 		public boolean show_labels = false;
 
-		private boolean quadrant_mode = false;
-
 		private int quadrants_x = 2;
 
 		private int quadrants_y = 2;
@@ -703,7 +701,6 @@ public class Main extends MapActivity implements LocationListener
 				{
 					if (c.getCount() <= MAX_WIFI_VISIBLE || mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - 2)
 					{
-						quadrant_mode = false;
 						do
 						{
 							draw_single(canvas, mapView,
@@ -713,7 +710,6 @@ public class Main extends MapActivity implements LocationListener
 					}
 					else
 					{
-						quadrant_mode = true;
 						quadrant_w = (mapView.getWidth() / quadrants_x);
 						quadrant_h = (mapView.getHeight() / quadrants_y);
 						max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 2 : quadrant_w / 2;
@@ -778,15 +774,6 @@ public class Main extends MapActivity implements LocationListener
 		@Override
 		public boolean onTap(GeoPoint p, MapView mapView)
 		{
-			//
-			// TODO in the case of quadrant view zoom to quadrant.
-			// TODO on long tap show info
-			//
-			if (!quadrant_mode)
-			{
-				return false;
-			}
-
 			return false;
 		}
 
