@@ -166,6 +166,8 @@ public class Main extends MapActivity implements LocationListener
 	private static final String SELECT_COUNT_OPEN = "select count(bssid) from networks where capabilities = ''";
 
 	private static final String CREATE_TABLE_NETWORKS = "create table if not exists networks (bssid text primary key, ssid text, capabilities text, level integer, frequency integer, lat real, lon real, alt real, timestamp integer)";
+	
+	private static final String CREATE_INDEX_LATLON = "create index networks_latlon_idx on networks(lat, lon)";
 
 	private SQLiteDatabase database;
 
@@ -423,6 +425,7 @@ public class Main extends MapActivity implements LocationListener
 		if (database != null)
 		{
 			database.execSQL(CREATE_TABLE_NETWORKS);
+			database.execSQL(CREATE_INDEX_LATLON);
 		}
 	}
 
