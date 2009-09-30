@@ -249,14 +249,20 @@ public class Main extends MapActivity implements LocationListener
 	{
 		super.onResume();
 
-		wake_lock.acquire();
+		if (!wake_lock.isHeld())
+		{
+			wake_lock.acquire();
+		}
 		start_services();
 	}
 
 	@Override
 	protected void onPause()
 	{
-		wake_lock.release();
+		if (wake_lock.isHeld())
+		{
+			wake_lock.release();
+		}
 		stop_services();
 
 		super.onPause();
@@ -275,7 +281,10 @@ public class Main extends MapActivity implements LocationListener
 		}
 		settings_editor.commit();
 
-		wake_lock.release();
+		if (wake_lock.isHeld())
+		{
+			wake_lock.release();
+		}
 		stop_services();
 
 		super.onStop();
