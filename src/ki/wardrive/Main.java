@@ -166,7 +166,7 @@ public class Main extends MapActivity implements LocationListener
 	private static final String SELECT_COUNT_OPEN = "select count(bssid) from networks where capabilities = ''";
 
 	private static final String CREATE_TABLE_NETWORKS = "create table if not exists networks (bssid text primary key, ssid text, capabilities text, level integer, frequency integer, lat real, lon real, alt real, timestamp integer)";
-	
+
 	private static final String CREATE_INDEX_LATLON = "create index networks_latlon_idx on networks(lat, lon)";
 
 	private SQLiteDatabase database;
@@ -700,7 +700,7 @@ public class Main extends MapActivity implements LocationListener
 
 				if (c != null && c.moveToFirst())
 				{
-					if (c.getCount() <= MAX_WIFI_VISIBLE || mapView.getZoomLevel() >= mapView.getMaxZoomLevel()-2)
+					if (c.getCount() <= MAX_WIFI_VISIBLE || mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - 2)
 					{
 						quadrant_mode = false;
 						do
@@ -715,7 +715,7 @@ public class Main extends MapActivity implements LocationListener
 						quadrant_mode = true;
 						quadrant_w = (mapView.getWidth() / quadrants_x);
 						quadrant_h = (mapView.getHeight() / quadrants_y);
-						max_radius_for_quadrant = quadrant_w;
+						max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 2 : quadrant_w / 2;
 
 						for (int x = 0; x < quadrants_x; x++)
 						{
@@ -788,7 +788,7 @@ public class Main extends MapActivity implements LocationListener
 
 			return false;
 		}
-		
+
 		private int getTextWidth(String text)
 		{
 			int count = text.length();
