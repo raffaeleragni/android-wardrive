@@ -1,18 +1,5 @@
 
- - Add the function to view a report of the Wifi, or currently visible ones
-   as a list.
-   
- - Alternatively find a way to display better names so that can all be read
-   (very difficult if there are too many, generally more than 4)
-   
- - Make the points clickable to show other information, or for showing
-   information of all the wifi that are in the same spot.
+ - Realize an interface to see detailed list and details of the WiFis
    
  - Realize a method to synchronize the databases, maybe phone to phone, maybe
    via bluetooth
-   
- - On Touch event seems to make application crash sometimes, maybe when clicking
-   the empty.png rendered 1x1 transparent png image that the systems assumes
-   taking over the clickable area.
-
- - Still optimize Overlays.draw: too much code in there.

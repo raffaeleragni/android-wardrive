@@ -32,3 +32,5 @@ v1.2
       "lan, lon, alt, level" are updated, while all other information are always
       updated (frequency, capabilities, ssid...) when the wifi is detected,
       even if ad worse level.
+      
+    - Changed localization method
