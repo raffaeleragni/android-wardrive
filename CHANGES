@@ -34,3 +34,7 @@ v1.2
       even if ad worse level.
       
     - Changed localization method
+    
+v1.3
+
+    - Bugfix: on quit application was halting unexpectedly
