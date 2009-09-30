@@ -167,7 +167,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final String CREATE_TABLE_NETWORKS = "create table if not exists networks (bssid text primary key, ssid text, capabilities text, level integer, frequency integer, lat real, lon real, alt real, timestamp integer)";
 
-	private static final String CREATE_INDEX_LATLON = "create index networks_latlon_idx on networks(lat, lon)";
+	private static final String CREATE_INDEX_LATLON = "create index if not exists networks_latlon_idx on networks(lat, lon)";
 
 	private SQLiteDatabase database;
 
