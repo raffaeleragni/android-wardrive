@@ -17,7 +17,6 @@
  */
 package ki.wardrive;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -32,6 +31,11 @@ import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.graphics.Canvas;
+import android.graphics.Paint;
+import android.graphics.Point;
+import android.graphics.RectF;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -40,16 +44,23 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.text.TextPaint;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
 
 public class Main extends MapActivity implements LocationListener
 {
+	public enum OverlayType
+	{
+		MY_LOCATION, OPEN_WIFI, CLOSED_WIFI
+	};
+
 	//
 	// Interface Related
 	//
@@ -58,8 +69,6 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int MENU_STATS = 1;
 
-	private static final int MENU_MAX_WIFI_VISIBLE = 3;
-
 	private static final int MENU_GPS_QUERIES_METERS = 4;
 
 	private static final int MENU_TOGGLE_LABELS = 5;
@@ -67,8 +76,6 @@ public class Main extends MapActivity implements LocationListener
 	private static final int MENU_TOGGLE_FOLLOW_ME = 6;
 
 	private static final int DIALOG_STATS = 0;
-
-	private static final int DIALOG_MAX_WIFI_VISIBLE = 1;
 
 	private static final int DIALOG_GPS_QUERIES_METERS = 2;
 
@@ -84,15 +91,13 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int DEFAULT_ZOOM_LEVEL = 17;
 
-	private static final int[] MAX_WIFI_VISIBLE_DATA = new int[] { 30, 300, 3000 };
-
-	private static final String CONF_MAX_WIFI_VISIBLE = "max_wifi_visible";
-
 	private static final int[] GPS_QUERIES_METERS_DATA = new int[] { 10, 50, 200 };
 
 	private static final String CONF_GPS_QUERIES_METERS = "gps_queries_meters";
 
 	private static final String CONF_SHOW_LABELS = "show_labels";
+
+	private static final int MAX_WIFI_VISIBLE = 20;
 
 	private WakeLock wake_lock;
 
@@ -107,8 +112,6 @@ public class Main extends MapActivity implements LocationListener
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
-
-	private int MAX_WIFI_VISIBLE = 0;
 
 	private int GPS_QUERIES_METERS = 1;
 
@@ -125,6 +128,12 @@ public class Main extends MapActivity implements LocationListener
 	private static final String TABLE_NETWORKS = "networks";
 
 	private static final String TABLE_NETWORKS_FIELD_BSSID = "bssid";
+
+	private static final String TABLE_NETWORKS_FIELD_COUNT_BSSID = "count(bssid)";
+
+	private static final String TABLE_NETWORKS_FIELD_SUM_LAT = "sum(lat)";
+
+	private static final String TABLE_NETWORKS_FIELD_SUM_LON = "sum(lon)";
 
 	private static final String TABLE_NETWORKS_FIELD_BSSID_EQUALS = "bssid = ?";
 
@@ -145,6 +154,12 @@ public class Main extends MapActivity implements LocationListener
 	private static final String TABLE_NETWORKS_FIELD_TIMESTAMP = "timestamp";
 
 	private static final String TABLE_NETWORKS_LOCATION_BETWEEN = "lat >= ? and lat <= ? and lon >= ? and lon <= ?";
+
+	private static final String TABLE_NETWORKS_OPEN_CONDITION = "capabilities = ''";
+
+	private static final String TABLE_NETWORKS_CLOSED_CONDITION = "capabilities <> ''";
+
+	private static final String AND = " and ";
 
 	private static final String SELECT_COUNT_WIFIS = "select count(bssid) from networks";
 
@@ -190,7 +205,6 @@ public class Main extends MapActivity implements LocationListener
 		settings = getPreferences(MODE_PRIVATE);
 		settings_editor = settings.edit();
 
-		MAX_WIFI_VISIBLE = settings.getInt(CONF_MAX_WIFI_VISIBLE, MAX_WIFI_VISIBLE);
 		GPS_QUERIES_METERS = settings.getInt(CONF_GPS_QUERIES_METERS, GPS_QUERIES_METERS);
 		show_labels = settings.getBoolean(CONF_SHOW_LABELS, show_labels);
 
@@ -203,18 +217,15 @@ public class Main extends MapActivity implements LocationListener
 		mapview.setClickable(true);
 		mapview.setLongClickable(true);
 
-		overlays_closed = new Overlays(getResources().getDrawable(R.drawable.empty), 255, 0, 0);
-		overlays_opened = new Overlays(getResources().getDrawable(R.drawable.empty), 0, 200, 0);
-		overlays_me = new Overlays(getResources().getDrawable(R.drawable.empty), 0, 0, 255);
+		Drawable d = getResources().getDrawable(R.drawable.empty);
+
+		overlays_closed = new Overlays(OverlayType.CLOSED_WIFI, d, 255, 0, 0);
+		overlays_opened = new Overlays(OverlayType.OPEN_WIFI, d, 0, 200, 0);
+		overlays_me = new Overlays(OverlayType.MY_LOCATION, d, 0, 0, 255);
 
 		overlays_closed.show_labels = show_labels;
 		overlays_opened.show_labels = show_labels;
 		overlays_me.show_labels = show_labels;
-
-		//
-		// Only one callback, it sets all layers
-		//
-		overlays_closed.setLazyLoadCallback(lazy_load_callback);
 
 		mapview.getOverlays().add(overlays_closed);
 		mapview.getOverlays().add(overlays_opened);
@@ -246,7 +257,6 @@ public class Main extends MapActivity implements LocationListener
 	protected void onStop()
 	{
 		settings_editor.putInt(ZOOM_LEVEL, mapview.getZoomLevel());
-		settings_editor.putInt(CONF_MAX_WIFI_VISIBLE, MAX_WIFI_VISIBLE);
 		settings_editor.putInt(CONF_GPS_QUERIES_METERS, GPS_QUERIES_METERS);
 		settings_editor.putBoolean(CONF_SHOW_LABELS, show_labels);
 		if (last_location != null)
@@ -270,7 +280,6 @@ public class Main extends MapActivity implements LocationListener
 	{
 		menu.add(0, MENU_QUIT, 0, Locales.get(language).MENU_QUIT_LABEL);
 		menu.add(0, MENU_STATS, 0, Locales.get(language).MENU_STATS_LABEL);
-		menu.add(0, MENU_MAX_WIFI_VISIBLE, 0, Locales.get(language).MENU_MAX_WIFI_VISIBLE_LABEL);
 		menu.add(0, MENU_GPS_QUERIES_METERS, 0, Locales.get(language).MENU_GPS_QUERIES_METERS_LABEL);
 		menu.add(0, MENU_TOGGLE_LABELS, 0, Locales.get(language).MENU_TOGGLE_LABELS_LABEL);
 		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, Locales.get(language).MENU_TOGGLE_FOLLOW_ME_LABEL);
@@ -291,11 +300,6 @@ public class Main extends MapActivity implements LocationListener
 			{
 				showDialog(DIALOG_STATS);
 				return true;
-			}
-			case MENU_MAX_WIFI_VISIBLE:
-			{
-				showDialog(DIALOG_MAX_WIFI_VISIBLE);
-				break;
 			}
 			case MENU_GPS_QUERIES_METERS:
 			{
@@ -329,22 +333,6 @@ public class Main extends MapActivity implements LocationListener
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(print_stats());
-				return builder.create();
-			}
-			case DIALOG_MAX_WIFI_VISIBLE:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle(Locales.get(language).MENU_MAX_WIFI_VISIBLE_LABEL);
-				builder.setSingleChoiceItems(Locales.get(language).MAX_WIFI_VISIBLE_LABEL, MAX_WIFI_VISIBLE,
-						new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int item)
-							{
-								MAX_WIFI_VISIBLE = item;
-								closeOptionsMenu();
-								dismissDialog(DIALOG_MAX_WIFI_VISIBLE);
-							}
-						});
 				return builder.create();
 			}
 			case DIALOG_GPS_QUERIES_METERS:
@@ -574,9 +562,6 @@ public class Main extends MapActivity implements LocationListener
 		int e6lat = (int) (location.getLatitude() * 1E6);
 		int e6lon = (int) (location.getLongitude() * 1E6);
 		GeoPoint p = new GeoPoint(e6lat, e6lon);
-		ArrayList<OverlayItem> me = new ArrayList<OverlayItem>();
-		me.add(new OverlayItem(p, Locales.get(language).GPS_LABEL_ME, ""));
-		overlays_me.setItems(me);
 		if (follow_me)
 		{
 			mapview.getController().animateTo(p);
@@ -584,19 +569,104 @@ public class Main extends MapActivity implements LocationListener
 		mapview.invalidate();
 	}
 
-	private Runnable lazy_load_callback = new Runnable()
+	//
+	// Rendering
+	//
+
+	public class Overlays extends ItemizedOverlay<OverlayItem>
 	{
+		private static final int CIRCLE_RADIUS = 4;
+
+		private static final int INFO_WINDOW_HEIGHT = 16;
+
+		private Paint paint_circle;
+
+		private TextPaint paint_text;
+
+		private Point point = new Point();
+
+		private RectF rect = null;
+
+		private OverlayType type;
+
+		public boolean show_labels = false;
+
+		private boolean quadrant_mode = false;
+
+		private int quadrants_x = 2;
+
+		private int quadrants_y = 2;
+
+		private int quadrant_w = 0;
+
+		private int quadrant_h = 0;
+
+		private int max_radius_for_quadrant = 0;
+
+		private int count = 0;
+
+		private double avg_lat = 0;
+
+		private double avg_lon = 0;
+
+		public Overlays(OverlayType type, Drawable d, int r, int g, int b)
+		{
+			super(d);
+			populate();
+
+			this.type = type;
+
+			paint_circle = new Paint();
+			paint_circle.setARGB(255, r, g, b);
+			paint_circle.setAntiAlias(true);
+
+			paint_text = new TextPaint();
+			paint_text.setARGB(255, 255, 255, 255);
+			paint_text.setAntiAlias(true);
+			paint_text.setStrokeWidth(3);
+			paint_text.setTextSize(14);
+		}
+
+		private void draw_single(Canvas canvas, MapView mapView, GeoPoint geo_point, String title)
+		{
+			point = mapView.getProjection().toPixels(geo_point, point);
+			canvas.drawCircle(point.x, point.y, CIRCLE_RADIUS, paint_circle);
+
+			if (show_labels && title != null && title.length() > 0)
+			{
+				rect = new RectF(0, 0, getTextWidth(title) + 4 * 2, INFO_WINDOW_HEIGHT);
+				rect.offset(point.x + 2, point.y + 2);
+				canvas.drawRect(rect, paint_circle);
+				canvas.drawText(title, point.x + 6, point.y + 14, paint_text);
+			}
+		}
+
+		private void draw_sized_item(Canvas canvas, MapView mapView, GeoPoint geo_point, int radius)
+		{
+			point = mapView.getProjection().toPixels(geo_point, point);
+			canvas.drawCircle(point.x, point.y, radius < CIRCLE_RADIUS ? CIRCLE_RADIUS : radius, paint_circle);
+		}
+
 		@Override
-		public void run()
+		public void draw(Canvas canvas, MapView mapView, boolean shadow)
 		{
 			if (database == null)
 			{
 				return;
 			}
 
-			GeoPoint top_left = mapview.getProjection().fromPixels(0, 0);
-			GeoPoint bottom_right = mapview.getProjection().fromPixels(mapview.getWidth(), mapview.getHeight());
+			if (OverlayType.MY_LOCATION.equals(type))
+			{
+				if (last_location != null)
+				{
+					draw_single(canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
+							.getLongitude() * 1E6)), Locales.get(language).GPS_LABEL_ME);
+				}
+				return;
+			}
 
+			GeoPoint top_left = mapView.getProjection().fromPixels(0, 0);
+			GeoPoint bottom_right = mapView.getProjection().fromPixels(mapView.getWidth(), mapView.getHeight());
 			double lat_from = ((double) top_left.getLatitudeE6()) / 1E6;
 			double lat_to = ((double) bottom_right.getLatitudeE6()) / 1E6;
 			double lon_from = ((double) top_left.getLongitudeE6()) / 1E6;
@@ -617,40 +687,130 @@ public class Main extends MapActivity implements LocationListener
 			Cursor c = null;
 			try
 			{
-				ArrayList<OverlayItem> itemso = new ArrayList<OverlayItem>();
-				ArrayList<OverlayItem> itemsc = new ArrayList<OverlayItem>();
-
 				c = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_LAT, TABLE_NETWORKS_FIELD_LON,
-						TABLE_NETWORKS_FIELD_CAPABILITIES, TABLE_NETWORKS_FIELD_SSID }, TABLE_NETWORKS_LOCATION_BETWEEN,
-						new String[] { "" + lat_from, "" + lat_to, "" + lon_from, "" + lon_to }, null, null, null);
+						TABLE_NETWORKS_FIELD_SSID },
+						TABLE_NETWORKS_LOCATION_BETWEEN
+								+ AND
+								+ (OverlayType.CLOSED_WIFI.equals(type) ? TABLE_NETWORKS_CLOSED_CONDITION
+										: TABLE_NETWORKS_OPEN_CONDITION), new String[] { "" + lat_from, "" + lat_to,
+								"" + lon_from, "" + lon_to }, null, null, null);
 
 				if (c != null && c.moveToFirst())
 				{
-					do
+					if (c.getCount() <= MAX_WIFI_VISIBLE || mapView.getZoomLevel() >= mapView.getMaxZoomLevel()-2)
 					{
-						OverlayItem item = new OverlayItem(new GeoPoint((int) (c.getDouble(0) * 1E6),
-								(int) (c.getDouble(1) * 1E6)), c.getString(3), c.getString(3));
-						if (c.getString(2).length() > 0)
+						quadrant_mode = false;
+						do
 						{
-							itemsc.add(item);
+							draw_single(canvas, mapView,
+									new GeoPoint((int) (c.getDouble(0) * 1E6), (int) (c.getDouble(1) * 1E6)), c.getString(2));
 						}
-						else
+						while (c.moveToNext() && c.getPosition() < MAX_WIFI_VISIBLE);
+					}
+					else
+					{
+						quadrant_mode = true;
+						quadrant_w = (mapView.getWidth() / quadrants_x);
+						quadrant_h = (mapView.getHeight() / quadrants_y);
+						max_radius_for_quadrant = quadrant_w;
+
+						for (int x = 0; x < quadrants_x; x++)
 						{
-							itemso.add(item);
+							for (int y = 0; y < quadrants_y; y++)
+							{
+								top_left = mapView.getProjection().fromPixels(quadrant_w * x, quadrant_h * y);
+								bottom_right = mapView.getProjection().fromPixels(quadrant_w * x + quadrant_w,
+										quadrant_h * y + quadrant_h);
+								lat_from = ((double) top_left.getLatitudeE6()) / 1E6;
+								lat_to = ((double) bottom_right.getLatitudeE6()) / 1E6;
+								lon_from = ((double) top_left.getLongitudeE6()) / 1E6;
+								lon_to = ((double) bottom_right.getLongitudeE6()) / 1E6;
+								if (lat_from > lat_to)
+								{
+									double _x = lat_to;
+									lat_to = lat_from;
+									lat_from = _x;
+								}
+								if (lon_from > lon_to)
+								{
+									double _x = lon_to;
+									lon_to = lon_from;
+									lon_from = _x;
+								}
+
+								count = 0;
+								destroy_cursor(c);
+								c = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_COUNT_BSSID,
+										TABLE_NETWORKS_FIELD_SUM_LAT, TABLE_NETWORKS_FIELD_SUM_LON },
+										TABLE_NETWORKS_LOCATION_BETWEEN
+												+ AND
+												+ (OverlayType.CLOSED_WIFI.equals(type) ? TABLE_NETWORKS_CLOSED_CONDITION
+														: TABLE_NETWORKS_OPEN_CONDITION), new String[] { "" + lat_from,
+												"" + lat_to, "" + lon_from, "" + lon_to }, null, null, null);
+
+								if (c != null && c.moveToFirst())
+								{
+									count = c.getInt(0);
+									avg_lat = count > 0 ? c.getDouble(1) / count : 0;
+									avg_lon = count > 0 ? c.getDouble(2) / count : 0;
+								}
+
+								if (count > 0)
+								{
+									draw_sized_item(canvas, mapView, new GeoPoint((int) (avg_lat * 1E6), (int) (avg_lon * 1E6)),
+											count > max_radius_for_quadrant ? max_radius_for_quadrant : count);
+								}
+							}
 						}
 					}
-					while (c.moveToNext() && c.getPosition() < MAX_WIFI_VISIBLE_DATA[MAX_WIFI_VISIBLE]);
 				}
-
-				overlays_opened.setItems(itemso);
-				overlays_closed.setItems(itemsc);
 			}
 			finally
 			{
 				destroy_cursor(c);
 			}
 		}
-	};
+
+		@Override
+		public boolean onTap(GeoPoint p, MapView mapView)
+		{
+			//
+			// TODO in the case of quadrant view zoom to quadrant.
+			// TODO on long tap show info
+			//
+			if (!quadrant_mode)
+			{
+				return false;
+			}
+
+			return false;
+		}
+		
+		private int getTextWidth(String text)
+		{
+			int count = text.length();
+			float[] widths = new float[count];
+			paint_text.getTextWidths(text, widths);
+			int textWidth = 0;
+			for (int i = 0; i < count; i++)
+			{
+				textWidth += widths[i];
+			}
+			return textWidth;
+		}
+
+		@Override
+		protected OverlayItem createItem(int i)
+		{
+			return null;
+		}
+
+		@Override
+		public int size()
+		{
+			return 0;
+		}
+	}
 
 	//
 	// Miscellaneous

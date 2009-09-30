@@ -8,21 +8,11 @@
  - Make the points clickable to show other information, or for showing
    information of all the wifi that are in the same spot.
    
- - Find a better method to render >30 wifis instead of asking the user a maximum
-   number. 30 WiFis are already too much to show and slows the scrolling a lot.
-   Possible solution: show aggregates dots that sums up more wifi and they can
-   be clicked to view the list. (maybe a dot whose radius is parametric to the
-   number of wifis inside it?)
-   Another solution: scan the mapview as sectors and query the database for a
-   count(bssid) for that rectangle. Something like 4x4 sectors.
-   
  - Realize a method to synchronize the databases, maybe phone to phone, maybe
    via bluetooth
    
  - On Touch event seems to make application crash sometimes, maybe when clicking
    the empty.png rendered 1x1 transparent png image that the systems assumes
    taking over the clickable area.
-   
- - Put the query of the visible wifis directly on the Overlays.draw, maybe
-   becoming it another inner class of Main. It's useless to make an array by
-   cycle and then cycling the same items to read it, when it's always rebuilt.
+
+ - Still optimize Overlays.draw: too much code in there.

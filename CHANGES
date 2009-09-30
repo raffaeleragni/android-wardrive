@@ -19,3 +19,10 @@ v1.1
     
     - "Follow ME", can be disabled, but is not saved to preferences: at startup
       it needs the position or it will remain in coords 0,0
+      
+v1.2
+
+    - Introduced the quadrant view: many wifis in the same screen gets wrapped
+      on a bigger dot, still divided between red and green.
+      Should improve performance with big numbers (100+).
+      This is activated also only when on a zoom level far enough.
