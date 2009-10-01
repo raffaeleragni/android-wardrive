@@ -118,7 +118,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
 
-	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 2;
+	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 3;
 
 	private MapView mapview;
 
@@ -701,7 +701,7 @@ public class Main extends MapActivity implements LocationListener
 							draw_single(canvas, mapView,
 									new GeoPoint((int) (c.getDouble(0) * 1E6), (int) (c.getDouble(1) * 1E6)), c.getString(2));
 						}
-						while (c.moveToNext() && c.getPosition() < MAX_WIFI_VISIBLE);
+						while (c.moveToNext());
 					}
 					else
 					{
