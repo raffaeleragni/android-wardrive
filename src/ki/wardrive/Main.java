@@ -46,6 +46,7 @@ import android.os.PowerManager.WakeLock;
 import android.text.TextPaint;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -648,27 +649,19 @@ public class Main extends MapActivity implements LocationListener
 			paint_text.setStrokeWidth(3);
 			paint_text.setTextSize(14);
 		}
-
-		private void draw_single(Canvas canvas, MapView mapView, GeoPoint geo_point, String title)
+		
+		@Override
+		public boolean onTouchEvent(MotionEvent event, MapView mapView)
 		{
-			point = mapView.getProjection().toPixels(geo_point, point);
-			canvas.drawCircle(point.x, point.y, CIRCLE_RADIUS, paint_circle);
-
-			if (show_labels && title != null && title.length() > 0)
-			{
-				rect = new RectF(0, 0, getTextWidth(title) + 4 * 2, INFO_WINDOW_HEIGHT);
-				rect.offset(point.x + 2, point.y + 2);
-				canvas.drawRect(rect, paint_circle);
-				canvas.drawText(title, point.x + 6, point.y + 14, paint_text);
-			}
+			return false;
 		}
-
-		private void draw_sized_item(Canvas canvas, MapView mapView, GeoPoint geo_point, int radius)
+		
+		@Override
+		public boolean onTap(GeoPoint p, MapView mapView)
 		{
-			point = mapView.getProjection().toPixels(geo_point, point);
-			canvas.drawCircle(point.x, point.y, radius < CIRCLE_RADIUS ? CIRCLE_RADIUS : radius, paint_circle);
+			return false;
 		}
-
+		
 		@Override
 		public void draw(Canvas canvas, MapView mapView, boolean shadow)
 		{
@@ -712,6 +705,7 @@ public class Main extends MapActivity implements LocationListener
 					}
 					else
 					{
+						
 						quadrant_w = (mapView.getWidth() / quadrants_x);
 						quadrant_h = (mapView.getHeight() / quadrants_y);
 						max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 3 : quadrant_w / 3;
@@ -722,12 +716,13 @@ public class Main extends MapActivity implements LocationListener
 						{
 							for (int y = 0; y < quadrants_y; y++)
 							{
+								destroy_cursor(c);
+								
 								top_left = mapView.getProjection().fromPixels(quadrant_w * x, quadrant_h * y);
 								bottom_right = mapView.getProjection().fromPixels(quadrant_w * x + quadrant_w,
 										quadrant_h * y + quadrant_h);
 
 								count = 0;
-								destroy_cursor(c);
 								c = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_COUNT_BSSID,
 										TABLE_NETWORKS_FIELD_SUM_LAT, TABLE_NETWORKS_FIELD_SUM_LON },
 										TABLE_NETWORKS_LOCATION_BETWEEN
@@ -758,14 +753,28 @@ public class Main extends MapActivity implements LocationListener
 				destroy_cursor(c);
 			}
 		}
-
-		@Override
-		public boolean onTap(GeoPoint p, MapView mapView)
+		
+		private void draw_single(Canvas canvas, MapView mapView, GeoPoint geo_point, String title)
 		{
-			return false;
+			point = mapView.getProjection().toPixels(geo_point, point);
+			canvas.drawCircle(point.x, point.y, CIRCLE_RADIUS, paint_circle);
+			
+			if (show_labels && title != null && title.length() > 0)
+			{
+				rect = new RectF(0, 0, getTextWidth(title) + 4 * 2, INFO_WINDOW_HEIGHT);
+				rect.offset(point.x + 2, point.y + 2);
+				canvas.drawRect(rect, paint_circle);
+				canvas.drawText(title, point.x + 6, point.y + 14, paint_text);
+			}
+		}
+		
+		private void draw_sized_item(Canvas canvas, MapView mapView, GeoPoint geo_point, int radius)
+		{
+			point = mapView.getProjection().toPixels(geo_point, point);
+			canvas.drawCircle(point.x, point.y, radius < CIRCLE_RADIUS ? CIRCLE_RADIUS : radius, paint_circle);
 		}
 
-		public String[] compose_latlon_between(GeoPoint top_left, GeoPoint bottom_right)
+		private String[] compose_latlon_between(GeoPoint top_left, GeoPoint bottom_right)
 		{
 			double lat_from = ((double) top_left.getLatitudeE6()) / 1E6;
 			double lat_to = ((double) bottom_right.getLatitudeE6()) / 1E6;
