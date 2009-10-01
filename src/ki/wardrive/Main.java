@@ -65,10 +65,37 @@ import com.google.android.maps.OverlayItem;
  */
 public class Main extends MapActivity implements LocationListener
 {
-	public enum OverlayType
-	{
-		MY_LOCATION, OPEN_WIFI, CLOSED_WIFI
-	};
+	//
+	// Program related
+	//
+	
+	private static int OTYPE_MY_LOCATION = 0;
+
+	private static int OTYPE_OPEN_WIFI = 1;
+
+	private static int OTYPE_CLOSED_WIFI = 2;
+
+	private static final String LAST_LAT = "last_lat";
+
+	private static final String LAST_LON = "last_lon";
+
+	private static final String ZOOM_LEVEL = "zoom_level";
+
+	private static final String CONF_GPS_QUERIES_METERS = "gps_queries_meters";
+
+	private static final String CONF_SHOW_LABELS = "show_labels";
+
+	private static final int[] GPS_QUERIES_METERS_DATA = new int[] { 10, 50, 200 };
+
+	private static final int MAX_WIFI_VISIBLE = 20;
+
+	private WakeLock wake_lock;
+
+	private SharedPreferences settings;
+
+	private SharedPreferences.Editor settings_editor;
+	
+	private int GPS_QUERIES_METERS = 1;
 
 	//
 	// Interface Related
@@ -88,31 +115,9 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int DIALOG_GPS_QUERIES_METERS = 2;
 
-	private static final String LAST_LAT = "last_lat";
-
-	private static final String LAST_LON = "last_lon";
-
-	private static final String ZOOM_LEVEL = "zoom_level";
-
-	private static final int DEFAULT_LAT = 0;
-
-	private static final int DEFAULT_LON = 0;
-
-	private static final int DEFAULT_ZOOM_LEVEL = 17;
-
-	private static final int[] GPS_QUERIES_METERS_DATA = new int[] { 10, 50, 200 };
-
-	private static final String CONF_GPS_QUERIES_METERS = "gps_queries_meters";
-
-	private static final String CONF_SHOW_LABELS = "show_labels";
-
-	private static final int MAX_WIFI_VISIBLE = 20;
-
 	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
 
 	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 3;
-
-	private WakeLock wake_lock;
 
 	private MapView mapview;
 
@@ -122,14 +127,8 @@ public class Main extends MapActivity implements LocationListener
 
 	private Overlays overlays_me;
 
-	private SharedPreferences settings;
-
-	private SharedPreferences.Editor settings_editor;
-
-	private int GPS_QUERIES_METERS = 1;
-
 	public boolean show_labels = false;
-
+	
 	public boolean follow_me = true;
 
 	//
@@ -188,6 +187,12 @@ public class Main extends MapActivity implements LocationListener
 	// Location Related
 	//
 
+	private static final int DEFAULT_LAT = 0;
+
+	private static final int DEFAULT_LON = 0;
+
+	private static final int DEFAULT_ZOOM_LEVEL = 17;
+
 	public static final int GPS_EVENT_WAIT = 30000;
 
 	private LocationManager location_manager;
@@ -205,7 +210,7 @@ public class Main extends MapActivity implements LocationListener
 	private WifiManager wifi_manager;
 
 	//
-	// State change
+	// Status change
 	//
 
 	@Override
@@ -232,9 +237,9 @@ public class Main extends MapActivity implements LocationListener
 
 		Drawable d = getResources().getDrawable(R.drawable.empty);
 
-		overlays_closed = new Overlays(OverlayType.CLOSED_WIFI, d, 96, 255, 0, 0);
-		overlays_opened = new Overlays(OverlayType.OPEN_WIFI, d, 192, 0, 200, 0);
-		overlays_me = new Overlays(OverlayType.MY_LOCATION, d, 255, 0, 0, 255);
+		overlays_closed = new Overlays(OTYPE_CLOSED_WIFI, d, 96, 255, 0, 0);
+		overlays_opened = new Overlays(OTYPE_OPEN_WIFI, d, 192, 0, 200, 0);
+		overlays_me = new Overlays(OTYPE_MY_LOCATION, d, 255, 0, 0, 255);
 
 		overlays_closed.show_labels = show_labels;
 		overlays_opened.show_labels = show_labels;
@@ -285,6 +290,8 @@ public class Main extends MapActivity implements LocationListener
 		}
 		settings_editor.commit();
 
+		// TODO check: does the onPause get called anyway when we are here?
+		
 		if (wake_lock.isHeld())
 		{
 			wake_lock.release();
@@ -312,8 +319,7 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId())
-		{
+		switch (item.getItemId()) {
 			case MENU_QUIT:
 			{
 				finish();
@@ -350,8 +356,7 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
-		switch (id)
-		{
+		switch (id) {
 			case DIALOG_STATS:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -606,7 +611,7 @@ public class Main extends MapActivity implements LocationListener
 
 		private RectF rect = null;
 
-		private OverlayType type;
+		private int type;
 
 		public boolean show_labels = false;
 
@@ -626,7 +631,7 @@ public class Main extends MapActivity implements LocationListener
 
 		private double avg_lon = 0;
 
-		public Overlays(OverlayType type, Drawable d, int a, int r, int g, int b)
+		public Overlays(int type, Drawable d, int a, int r, int g, int b)
 		{
 			super(d);
 			populate();
@@ -672,7 +677,7 @@ public class Main extends MapActivity implements LocationListener
 				return;
 			}
 
-			if (OverlayType.MY_LOCATION.equals(type))
+			if (OTYPE_MY_LOCATION == type)
 			{
 				if (last_location != null)
 				{
@@ -705,16 +710,14 @@ public class Main extends MapActivity implements LocationListener
 			try
 			{
 				c = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_LAT, TABLE_NETWORKS_FIELD_LON,
-						TABLE_NETWORKS_FIELD_SSID },
-						TABLE_NETWORKS_LOCATION_BETWEEN
-								+ AND
-								+ (OverlayType.CLOSED_WIFI.equals(type) ? TABLE_NETWORKS_CLOSED_CONDITION
-										: TABLE_NETWORKS_OPEN_CONDITION), new String[] { "" + lat_from, "" + lat_to,
-								"" + lon_from, "" + lon_to }, null, null, null);
+						TABLE_NETWORKS_FIELD_SSID }, TABLE_NETWORKS_LOCATION_BETWEEN + AND
+						+ (OTYPE_CLOSED_WIFI == type ? TABLE_NETWORKS_CLOSED_CONDITION : TABLE_NETWORKS_OPEN_CONDITION),
+						new String[] { "" + lat_from, "" + lat_to, "" + lon_from, "" + lon_to }, null, null, null);
 
 				if (c != null && c.moveToFirst())
 				{
-					if (c.getCount() <= MAX_WIFI_VISIBLE || mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE)
+					if (c.getCount() <= MAX_WIFI_VISIBLE
+							|| mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE)
 					{
 						do
 						{
@@ -761,7 +764,7 @@ public class Main extends MapActivity implements LocationListener
 										TABLE_NETWORKS_FIELD_SUM_LAT, TABLE_NETWORKS_FIELD_SUM_LON },
 										TABLE_NETWORKS_LOCATION_BETWEEN
 												+ AND
-												+ (OverlayType.CLOSED_WIFI.equals(type) ? TABLE_NETWORKS_CLOSED_CONDITION
+												+ (OTYPE_CLOSED_WIFI == type ? TABLE_NETWORKS_CLOSED_CONDITION
 														: TABLE_NETWORKS_OPEN_CONDITION), new String[] { "" + lat_from,
 												"" + lat_to, "" + lon_from, "" + lon_to }, null, null, null);
 
