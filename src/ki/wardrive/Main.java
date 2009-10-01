@@ -68,7 +68,7 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Program related
 	//
-	
+
 	private static int OTYPE_MY_LOCATION = 0;
 
 	private static int OTYPE_OPEN_WIFI = 1;
@@ -94,7 +94,7 @@ public class Main extends MapActivity implements LocationListener
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
-	
+
 	private int GPS_QUERIES_METERS = 1;
 
 	//
@@ -128,7 +128,7 @@ public class Main extends MapActivity implements LocationListener
 	private Overlays overlays_me;
 
 	public boolean show_labels = false;
-	
+
 	public boolean follow_me = true;
 
 	//
@@ -291,7 +291,7 @@ public class Main extends MapActivity implements LocationListener
 		settings_editor.commit();
 
 		// TODO check: does the onPause get called anyway when we are here?
-		
+
 		if (wake_lock.isHeld())
 		{
 			wake_lock.release();
@@ -689,22 +689,6 @@ public class Main extends MapActivity implements LocationListener
 
 			GeoPoint top_left = mapView.getProjection().fromPixels(0, 0);
 			GeoPoint bottom_right = mapView.getProjection().fromPixels(mapView.getWidth(), mapView.getHeight());
-			double lat_from = ((double) top_left.getLatitudeE6()) / 1E6;
-			double lat_to = ((double) bottom_right.getLatitudeE6()) / 1E6;
-			double lon_from = ((double) top_left.getLongitudeE6()) / 1E6;
-			double lon_to = ((double) bottom_right.getLongitudeE6()) / 1E6;
-			if (lat_from > lat_to)
-			{
-				double x = lat_to;
-				lat_to = lat_from;
-				lat_from = x;
-			}
-			if (lon_from > lon_to)
-			{
-				double x = lon_to;
-				lon_to = lon_from;
-				lon_from = x;
-			}
 
 			Cursor c = null;
 			try
@@ -712,7 +696,7 @@ public class Main extends MapActivity implements LocationListener
 				c = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_LAT, TABLE_NETWORKS_FIELD_LON,
 						TABLE_NETWORKS_FIELD_SSID }, TABLE_NETWORKS_LOCATION_BETWEEN + AND
 						+ (OTYPE_CLOSED_WIFI == type ? TABLE_NETWORKS_CLOSED_CONDITION : TABLE_NETWORKS_OPEN_CONDITION),
-						new String[] { "" + lat_from, "" + lat_to, "" + lon_from, "" + lon_to }, null, null, null);
+						compose_latlon_between(top_left, bottom_right), null, null, null);
 
 				if (c != null && c.moveToFirst())
 				{
@@ -741,22 +725,6 @@ public class Main extends MapActivity implements LocationListener
 								top_left = mapView.getProjection().fromPixels(quadrant_w * x, quadrant_h * y);
 								bottom_right = mapView.getProjection().fromPixels(quadrant_w * x + quadrant_w,
 										quadrant_h * y + quadrant_h);
-								lat_from = ((double) top_left.getLatitudeE6()) / 1E6;
-								lat_to = ((double) bottom_right.getLatitudeE6()) / 1E6;
-								lon_from = ((double) top_left.getLongitudeE6()) / 1E6;
-								lon_to = ((double) bottom_right.getLongitudeE6()) / 1E6;
-								if (lat_from > lat_to)
-								{
-									double _x = lat_to;
-									lat_to = lat_from;
-									lat_from = _x;
-								}
-								if (lon_from > lon_to)
-								{
-									double _x = lon_to;
-									lon_to = lon_from;
-									lon_from = _x;
-								}
 
 								count = 0;
 								destroy_cursor(c);
@@ -765,8 +733,8 @@ public class Main extends MapActivity implements LocationListener
 										TABLE_NETWORKS_LOCATION_BETWEEN
 												+ AND
 												+ (OTYPE_CLOSED_WIFI == type ? TABLE_NETWORKS_CLOSED_CONDITION
-														: TABLE_NETWORKS_OPEN_CONDITION), new String[] { "" + lat_from,
-												"" + lat_to, "" + lon_from, "" + lon_to }, null, null, null);
+														: TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
+												bottom_right), null, null, null);
 
 								if (c != null && c.moveToFirst())
 								{
@@ -795,6 +763,27 @@ public class Main extends MapActivity implements LocationListener
 		public boolean onTap(GeoPoint p, MapView mapView)
 		{
 			return false;
+		}
+
+		public String[] compose_latlon_between(GeoPoint top_left, GeoPoint bottom_right)
+		{
+			double lat_from = ((double) top_left.getLatitudeE6()) / 1E6;
+			double lat_to = ((double) bottom_right.getLatitudeE6()) / 1E6;
+			double lon_from = ((double) top_left.getLongitudeE6()) / 1E6;
+			double lon_to = ((double) bottom_right.getLongitudeE6()) / 1E6;
+			if (lat_from > lat_to)
+			{
+				double x = lat_to;
+				lat_to = lat_from;
+				lat_from = x;
+			}
+			if (lon_from > lon_to)
+			{
+				double x = lon_to;
+				lon_to = lon_from;
+				lon_from = x;
+			}
+			return new String[] { "" + lat_from, "" + lat_to, "" + lon_from, "" + lon_to };
 		}
 
 		private int getTextWidth(String text)
