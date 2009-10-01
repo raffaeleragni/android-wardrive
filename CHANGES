@@ -41,5 +41,7 @@ v1.3
 
 v1.4
 
-	- Added transparency to circles and they don't take all the map when it's
-	  fully zoomed out (proportional scaling up).
+	- Added transparency to circles
+	
+	- Big circles: they don't take all the map when it's fully zoomed out
+	  (proportional scaling up).
