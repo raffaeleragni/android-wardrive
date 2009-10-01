@@ -108,6 +108,10 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int MAX_WIFI_VISIBLE = 20;
 
+	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
+
+	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 3;
+
 	private WakeLock wake_lock;
 
 	private MapView mapview;
@@ -228,9 +232,9 @@ public class Main extends MapActivity implements LocationListener
 
 		Drawable d = getResources().getDrawable(R.drawable.empty);
 
-		overlays_closed = new Overlays(OverlayType.CLOSED_WIFI, d, 255, 0, 0);
-		overlays_opened = new Overlays(OverlayType.OPEN_WIFI, d, 0, 200, 0);
-		overlays_me = new Overlays(OverlayType.MY_LOCATION, d, 0, 0, 255);
+		overlays_closed = new Overlays(OverlayType.CLOSED_WIFI, d, 96, 255, 0, 0);
+		overlays_opened = new Overlays(OverlayType.OPEN_WIFI, d, 192, 0, 200, 0);
+		overlays_me = new Overlays(OverlayType.MY_LOCATION, d, 255, 0, 0, 255);
 
 		overlays_closed.show_labels = show_labels;
 		overlays_opened.show_labels = show_labels;
@@ -308,7 +312,8 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId()) {
+		switch (item.getItemId())
+		{
 			case MENU_QUIT:
 			{
 				finish();
@@ -345,7 +350,8 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
-		switch (id) {
+		switch (id)
+		{
 			case DIALOG_STATS:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -620,7 +626,7 @@ public class Main extends MapActivity implements LocationListener
 
 		private double avg_lon = 0;
 
-		public Overlays(OverlayType type, Drawable d, int r, int g, int b)
+		public Overlays(OverlayType type, Drawable d, int a, int r, int g, int b)
 		{
 			super(d);
 			populate();
@@ -628,7 +634,7 @@ public class Main extends MapActivity implements LocationListener
 			this.type = type;
 
 			paint_circle = new Paint();
-			paint_circle.setARGB(255, r, g, b);
+			paint_circle.setARGB(a, r, g, b);
 			paint_circle.setAntiAlias(true);
 
 			paint_text = new TextPaint();
@@ -708,7 +714,7 @@ public class Main extends MapActivity implements LocationListener
 
 				if (c != null && c.moveToFirst())
 				{
-					if (c.getCount() <= MAX_WIFI_VISIBLE || mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - 2)
+					if (c.getCount() <= MAX_WIFI_VISIBLE || mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE)
 					{
 						do
 						{
@@ -721,7 +727,9 @@ public class Main extends MapActivity implements LocationListener
 					{
 						quadrant_w = (mapView.getWidth() / quadrants_x);
 						quadrant_h = (mapView.getHeight() / quadrants_y);
-						max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 2 : quadrant_w / 2;
+						max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 3 : quadrant_w / 3;
+						max_radius_for_quadrant /= mapView.getZoomLevel() - QUADRANT_DOTS_SCALING_FACTOR >= 0 ? 1 : -(mapView
+								.getZoomLevel() - QUADRANT_DOTS_SCALING_FACTOR);
 
 						for (int x = 0; x < quadrants_x; x++)
 						{
