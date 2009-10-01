@@ -118,7 +118,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
 
-	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 3;
+	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 2;
 
 	private MapView mapview;
 
