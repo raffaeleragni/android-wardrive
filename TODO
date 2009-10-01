@@ -3,3 +3,6 @@
    
  - Realize a method to synchronize the databases, maybe phone to phone, maybe
    via bluetooth
+
+ - Make the information gathering as a service that coult remain in the
+   background (using the Service class)
