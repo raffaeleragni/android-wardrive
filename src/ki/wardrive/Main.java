@@ -17,16 +17,9 @@
  */
 package ki.wardrive;
 
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.BroadcastReceiver;
-import android.content.ContentValues;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -38,11 +31,7 @@ import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.net.wifi.ScanResult;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
-import android.os.PowerManager;
-import android.os.PowerManager.WakeLock;
 import android.text.TextPaint;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -72,9 +61,9 @@ public class Main extends MapActivity implements LocationListener
 
 	private static int OTYPE_MY_LOCATION = 0;
 
-	private static int OTYPE_OPEN_WIFI = 1;
+	private static int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
 
-	private static int OTYPE_CLOSED_WIFI = 2;
+	private static int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
 
 	private static final String LAST_LAT = "last_lat";
 
@@ -82,21 +71,15 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final String ZOOM_LEVEL = "zoom_level";
 
-	private static final String CONF_GPS_QUERIES_METERS = "gps_queries_meters";
-
 	private static final String CONF_SHOW_LABELS = "show_labels";
-
-	private static final int[] GPS_QUERIES_METERS_DATA = new int[] { 10, 50, 200 };
+	
+	private static final String CONF_FOLLOW = "follow";
 
 	private static final int MAX_WIFI_VISIBLE = 20;
-
-	private WakeLock wake_lock;
 
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
-
-	private int GPS_QUERIES_METERS = 1;
 
 	//
 	// Interface Related
@@ -104,17 +87,13 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int MENU_QUIT = 0;
 
-	private static final int MENU_STATS = 1;
+	private static final int MENU_STATS = MENU_QUIT + 1;
 
-	private static final int MENU_GPS_QUERIES_METERS = 4;
+	private static final int MENU_TOGGLE_LABELS = MENU_STATS + 1;
 
-	private static final int MENU_TOGGLE_LABELS = 5;
-
-	private static final int MENU_TOGGLE_FOLLOW_ME = 6;
+	private static final int MENU_TOGGLE_FOLLOW_ME = MENU_TOGGLE_LABELS + 1;
 
 	private static final int DIALOG_STATS = 0;
-
-	private static final int DIALOG_GPS_QUERIES_METERS = 2;
 
 	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
 
@@ -138,50 +117,6 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final String DATABASE_FULL_PATH = "/sdcard/wardrive.db3";
 
-	private static final String TABLE_NETWORKS = "networks";
-
-	private static final String TABLE_NETWORKS_FIELD_BSSID = "bssid";
-
-	private static final String TABLE_NETWORKS_FIELD_COUNT_BSSID = "count(bssid)";
-
-	private static final String TABLE_NETWORKS_FIELD_SUM_LAT = "sum(lat)";
-
-	private static final String TABLE_NETWORKS_FIELD_SUM_LON = "sum(lon)";
-
-	private static final String TABLE_NETWORKS_FIELD_BSSID_EQUALS = "bssid = ?";
-
-	private static final String TABLE_NETWORKS_FIELD_SSID = "ssid";
-
-	private static final String TABLE_NETWORKS_FIELD_CAPABILITIES = "capabilities";
-
-	private static final String TABLE_NETWORKS_FIELD_LEVEL = "level";
-
-	private static final String TABLE_NETWORKS_FIELD_FREQUENCY = "frequency";
-
-	private static final String TABLE_NETWORKS_FIELD_LAT = "lat";
-
-	private static final String TABLE_NETWORKS_FIELD_LON = "lon";
-
-	private static final String TABLE_NETWORKS_FIELD_ALT = "alt";
-
-	private static final String TABLE_NETWORKS_FIELD_TIMESTAMP = "timestamp";
-
-	private static final String TABLE_NETWORKS_LOCATION_BETWEEN = "lat >= ? and lat <= ? and lon >= ? and lon <= ?";
-
-	private static final String TABLE_NETWORKS_OPEN_CONDITION = "capabilities = ''";
-
-	private static final String TABLE_NETWORKS_CLOSED_CONDITION = "capabilities <> ''";
-
-	private static final String AND = " and ";
-
-	private static final String SELECT_COUNT_WIFIS = "select count(bssid) from networks";
-
-	private static final String SELECT_COUNT_OPEN = "select count(bssid) from networks where capabilities = ''";
-
-	private static final String CREATE_TABLE_NETWORKS = "create table if not exists networks (bssid text primary key, ssid text, capabilities text, level integer, frequency integer, lat real, lon real, alt real, timestamp integer)";
-
-	private static final String CREATE_INDEX_LATLON = "create index if not exists networks_latlon_idx on networks(lat, lon)";
-
 	private SQLiteDatabase database;
 
 	//
@@ -196,19 +131,11 @@ public class Main extends MapActivity implements LocationListener
 
 	public static final int GPS_EVENT_WAIT = 30000;
 
+	public static final int GPS_EVENT_METERS = 30;
+
 	private LocationManager location_manager;
 
-	private Object LAST_LOCATION_LOCK = new Object();
-
 	private Location last_location = null;
-
-	//
-	// WiFi Related
-	//
-
-	private boolean previous_wifi_state = false;
-
-	private WifiManager wifi_manager;
 
 	//
 	// Status change
@@ -224,8 +151,8 @@ public class Main extends MapActivity implements LocationListener
 		settings = getPreferences(MODE_PRIVATE);
 		settings_editor = settings.edit();
 
-		GPS_QUERIES_METERS = settings.getInt(CONF_GPS_QUERIES_METERS, GPS_QUERIES_METERS);
 		show_labels = settings.getBoolean(CONF_SHOW_LABELS, show_labels);
+		follow_me = settings.getBoolean(CONF_FOLLOW, follow_me);
 
 		GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, DEFAULT_LAT), settings.getInt(LAST_LON, DEFAULT_LON));
 
@@ -250,28 +177,31 @@ public class Main extends MapActivity implements LocationListener
 		mapview.getOverlays().add(overlays_opened);
 		mapview.getOverlays().add(overlays_me);
 
-		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "");
+		database = SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null);
+		location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+		Intent i = new Intent();
+		i.setClass(this, ScanService.class);
+		startService(i);
 	}
-	
+
 	@Override
 	protected void onStart()
 	{
 		super.onStart();
-		
-		if (!wake_lock.isHeld())
+
+		if (location_manager != null)
 		{
-			wake_lock.acquire();
+			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_EVENT_WAIT, GPS_EVENT_METERS, Main.this);
 		}
-		start_services();
 	}
 
 	@Override
 	protected void onStop()
 	{
 		settings_editor.putInt(ZOOM_LEVEL, mapview.getZoomLevel());
-		settings_editor.putInt(CONF_GPS_QUERIES_METERS, GPS_QUERIES_METERS);
 		settings_editor.putBoolean(CONF_SHOW_LABELS, show_labels);
+		settings_editor.putBoolean(CONF_FOLLOW, follow_me);
 		if (last_location != null)
 		{
 			settings_editor.putInt(LAST_LAT, (int) (last_location.getLatitude() * 1E6));
@@ -279,13 +209,21 @@ public class Main extends MapActivity implements LocationListener
 		}
 		settings_editor.commit();
 
-		if (wake_lock.isHeld())
+		if (location_manager != null)
 		{
-			wake_lock.release();
+			location_manager.removeUpdates(Main.this);
 		}
-		stop_services();
 
 		super.onStop();
+	}
+
+	@Override
+	protected void onDestroy()
+	{
+		database.close();
+		database = null;
+
+		super.onDestroy();
 	}
 
 	//
@@ -295,32 +233,45 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		menu.add(0, MENU_QUIT, 0, R.string.MENU_QUIT_LABEL);
-		menu.add(0, MENU_STATS, 0, R.string.MENU_STATS_LABEL);
-		menu.add(0, MENU_GPS_QUERIES_METERS, 0, R.string.MENU_GPS_QUERIES_METERS_LABEL);
-		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL);
-		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, R.string.MENU_TOGGLE_FOLLOW_ME_LABEL);
+		menu.add(0, MENU_QUIT, 0, R.string.MENU_QUIT_LABEL).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
+		menu.add(0, MENU_STATS, 0, R.string.MENU_STATS_LABEL).setIcon(android.R.drawable.ic_menu_info_details);
+		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL).setIcon(android.R.drawable.ic_menu_mapmode);
+		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, R.string.MENU_TOGGLE_FOLLOW_ME_LABEL)
+				.setIcon(android.R.drawable.ic_menu_directions);
+
 		return true;
+	}
+
+	@Override
+	public boolean onPrepareOptionsMenu(Menu menu)
+	{
+		menu.getItem(MENU_TOGGLE_LABELS).setTitle(
+				getResources().getString(R.string.MENU_TOGGLE_LABELS_LABEL) + (show_labels ? " [ON]" : " [OFF]"));
+		menu.getItem(MENU_TOGGLE_FOLLOW_ME).setTitle(
+				getResources().getString(R.string.MENU_TOGGLE_FOLLOW_ME_LABEL) + (follow_me ? " [ON]" : " [OFF]"));
+
+		return super.onPrepareOptionsMenu(menu);
 	}
 
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId()) {
+		switch (item.getItemId())
+		{
 			case MENU_QUIT:
 			{
+				Intent i = new Intent();
+				i.setClass(this, ScanService.class);
+				stopService(i);
+
 				finish();
+
 				return true;
 			}
 			case MENU_STATS:
 			{
 				showDialog(DIALOG_STATS);
 				return true;
-			}
-			case MENU_GPS_QUERIES_METERS:
-			{
-				showDialog(DIALOG_GPS_QUERIES_METERS);
-				break;
 			}
 			case MENU_TOGGLE_LABELS:
 			{
@@ -343,28 +294,12 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
-		switch (id) {
+		switch (id)
+		{
 			case DIALOG_STATS:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(print_stats());
-				return builder.create();
-			}
-			case DIALOG_GPS_QUERIES_METERS:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setTitle(R.string.MENU_GPS_QUERIES_METERS_LABEL);
-				builder.setSingleChoiceItems(R.array.GPS_QUERIES_METERS_LABEL, GPS_QUERIES_METERS,
-						new DialogInterface.OnClickListener()
-						{
-							public void onClick(DialogInterface dialog, int item)
-							{
-								GPS_QUERIES_METERS = item;
-								stop_services();
-								start_services();
-								dismissDialog(DIALOG_GPS_QUERIES_METERS);
-							}
-						});
 				return builder.create();
 			}
 		}
@@ -382,14 +317,14 @@ public class Main extends MapActivity implements LocationListener
 			Cursor c = null;
 			try
 			{
-				c = database.rawQuery(SELECT_COUNT_WIFIS, null);
+				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_WIFIS, null);
 				if (c.moveToFirst())
 				{
 					sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
 					sb.append(c.getInt(0));
 				}
 				c.close();
-				c = database.rawQuery(SELECT_COUNT_OPEN, null);
+				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_OPEN, null);
 				if (c.moveToFirst())
 				{
 					sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
@@ -406,71 +341,6 @@ public class Main extends MapActivity implements LocationListener
 	}
 
 	//
-	// Services
-	//
-
-	private void start_services()
-	{
-		location_manager = location_manager == null ? (LocationManager) getSystemService(LOCATION_SERVICE) : location_manager;
-		wifi_manager = wifi_manager == null ? (WifiManager) getSystemService(Context.WIFI_SERVICE) : wifi_manager;
-
-		if (location_manager != null)
-		{
-			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_EVENT_WAIT,
-					GPS_QUERIES_METERS_DATA[GPS_QUERIES_METERS], this);
-		}
-
-		if (wifi_manager != null)
-		{
-			previous_wifi_state = wifi_manager.isWifiEnabled();
-			if (!previous_wifi_state)
-			{
-				wifi_manager.setWifiEnabled(true);
-			}
-
-			IntentFilter i = new IntentFilter();
-			i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-			registerReceiver(wifiEvent, i);
-		}
-
-		database = SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null);
-
-		if (database != null)
-		{
-			database.execSQL(CREATE_TABLE_NETWORKS);
-			database.execSQL(CREATE_INDEX_LATLON);
-		}
-	}
-
-	private void stop_services()
-	{
-		if (location_manager != null)
-		{
-			location_manager.removeUpdates(this);
-			location_manager = null;
-		}
-
-		if (wifi_manager != null)
-		{
-			if (wifi_manager.isWifiEnabled() != previous_wifi_state)
-			{
-				wifi_manager.setWifiEnabled(previous_wifi_state);
-			}
-			unregisterReceiver(wifiEvent);
-			wifi_manager = null;
-		}
-
-		if (database != null)
-		{
-			if (database.isOpen())
-			{
-				database.close();
-			}
-			database = null;
-		}
-	}
-
-	//
 	// Events
 	//
 
@@ -479,108 +349,16 @@ public class Main extends MapActivity implements LocationListener
 	{
 		if (location != null)
 		{
-			synchronized (LAST_LOCATION_LOCK)
+			last_location = location;
+			int e6lat = (int) (location.getLatitude() * 1E6);
+			int e6lon = (int) (location.getLongitude() * 1E6);
+			GeoPoint p = new GeoPoint(e6lat, e6lon);
+			if (follow_me)
 			{
-				last_location = location;
-				update_map(last_location);
-				if (wifi_manager != null)
-				{
-					wifi_manager.startScan();
-				}
+				mapview.getController().animateTo(p);
 			}
+			mapview.invalidate();
 		}
-	}
-
-	private BroadcastReceiver wifiEvent = new BroadcastReceiver()
-	{
-		@Override
-		public void onReceive(Context context, Intent intent)
-		{
-			synchronized (LAST_LOCATION_LOCK)
-			{
-				if (last_location != null)
-				{
-					List<ScanResult> results = wifi_manager.getScanResults();
-					for (ScanResult result : results)
-					{
-						process_wifi_result(result, last_location.getLatitude(), last_location.getLongitude(), last_location
-								.getAltitude());
-					}
-				}
-			}
-		}
-	};
-
-	private void process_wifi_result(ScanResult result, double lat, double lon, double alt)
-	{
-		Cursor cursor = null;
-
-		boolean toadd = false;
-		boolean toupdate = false;
-		boolean toupdate_coords = false;
-		try
-		{
-			cursor = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_LEVEL },
-					TABLE_NETWORKS_FIELD_BSSID_EQUALS, new String[] { result.BSSID }, null, null, null);
-			if (!cursor.moveToFirst())
-			{
-				toadd = true;
-			}
-			else
-			{
-				toupdate = true;
-				toupdate_coords = result.level > cursor.getInt(0);
-			}
-		}
-		finally
-		{
-			destroy_cursor(cursor);
-		}
-
-		if (toadd)
-		{
-			ContentValues values = new ContentValues();
-			values.put(TABLE_NETWORKS_FIELD_BSSID, result.BSSID);
-			values.put(TABLE_NETWORKS_FIELD_SSID, result.SSID);
-			values.put(TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
-			values.put(TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
-			values.put(TABLE_NETWORKS_FIELD_LEVEL, result.level);
-			values.put(TABLE_NETWORKS_FIELD_LAT, lat);
-			values.put(TABLE_NETWORKS_FIELD_LON, lon);
-			values.put(TABLE_NETWORKS_FIELD_ALT, alt);
-			values.put(TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
-
-			database.insert(TABLE_NETWORKS, null, values);
-		}
-		else if (toupdate)
-		{
-			ContentValues values = new ContentValues();
-			values.put(TABLE_NETWORKS_FIELD_SSID, result.SSID);
-			values.put(TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
-			values.put(TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
-			values.put(TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
-			if (toupdate_coords)
-			{
-				values.put(TABLE_NETWORKS_FIELD_LAT, lat);
-				values.put(TABLE_NETWORKS_FIELD_LON, lon);
-				values.put(TABLE_NETWORKS_FIELD_ALT, alt);
-				values.put(TABLE_NETWORKS_FIELD_LEVEL, result.level);
-			}
-
-			database.update(TABLE_NETWORKS, values, TABLE_NETWORKS_FIELD_BSSID_EQUALS, new String[] { result.BSSID });
-		}
-	}
-
-	private void update_map(Location location)
-	{
-		int e6lat = (int) (location.getLatitude() * 1E6);
-		int e6lon = (int) (location.getLongitude() * 1E6);
-		GeoPoint p = new GeoPoint(e6lat, e6lon);
-		if (follow_me)
-		{
-			mapview.getController().animateTo(p);
-		}
-		mapview.invalidate();
 	}
 
 	//
@@ -638,19 +416,19 @@ public class Main extends MapActivity implements LocationListener
 			paint_text.setStrokeWidth(3);
 			paint_text.setTextSize(14);
 		}
-		
+
 		@Override
 		public boolean onTouchEvent(MotionEvent event, MapView mapView)
 		{
 			return false;
 		}
-		
+
 		@Override
 		public boolean onTap(GeoPoint p, MapView mapView)
 		{
 			return false;
 		}
-		
+
 		@Override
 		public void draw(Canvas canvas, MapView mapView, boolean shadow)
 		{
@@ -675,10 +453,13 @@ public class Main extends MapActivity implements LocationListener
 			Cursor c = null;
 			try
 			{
-				c = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_LAT, TABLE_NETWORKS_FIELD_LON,
-						TABLE_NETWORKS_FIELD_SSID }, TABLE_NETWORKS_LOCATION_BETWEEN + AND
-						+ (OTYPE_CLOSED_WIFI == type ? TABLE_NETWORKS_CLOSED_CONDITION : TABLE_NETWORKS_OPEN_CONDITION),
-						compose_latlon_between(top_left, bottom_right), null, null, null);
+				c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LAT,
+						DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID },
+						DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
+								+ " and "
+								+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
+										: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
+								bottom_right), null, null, null);
 
 				if (c != null && c.moveToFirst())
 				{
@@ -694,7 +475,7 @@ public class Main extends MapActivity implements LocationListener
 					}
 					else
 					{
-						
+
 						quadrant_w = (mapView.getWidth() / quadrants_x);
 						quadrant_h = (mapView.getHeight() / quadrants_y);
 						max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 3 : quadrant_w / 3;
@@ -706,19 +487,21 @@ public class Main extends MapActivity implements LocationListener
 							for (int y = 0; y < quadrants_y; y++)
 							{
 								destroy_cursor(c);
-								
+
 								top_left = mapView.getProjection().fromPixels(quadrant_w * x, quadrant_h * y);
 								bottom_right = mapView.getProjection().fromPixels(quadrant_w * x + quadrant_w,
 										quadrant_h * y + quadrant_h);
 
 								count = 0;
-								c = database.query(TABLE_NETWORKS, new String[] { TABLE_NETWORKS_FIELD_COUNT_BSSID,
-										TABLE_NETWORKS_FIELD_SUM_LAT, TABLE_NETWORKS_FIELD_SUM_LON },
-										TABLE_NETWORKS_LOCATION_BETWEEN
-												+ AND
-												+ (OTYPE_CLOSED_WIFI == type ? TABLE_NETWORKS_CLOSED_CONDITION
-														: TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
-												bottom_right), null, null, null);
+								c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] {
+										DBTableNetworks.TABLE_NETWORKS_FIELD_COUNT_BSSID,
+										DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LAT,
+										DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LON },
+										DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
+												+ " and "
+												+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
+														: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(
+												top_left, bottom_right), null, null, null);
 
 								if (c != null && c.moveToFirst())
 								{
@@ -742,12 +525,12 @@ public class Main extends MapActivity implements LocationListener
 				destroy_cursor(c);
 			}
 		}
-		
+
 		private void draw_single(Canvas canvas, MapView mapView, GeoPoint geo_point, String title)
 		{
 			point = mapView.getProjection().toPixels(geo_point, point);
 			canvas.drawCircle(point.x, point.y, CIRCLE_RADIUS, paint_circle);
-			
+
 			if (show_labels && title != null && title.length() > 0)
 			{
 				rect = new RectF(0, 0, getTextWidth(title) + 4 * 2, INFO_WINDOW_HEIGHT);
@@ -756,7 +539,7 @@ public class Main extends MapActivity implements LocationListener
 				canvas.drawText(title, point.x + 6, point.y + 14, paint_text);
 			}
 		}
-		
+
 		private void draw_sized_item(Canvas canvas, MapView mapView, GeoPoint geo_point, int radius)
 		{
 			point = mapView.getProjection().toPixels(geo_point, point);

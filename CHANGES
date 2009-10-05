@@ -45,3 +45,9 @@ v1.4
 	
 	- Big circles: they don't take all the map when it's fully zoomed out
 	  (proportional scaling up).
+	  
+v1.5
+
+    - Now the scanning is backed into a service independent from the action.
+      The service is stopped when clicking the "quit" menu entry.
+      (Something like G-Mon does)
