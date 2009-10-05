@@ -253,29 +253,17 @@ public class Main extends MapActivity implements LocationListener
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, "");
 	}
-
+	
 	@Override
-	protected void onResume()
+	protected void onStart()
 	{
-		super.onResume();
-
+		super.onStart();
+		
 		if (!wake_lock.isHeld())
 		{
 			wake_lock.acquire();
 		}
 		start_services();
-	}
-
-	@Override
-	protected void onPause()
-	{
-		if (wake_lock.isHeld())
-		{
-			wake_lock.release();
-		}
-		stop_services();
-
-		super.onPause();
 	}
 
 	@Override
@@ -290,8 +278,6 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putInt(LAST_LON, (int) (last_location.getLongitude() * 1E6));
 		}
 		settings_editor.commit();
-
-		// TODO check: does the onPause get called anyway when we are here?
 
 		if (wake_lock.isHeld())
 		{
@@ -497,7 +483,10 @@ public class Main extends MapActivity implements LocationListener
 			{
 				last_location = location;
 				update_map(last_location);
-				wifi_manager.startScan();
+				if (wifi_manager != null)
+				{
+					wifi_manager.startScan();
+				}
 			}
 		}
 	}
