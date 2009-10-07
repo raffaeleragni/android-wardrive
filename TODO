@@ -3,3 +3,7 @@
    
  - Realize a method to synchronize the databases, maybe phone to phone, maybe
    via bluetooth
+
+ - Start/Stop the service via a specific menu command and save that setting
+   to preferences.
+   Also keep the old "quit" menu method.

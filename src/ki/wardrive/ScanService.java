@@ -37,6 +37,7 @@ import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
+import android.util.Log;
 
 public class ScanService extends Service
 {
@@ -57,70 +58,85 @@ public class ScanService extends Service
 	private int gpsWaitTime = 30000;
 
 	private int gpsMeterSpan = 50;
-	
+
 	private boolean started = false;
 
 	private void start_services()
 	{
-		location_manager = location_manager == null ? (LocationManager) getSystemService(LOCATION_SERVICE) : location_manager;
-		wifi_manager = wifi_manager == null ? (WifiManager) getSystemService(Context.WIFI_SERVICE) : wifi_manager;
-		database = database == null ? SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null) : database;
-
-		if (location_manager != null)
+		try
 		{
-			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gpsWaitTime, gpsMeterSpan, location_listener);
-		}
+			location_manager = location_manager == null ? (LocationManager) getSystemService(LOCATION_SERVICE) : location_manager;
+			wifi_manager = wifi_manager == null ? (WifiManager) getSystemService(Context.WIFI_SERVICE) : wifi_manager;
+			database = database == null ? SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null) : database;
 
-		if (wifi_manager != null)
-		{
-			previous_wifi_state = wifi_manager.isWifiEnabled();
-			if (!previous_wifi_state)
+			if (location_manager != null)
 			{
-				wifi_manager.setWifiEnabled(true);
+				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gpsWaitTime, gpsMeterSpan,
+						location_listener);
 			}
 
-			IntentFilter i = new IntentFilter();
-			i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
-			registerReceiver(wifiEvent, i);
-		}
+			if (wifi_manager != null)
+			{
+				previous_wifi_state = wifi_manager.isWifiEnabled();
+				if (!previous_wifi_state)
+				{
+					wifi_manager.setWifiEnabled(true);
+				}
 
-		if (database != null)
-		{
-			database.execSQL(DBTableNetworks.CREATE_TABLE_NETWORKS);
-			database.execSQL(DBTableNetworks.CREATE_INDEX_LATLON);
+				IntentFilter i = new IntentFilter();
+				i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
+				registerReceiver(wifiEvent, i);
+			}
+
+			if (database != null)
+			{
+				database.execSQL(DBTableNetworks.CREATE_TABLE_NETWORKS);
+				database.execSQL(DBTableNetworks.CREATE_INDEX_LATLON);
+			}
+
+			started = true;
 		}
-		
-		started = true;
+		catch (Exception e)
+		{
+			Log.e(this.getClass().getName(), "", e);
+		}
 	}
 
 	private void stop_services()
 	{
-		if (location_manager != null)
+		try
 		{
-			location_manager.removeUpdates(location_listener);
-			location_manager = null;
-		}
-
-		if (wifi_manager != null)
-		{
-			if (wifi_manager.isWifiEnabled() != previous_wifi_state)
+			if (location_manager != null)
 			{
-				wifi_manager.setWifiEnabled(previous_wifi_state);
+				location_manager.removeUpdates(location_listener);
+				location_manager = null;
 			}
-			unregisterReceiver(wifiEvent);
-			wifi_manager = null;
-		}
 
-		if (database != null)
-		{
-			if (database.isOpen())
+			if (wifi_manager != null)
 			{
-				database.close();
+				if (wifi_manager.isWifiEnabled() != previous_wifi_state)
+				{
+					wifi_manager.setWifiEnabled(previous_wifi_state);
+				}
+				unregisterReceiver(wifiEvent);
+				wifi_manager = null;
 			}
-			database = null;
+
+			if (database != null)
+			{
+				if (database.isOpen())
+				{
+					database.close();
+				}
+				database = null;
+			}
+
+			started = false;
 		}
-		
-		started = false;
+		catch (Exception e)
+		{
+			Log.e(this.getClass().getName(), "", e);
+		}
 	}
 
 	private LocationListener location_listener = new LocationListener()
@@ -147,10 +163,17 @@ public class ScanService extends Service
 			{
 				synchronized (LAST_LOCATION_LOCK)
 				{
-					last_location = location;
-					if (wifi_manager != null)
+					try
 					{
-						wifi_manager.startScan();
+						last_location = location;
+						if (wifi_manager != null)
+						{
+							wifi_manager.startScan();
+						}
+					}
+					catch (Exception e)
+					{
+						Log.e(this.getClass().getName(), "", e);
 					}
 				}
 			}
@@ -164,14 +187,21 @@ public class ScanService extends Service
 		{
 			synchronized (LAST_LOCATION_LOCK)
 			{
-				if (last_location != null)
+				try
 				{
-					List<ScanResult> results = wifi_manager.getScanResults();
-					for (ScanResult result : results)
+					if (last_location != null)
 					{
-						process_wifi_result(result, last_location.getLatitude(), last_location.getLongitude(), last_location
-								.getAltitude());
+						List<ScanResult> results = wifi_manager.getScanResults();
+						for (ScanResult result : results)
+						{
+							process_wifi_result(result, last_location.getLatitude(), last_location.getLongitude(), last_location
+									.getAltitude());
+						}
 					}
+				}
+				catch (Exception e)
+				{
+					Log.e(this.getClass().getName(), "", e);
 				}
 			}
 		}
@@ -179,62 +209,70 @@ public class ScanService extends Service
 
 	private void process_wifi_result(ScanResult result, double lat, double lon, double alt)
 	{
-		Cursor cursor = null;
-
-		boolean toadd = false;
-		boolean toupdate = false;
-		boolean toupdate_coords = false;
 		try
 		{
-			cursor = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL },
-					DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS, new String[] { result.BSSID }, null, null, null);
-			if (!cursor.moveToFirst())
-			{
-				toadd = true;
-			}
-			else
-			{
-				toupdate = true;
-				toupdate_coords = result.level > cursor.getInt(0);
-			}
-		}
-		finally
-		{
-			destroy_cursor(cursor);
-		}
+			Cursor cursor = null;
 
-		if (toadd)
-		{
-			ContentValues values = new ContentValues();
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID, result.BSSID);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, result.SSID);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, result.level);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, lat);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LON, lon);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, alt);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
-
-			database.insert(DBTableNetworks.TABLE_NETWORKS, null, values);
-		}
-		else if (toupdate)
-		{
-			ContentValues values = new ContentValues();
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, result.SSID);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
-			values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
-			if (toupdate_coords)
+			boolean toadd = false;
+			boolean toupdate = false;
+			boolean toupdate_coords = false;
+			try
 			{
+				cursor = database.query(DBTableNetworks.TABLE_NETWORKS,
+						new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL },
+						DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS, new String[] { result.BSSID }, null, null, null);
+				if (!cursor.moveToFirst())
+				{
+					toadd = true;
+				}
+				else
+				{
+					toupdate = true;
+					toupdate_coords = result.level > cursor.getInt(0);
+				}
+			}
+			finally
+			{
+				destroy_cursor(cursor);
+			}
+
+			if (toadd)
+			{
+				ContentValues values = new ContentValues();
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID, result.BSSID);
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, result.SSID);
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, result.level);
 				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, lat);
 				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LON, lon);
 				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, alt);
-				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, result.level);
-			}
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
 
-			database.update(DBTableNetworks.TABLE_NETWORKS, values, DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS,
-					new String[] { result.BSSID });
+				database.insert(DBTableNetworks.TABLE_NETWORKS, null, values);
+			}
+			else if (toupdate)
+			{
+				ContentValues values = new ContentValues();
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, result.SSID);
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
+				if (toupdate_coords)
+				{
+					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, lat);
+					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LON, lon);
+					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, alt);
+					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, result.level);
+				}
+
+				database.update(DBTableNetworks.TABLE_NETWORKS, values, DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS,
+						new String[] { result.BSSID });
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(this.getClass().getName(), "", e);
 		}
 	}
 
@@ -258,11 +296,18 @@ public class ScanService extends Service
 	public synchronized void setGpsWaitTime(int gpsWaitTime)
 	{
 		this.gpsWaitTime = gpsWaitTime;
-		if (location_manager != null)
+		try
 		{
-			location_manager.removeUpdates(location_listener);
-			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, this.gpsWaitTime, gpsMeterSpan,
-					location_listener);
+			if (location_manager != null)
+			{
+				location_manager.removeUpdates(location_listener);
+				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, this.gpsWaitTime, gpsMeterSpan,
+						location_listener);
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(this.getClass().getName(), "", e);
 		}
 	}
 
@@ -274,11 +319,18 @@ public class ScanService extends Service
 	public synchronized void setGpsMeterSpan(int gpsMeterSpan)
 	{
 		this.gpsMeterSpan = gpsMeterSpan;
-		if (location_manager != null)
+		try
 		{
-			location_manager.removeUpdates(location_listener);
-			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gpsWaitTime, this.gpsMeterSpan,
-					location_listener);
+			if (location_manager != null)
+			{
+				location_manager.removeUpdates(location_listener);
+				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gpsWaitTime, this.gpsMeterSpan,
+						location_listener);
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(this.getClass().getName(), "", e);
 		}
 	}
 
@@ -286,11 +338,11 @@ public class ScanService extends Service
 	public void onStart(Intent intent, int startId)
 	{
 		super.onStart(intent, startId);
-		
+
 		if (!started)
 		{
 			start_services();
-			
+
 			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			Notification n = new Notification(R.drawable.icon, "wardrive Service started", System.currentTimeMillis());
 			Context context = getApplicationContext();
@@ -307,7 +359,7 @@ public class ScanService extends Service
 		if (started)
 		{
 			stop_services();
-	
+
 			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 			Notification n = new Notification(R.drawable.icon, "wardrive Service stopped", System.currentTimeMillis());
 			Context context = getApplicationContext();
@@ -316,7 +368,7 @@ public class ScanService extends Service
 			n.setLatestEventInfo(context, "wardrive Service stopped", "", contentIntent);
 			nm.notify(1, n);
 		}
-		
+
 		super.onDestroy();
 	}
 

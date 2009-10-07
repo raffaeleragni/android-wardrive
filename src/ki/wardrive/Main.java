@@ -19,6 +19,7 @@ package ki.wardrive;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -32,7 +33,10 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -72,7 +76,7 @@ public class Main extends MapActivity implements LocationListener
 	private static final String ZOOM_LEVEL = "zoom_level";
 
 	private static final String CONF_SHOW_LABELS = "show_labels";
-	
+
 	private static final String CONF_FOLLOW = "follow";
 
 	private static final int MAX_WIFI_VISIBLE = 20;
@@ -80,6 +84,8 @@ public class Main extends MapActivity implements LocationListener
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
+
+	private WakeLock wake_lock;
 
 	//
 	// Interface Related
@@ -94,6 +100,8 @@ public class Main extends MapActivity implements LocationListener
 	private static final int MENU_TOGGLE_FOLLOW_ME = MENU_TOGGLE_LABELS + 1;
 
 	private static final int DIALOG_STATS = 0;
+
+	private static final int QUADRANT_DOTS_SCALING_CONSTANT = 3;
 
 	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
 
@@ -148,41 +156,74 @@ public class Main extends MapActivity implements LocationListener
 
 		setContentView(R.layout.main);
 
-		settings = getPreferences(MODE_PRIVATE);
-		settings_editor = settings.edit();
+		try
+		{
+			settings = getPreferences(MODE_PRIVATE);
+			settings_editor = settings.edit();
 
-		show_labels = settings.getBoolean(CONF_SHOW_LABELS, show_labels);
-		follow_me = settings.getBoolean(CONF_FOLLOW, follow_me);
+			show_labels = settings.getBoolean(CONF_SHOW_LABELS, show_labels);
+			follow_me = settings.getBoolean(CONF_FOLLOW, follow_me);
 
-		GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, DEFAULT_LAT), settings.getInt(LAST_LON, DEFAULT_LON));
+			GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, DEFAULT_LAT), settings.getInt(LAST_LON, DEFAULT_LON));
 
-		mapview = (MapView) findViewById(R.id.mapview);
-		mapview.getController().animateTo(point);
-		mapview.getController().setZoom(settings.getInt(ZOOM_LEVEL, DEFAULT_ZOOM_LEVEL));
-		mapview.setBuiltInZoomControls(true);
-		mapview.setClickable(true);
-		mapview.setLongClickable(true);
+			mapview = (MapView) findViewById(R.id.mapview);
+			mapview.getController().animateTo(point);
+			mapview.getController().setZoom(settings.getInt(ZOOM_LEVEL, DEFAULT_ZOOM_LEVEL));
+			mapview.setBuiltInZoomControls(true);
+			mapview.setClickable(true);
+			mapview.setLongClickable(true);
 
-		Drawable d = getResources().getDrawable(R.drawable.empty);
+			Drawable d = getResources().getDrawable(R.drawable.empty);
 
-		overlays_closed = new Overlays(OTYPE_CLOSED_WIFI, d, 96, 255, 0, 0);
-		overlays_opened = new Overlays(OTYPE_OPEN_WIFI, d, 192, 0, 200, 0);
-		overlays_me = new Overlays(OTYPE_MY_LOCATION, d, 255, 0, 0, 255);
+			overlays_closed = new Overlays(OTYPE_CLOSED_WIFI, d, 96, 255, 0, 0);
+			overlays_opened = new Overlays(OTYPE_OPEN_WIFI, d, 192, 0, 200, 0);
+			overlays_me = new Overlays(OTYPE_MY_LOCATION, d, 255, 0, 0, 255);
 
-		overlays_closed.show_labels = show_labels;
-		overlays_opened.show_labels = show_labels;
-		overlays_me.show_labels = show_labels;
+			overlays_closed.show_labels = show_labels;
+			overlays_opened.show_labels = show_labels;
+			overlays_me.show_labels = show_labels;
 
-		mapview.getOverlays().add(overlays_closed);
-		mapview.getOverlays().add(overlays_opened);
-		mapview.getOverlays().add(overlays_me);
+			mapview.getOverlays().add(overlays_closed);
+			mapview.getOverlays().add(overlays_opened);
+			mapview.getOverlays().add(overlays_me);
 
-		database = SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null);
-		location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+			Intent i = new Intent();
+			i.setClass(this, ScanService.class);
+			startService(i);
 
-		Intent i = new Intent();
-		i.setClass(this, ScanService.class);
-		startService(i);
+			database = SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null);
+			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
+
+			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, this.getClass().getName());
+
+		}
+		catch (Exception e)
+		{
+			Log.e(this.getClass().getName(), "", e);
+		}
+	}
+
+	@Override
+	protected void onResume()
+	{
+		super.onResume();
+
+		if (!wake_lock.isHeld())
+		{
+			wake_lock.acquire();
+		}
+	}
+
+	@Override
+	protected void onPause()
+	{
+		if (wake_lock.isHeld())
+		{
+			wake_lock.release();
+		}
+
+		super.onPause();
 	}
 
 	@Override
@@ -190,28 +231,43 @@ public class Main extends MapActivity implements LocationListener
 	{
 		super.onStart();
 
-		if (location_manager != null)
+		try
 		{
-			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_EVENT_WAIT, GPS_EVENT_METERS, Main.this);
+			if (location_manager != null)
+			{
+				location_manager
+						.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_EVENT_WAIT, GPS_EVENT_METERS, Main.this);
+			}
+		}
+		catch (Exception e)
+		{
+			Log.e(this.getClass().getName(), "", e);
 		}
 	}
 
 	@Override
 	protected void onStop()
 	{
-		settings_editor.putInt(ZOOM_LEVEL, mapview.getZoomLevel());
-		settings_editor.putBoolean(CONF_SHOW_LABELS, show_labels);
-		settings_editor.putBoolean(CONF_FOLLOW, follow_me);
-		if (last_location != null)
+		try
 		{
-			settings_editor.putInt(LAST_LAT, (int) (last_location.getLatitude() * 1E6));
-			settings_editor.putInt(LAST_LON, (int) (last_location.getLongitude() * 1E6));
-		}
-		settings_editor.commit();
+			if (location_manager != null)
+			{
+				location_manager.removeUpdates(Main.this);
+			}
 
-		if (location_manager != null)
+			settings_editor.putInt(ZOOM_LEVEL, mapview.getZoomLevel());
+			settings_editor.putBoolean(CONF_SHOW_LABELS, show_labels);
+			settings_editor.putBoolean(CONF_FOLLOW, follow_me);
+			if (last_location != null)
+			{
+				settings_editor.putInt(LAST_LAT, (int) (last_location.getLatitude() * 1E6));
+				settings_editor.putInt(LAST_LON, (int) (last_location.getLongitude() * 1E6));
+			}
+			settings_editor.commit();
+		}
+		catch (Exception e)
 		{
-			location_manager.removeUpdates(Main.this);
+			Log.e(this.getClass().getName(), "", e);
 		}
 
 		super.onStop();
@@ -220,10 +276,31 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected void onDestroy()
 	{
-		database.close();
-		database = null;
+		if (database != null)
+		{
+			database.close();
+			database = null;
+		}
 
 		super.onDestroy();
+	}
+
+	@Override
+	public void onProviderDisabled(String provider)
+	{
+		if (LocationManager.GPS_PROVIDER.equals(provider) && location_manager != null)
+		{
+			location_manager.removeUpdates(Main.this);
+		}
+	}
+
+	@Override
+	public void onProviderEnabled(String provider)
+	{
+		if (LocationManager.GPS_PROVIDER.equals(provider) && location_manager != null)
+		{
+			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_EVENT_WAIT, GPS_EVENT_METERS, Main.this);
+		}
 	}
 
 	//
@@ -349,15 +426,22 @@ public class Main extends MapActivity implements LocationListener
 	{
 		if (location != null)
 		{
-			last_location = location;
-			int e6lat = (int) (location.getLatitude() * 1E6);
-			int e6lon = (int) (location.getLongitude() * 1E6);
-			GeoPoint p = new GeoPoint(e6lat, e6lon);
-			if (follow_me)
+			try
 			{
-				mapview.getController().animateTo(p);
+				last_location = location;
+				int e6lat = (int) (location.getLatitude() * 1E6);
+				int e6lon = (int) (location.getLongitude() * 1E6);
+				GeoPoint p = new GeoPoint(e6lat, e6lon);
+				if (follow_me)
+				{
+					mapview.getController().animateTo(p);
+				}
+				mapview.invalidate();
 			}
-			mapview.invalidate();
+			catch (Exception e)
+			{
+				Log.e(this.getClass().getName(), "", e);
+			}
 		}
 	}
 
@@ -399,6 +483,8 @@ public class Main extends MapActivity implements LocationListener
 
 		private double avg_lon = 0;
 
+		private int zoom_divider = 1;
+
 		public Overlays(int type, Drawable d, int a, int r, int g, int b)
 		{
 			super(d);
@@ -432,97 +518,108 @@ public class Main extends MapActivity implements LocationListener
 		@Override
 		public void draw(Canvas canvas, MapView mapView, boolean shadow)
 		{
-			if (database == null)
-			{
-				return;
-			}
-
-			if (OTYPE_MY_LOCATION == type)
-			{
-				if (last_location != null)
-				{
-					draw_single(canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
-							.getLongitude() * 1E6)), getResources().getString(R.string.GPS_LABEL_ME));
-				}
-				return;
-			}
-
-			GeoPoint top_left = mapView.getProjection().fromPixels(0, 0);
-			GeoPoint bottom_right = mapView.getProjection().fromPixels(mapView.getWidth(), mapView.getHeight());
-
-			Cursor c = null;
 			try
 			{
-				c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LAT,
-						DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID },
-						DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
-								+ " and "
-								+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
-										: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
-								bottom_right), null, null, null);
-
-				if (c != null && c.moveToFirst())
+				if (database == null)
 				{
-					if (c.getCount() <= MAX_WIFI_VISIBLE
-							|| mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE)
+					return;
+				}
+
+				if (OTYPE_MY_LOCATION == type)
+				{
+					if (last_location != null)
 					{
-						do
-						{
-							draw_single(canvas, mapView,
-									new GeoPoint((int) (c.getDouble(0) * 1E6), (int) (c.getDouble(1) * 1E6)), c.getString(2));
-						}
-						while (c.moveToNext());
+						draw_single(canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
+								.getLongitude() * 1E6)), getResources().getString(R.string.GPS_LABEL_ME));
 					}
-					else
+					return;
+				}
+
+				GeoPoint top_left = mapView.getProjection().fromPixels(0, 0);
+				GeoPoint bottom_right = mapView.getProjection().fromPixels(mapView.getWidth(), mapView.getHeight());
+
+				Cursor c = null;
+				try
+				{
+					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LAT,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID },
+							DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
+									+ " and "
+									+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
+											: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
+									bottom_right), null, null, null);
+
+					if (c != null && c.moveToFirst())
 					{
-
-						quadrant_w = (mapView.getWidth() / quadrants_x);
-						quadrant_h = (mapView.getHeight() / quadrants_y);
-						max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 3 : quadrant_w / 3;
-						max_radius_for_quadrant /= mapView.getZoomLevel() - QUADRANT_DOTS_SCALING_FACTOR >= 0 ? 1 : -(mapView
-								.getZoomLevel() - QUADRANT_DOTS_SCALING_FACTOR);
-
-						for (int x = 0; x < quadrants_x; x++)
+						if (c.getCount() <= MAX_WIFI_VISIBLE
+								|| mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE)
 						{
-							for (int y = 0; y < quadrants_y; y++)
+							do
 							{
-								destroy_cursor(c);
+								draw_single(canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
+										(int) (c.getDouble(1) * 1E6)), c.getString(2));
+							}
+							while (c.moveToNext());
+						}
+						else
+						{
+							quadrant_w = (mapView.getWidth() / quadrants_x);
+							quadrant_h = (mapView.getHeight() / quadrants_y);
 
-								top_left = mapView.getProjection().fromPixels(quadrant_w * x, quadrant_h * y);
-								bottom_right = mapView.getProjection().fromPixels(quadrant_w * x + quadrant_w,
-										quadrant_h * y + quadrant_h);
+							max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 2 : quadrant_w / 2;
 
-								count = 0;
-								c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] {
-										DBTableNetworks.TABLE_NETWORKS_FIELD_COUNT_BSSID,
-										DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LAT,
-										DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LON },
-										DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
-												+ " and "
-												+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
-														: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(
-												top_left, bottom_right), null, null, null);
+							zoom_divider = mapView.getZoomLevel() - QUADRANT_DOTS_SCALING_FACTOR + QUADRANT_DOTS_SCALING_CONSTANT;
+							max_radius_for_quadrant /= zoom_divider >= 0 ? QUADRANT_DOTS_SCALING_CONSTANT : -zoom_divider;
 
-								if (c != null && c.moveToFirst())
+							for (int x = 0; x < quadrants_x; x++)
+							{
+								for (int y = 0; y < quadrants_y; y++)
 								{
-									count = c.getInt(0);
-									avg_lat = count > 0 ? c.getDouble(1) / count : 0;
-									avg_lon = count > 0 ? c.getDouble(2) / count : 0;
-								}
+									destroy_cursor(c);
 
-								if (count > 0)
-								{
-									draw_sized_item(canvas, mapView, new GeoPoint((int) (avg_lat * 1E6), (int) (avg_lon * 1E6)),
-											count > max_radius_for_quadrant ? max_radius_for_quadrant : count);
+									top_left = mapView.getProjection().fromPixels(quadrant_w * x, quadrant_h * y);
+									bottom_right = mapView.getProjection().fromPixels(quadrant_w * x + quadrant_w,
+											quadrant_h * y + quadrant_h);
+
+									count = 0;
+									c = database
+											.query(
+													DBTableNetworks.TABLE_NETWORKS,
+													new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_COUNT_BSSID,
+															DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LAT,
+															DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LON },
+													DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
+															+ " and "
+															+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
+																	: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION),
+													compose_latlon_between(top_left, bottom_right), null, null, null);
+
+									if (c != null && c.moveToFirst())
+									{
+										count = c.getInt(0);
+										avg_lat = count > 0 ? c.getDouble(1) / count : 0;
+										avg_lon = count > 0 ? c.getDouble(2) / count : 0;
+									}
+
+									if (count > 0)
+									{
+										draw_sized_item(canvas, mapView, new GeoPoint((int) (avg_lat * 1E6),
+												(int) (avg_lon * 1E6)), count > max_radius_for_quadrant ? max_radius_for_quadrant
+												: count);
+									}
 								}
 							}
 						}
 					}
 				}
+				finally
+				{
+					destroy_cursor(c);
+				}
 			}
-			finally
+			catch (Exception e)
 			{
-				destroy_cursor(c);
+				Log.e(this.getClass().getName(), "", e);
 			}
 		}
 
@@ -607,16 +704,6 @@ public class Main extends MapActivity implements LocationListener
 			}
 			c = null;
 		}
-	}
-
-	@Override
-	public void onProviderDisabled(String provider)
-	{
-	}
-
-	@Override
-	public void onProviderEnabled(String provider)
-	{
 	}
 
 	@Override
