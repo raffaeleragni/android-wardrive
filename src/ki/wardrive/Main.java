@@ -36,10 +36,10 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.TextPaint;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
@@ -200,7 +200,7 @@ public class Main extends MapActivity implements LocationListener
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 	}
 
@@ -241,7 +241,7 @@ public class Main extends MapActivity implements LocationListener
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 	}
 
@@ -267,7 +267,7 @@ public class Main extends MapActivity implements LocationListener
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 
 		super.onStop();
@@ -440,7 +440,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 			catch (Exception e)
 			{
-				Log.e(this.getClass().getName(), "", e);
+				notify_error(e);
 			}
 		}
 	}
@@ -619,7 +619,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 			catch (Exception e)
 			{
-				Log.e(this.getClass().getName(), "", e);
+				notify_error(e);
 			}
 		}
 
@@ -693,6 +693,11 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Miscellaneous
 	//
+	
+	private void notify_error(Exception e)
+	{
+		Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+	}
 
 	private static void destroy_cursor(Cursor c)
 	{
