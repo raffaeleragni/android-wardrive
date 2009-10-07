@@ -343,13 +343,16 @@ public class ScanService extends Service
 		{
 			start_services();
 
-			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			Notification n = new Notification(R.drawable.icon, "wardrive Service started", System.currentTimeMillis());
-			Context context = getApplicationContext();
-			Intent notificationIntent = new Intent(this, ScanService.class);
-			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-			n.setLatestEventInfo(context, "wardrive Service started", "", contentIntent);
-			nm.notify(1, n);
+			if (started)
+			{
+				NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				Notification n = new Notification(R.drawable.icon, "wardrive Service started", System.currentTimeMillis());
+				Context context = getApplicationContext();
+				Intent notificationIntent = new Intent(this, ScanService.class);
+				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+				n.setLatestEventInfo(context, "wardrive Service started", "", contentIntent);
+				nm.notify(1, n);
+			}
 		}
 	}
 
@@ -360,13 +363,16 @@ public class ScanService extends Service
 		{
 			stop_services();
 
-			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-			Notification n = new Notification(R.drawable.icon, "wardrive Service stopped", System.currentTimeMillis());
-			Context context = getApplicationContext();
-			Intent notificationIntent = new Intent(this, ScanService.class);
-			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-			n.setLatestEventInfo(context, "wardrive Service stopped", "", contentIntent);
-			nm.notify(1, n);
+			if (!started)
+			{
+				NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+				Notification n = new Notification(R.drawable.icon, "wardrive Service stopped", System.currentTimeMillis());
+				Context context = getApplicationContext();
+				Intent notificationIntent = new Intent(this, ScanService.class);
+				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+				n.setLatestEventInfo(context, "wardrive Service stopped", "", contentIntent);
+				nm.notify(1, n);
+			}
 		}
 
 		super.onDestroy();
