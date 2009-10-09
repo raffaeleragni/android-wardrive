@@ -39,6 +39,7 @@ import android.os.PowerManager.WakeLock;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.widget.Toast;
@@ -81,6 +82,8 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final String CONF_FOLLOW = "follow";
 
+	private static final String CONF_MAP_MODE = "map_mode";
+
 	private static final int MAX_WIFI_VISIBLE = 20;
 
 	private SharedPreferences settings;
@@ -92,18 +95,6 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Interface Related
 	//
-
-	private static final int MENU_TOGGLE_FOLLOW_ME = 0;
-
-	private static final int MENU_TOGGLE_MAP_MODE = MENU_TOGGLE_FOLLOW_ME + 1;
-
-	private static final int MENU_TOGGLE_LABELS = MENU_TOGGLE_MAP_MODE + 1;
-
-	private static final int MENU_STATS = MENU_TOGGLE_LABELS + 1;
-
-	private static final int MENU_ABOUT = MENU_STATS + 1;
-
-	private static final int MENU_QUIT = MENU_ABOUT + 1;
 
 	private static final int DIALOG_STATS = 0;
 
@@ -173,6 +164,7 @@ public class Main extends MapActivity implements LocationListener
 
 			show_labels = settings.getBoolean(CONF_SHOW_LABELS, show_labels);
 			follow_me = settings.getBoolean(CONF_FOLLOW, follow_me);
+			map_mode = settings.getBoolean(CONF_MAP_MODE, map_mode);
 
 			GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, DEFAULT_LAT), settings.getInt(LAST_LON, DEFAULT_LON));
 
@@ -182,6 +174,7 @@ public class Main extends MapActivity implements LocationListener
 			mapview.setBuiltInZoomControls(true);
 			mapview.setClickable(true);
 			mapview.setLongClickable(true);
+			mapview.setSatellite(map_mode);
 
 			Drawable d = getResources().getDrawable(R.drawable.empty);
 
@@ -206,7 +199,6 @@ public class Main extends MapActivity implements LocationListener
 
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 			wake_lock = pm.newWakeLock(PowerManager.FULL_WAKE_LOCK, this.getClass().getName());
-
 		}
 		catch (Exception e)
 		{
@@ -219,7 +211,7 @@ public class Main extends MapActivity implements LocationListener
 	{
 		super.onResume();
 
-		if (!wake_lock.isHeld())
+		if (wake_lock != null && !wake_lock.isHeld())
 		{
 			wake_lock.acquire();
 		}
@@ -228,7 +220,7 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected void onPause()
 	{
-		if (wake_lock.isHeld())
+		if (wake_lock != null && wake_lock.isHeld())
 		{
 			wake_lock.release();
 		}
@@ -268,11 +260,10 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putInt(ZOOM_LEVEL, mapview.getZoomLevel());
 			settings_editor.putBoolean(CONF_SHOW_LABELS, show_labels);
 			settings_editor.putBoolean(CONF_FOLLOW, follow_me);
-			if (last_location != null)
-			{
-				settings_editor.putInt(LAST_LAT, (int) (last_location.getLatitude() * 1E6));
-				settings_editor.putInt(LAST_LON, (int) (last_location.getLongitude() * 1E6));
-			}
+			settings_editor.putBoolean(CONF_MAP_MODE, map_mode);
+			GeoPoint p = mapview.getProjection().fromPixels(mapview.getWidth() / 2, mapview.getHeight() / 2);
+			settings_editor.putInt(LAST_LAT, p.getLatitudeE6());
+			settings_editor.putInt(LAST_LON, p.getLongitudeE6());
 			settings_editor.commit();
 		}
 		catch (Exception e)
@@ -320,25 +311,19 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, R.string.MENU_TOGGLE_FOLLOW_ME_LABEL)
-				.setIcon(android.R.drawable.ic_menu_directions);
-		menu.add(0, MENU_TOGGLE_MAP_MODE, 0, R.string.MENU_TOGGLE_MAP_MODE_LABEL).setIcon(android.R.drawable.ic_menu_mapmode);
-		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL).setIcon(android.R.drawable.ic_menu_mylocation);
-		menu.add(0, MENU_STATS, 0, R.string.MENU_STATS_LABEL).setIcon(android.R.drawable.ic_menu_view);
-		menu.add(0, MENU_ABOUT, 0, R.string.MENU_ABOUT_LABEL).setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, MENU_QUIT, 0, R.string.MENU_QUIT_LABEL).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-
+		MenuInflater mi = getMenuInflater();
+		mi.inflate(R.menu.options_menu, menu);
 		return true;
 	}
 
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
-		menu.getItem(MENU_TOGGLE_LABELS).setTitle(
-				getResources().getString(R.string.MENU_TOGGLE_LABELS_LABEL) + (show_labels ? " [ON]" : " [OFF]"));
-		menu.getItem(MENU_TOGGLE_FOLLOW_ME).setTitle(
-				getResources().getString(R.string.MENU_TOGGLE_FOLLOW_ME_LABEL) + (follow_me ? " [ON]" : " [OFF]"));
+		/*((MenuItem) findViewById(R.menu_id.LABELS)).setChecked(show_labels);
+		((MenuItem) findViewById(R.menu_id.FOLLOW)).setChecked(follow_me);
+		((MenuItem) findViewById(R.menu_id.MAP_MODE)).setChecked(map_mode);*/
 
+		// TODO Auto-generated method stub
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -346,7 +331,7 @@ public class Main extends MapActivity implements LocationListener
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch (item.getItemId()) {
-			case MENU_QUIT:
+			case R.menu_id.QUIT:
 			{
 				Intent i = new Intent();
 				i.setClass(this, ScanService.class);
@@ -356,12 +341,12 @@ public class Main extends MapActivity implements LocationListener
 
 				return true;
 			}
-			case MENU_STATS:
+			case R.menu_id.STATS:
 			{
 				showDialog(DIALOG_STATS);
 				return true;
 			}
-			case MENU_TOGGLE_LABELS:
+			case R.menu_id.LABELS:
 			{
 				show_labels = !show_labels;
 				overlays_closed.show_labels = show_labels;
@@ -370,18 +355,18 @@ public class Main extends MapActivity implements LocationListener
 				mapview.invalidate();
 				break;
 			}
-			case MENU_TOGGLE_FOLLOW_ME:
+			case R.menu_id.FOLLOW:
 			{
 				follow_me = !follow_me;
 				break;
 			}
-			case MENU_TOGGLE_MAP_MODE:
+			case R.menu_id.MAP_MODE:
 			{
 				map_mode = !map_mode;
 				mapview.setSatellite(map_mode);
 				break;
 			}
-			case MENU_ABOUT:
+			case R.menu_id.ABOUT:
 			{
 				showDialog(DIALOG_ABOUT);
 				break;

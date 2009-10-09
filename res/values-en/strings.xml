@@ -9,6 +9,9 @@
     <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">Follow</string>
     <string name="MENU_TOGGLE_MAP_MODE_LABEL">Map</string>
     <string name="MENU_ABOUT_LABEL">About</string>
+    <string name="MENU_SHOW_OPEN_LABEL">Aperte</string>
+    <string name="MENU_SHOW_CLOSED_LABEL">Chiuse</string>
+    <string name="MENU_MORE_LABEL">Altro</string>
     <string name="MESSAGE_STATISTICS">Statistics:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nOf which open: </string>
