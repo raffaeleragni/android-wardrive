@@ -127,7 +127,11 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
+	
+	public boolean service = true;
 
+	private Intent service_intent = null;
+	
 	//
 	// DB Related
 	//
@@ -200,9 +204,9 @@ public class Main extends MapActivity implements LocationListener
 			mapview.getOverlays().add(overlays_opened);
 			mapview.getOverlays().add(overlays_me);
 
-			Intent i = new Intent();
-			i.setClass(this, ScanService.class);
-			startService(i);
+			service_intent = new Intent();
+			service_intent.setClass(this, ScanService.class);
+			startService(service_intent);
 
 			database = SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null);
 			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
@@ -340,9 +344,7 @@ public class Main extends MapActivity implements LocationListener
 		switch (item.getItemId()) {
 			case R.menu_id.QUIT:
 			{
-				Intent i = new Intent();
-				i.setClass(this, ScanService.class);
-				stopService(i);
+				stopService(service_intent);
 
 				finish();
 
@@ -393,6 +395,19 @@ public class Main extends MapActivity implements LocationListener
 				show_closed = !show_closed;
 				item.setChecked(show_closed);
 				mapview.invalidate();
+				break;
+			}
+			case R.menu_id.SERVICE:
+			{
+				service = !service;
+				if (service)
+				{
+					startService(service_intent);
+				}
+				else
+				{
+					stopService(service_intent);
+				}
 				break;
 			}
 		}

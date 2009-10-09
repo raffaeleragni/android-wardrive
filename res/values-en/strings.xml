@@ -12,6 +12,7 @@
     <string name="MENU_SHOW_OPEN_LABEL">Open</string>
     <string name="MENU_SHOW_CLOSED_LABEL">Closed</string>
     <string name="MENU_MORE_LABEL">More</string>
+    <string name="MENU_SERVICE_LABEL">Service</string>
     <string name="MESSAGE_STATISTICS">Statistics:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nOf which open: </string>
