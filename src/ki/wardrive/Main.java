@@ -99,6 +99,8 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int MENU_TOGGLE_FOLLOW_ME = MENU_TOGGLE_LABELS + 1;
 
+	private static final int MENU_TOGGLE_MAP_MODE = MENU_TOGGLE_FOLLOW_ME + 1;
+
 	private static final int DIALOG_STATS = 0;
 
 	private static final int QUADRANT_DOTS_SCALING_CONSTANT = 3;
@@ -118,6 +120,8 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_labels = false;
 
 	public boolean follow_me = true;
+	
+	public boolean map_mode = false;
 
 	//
 	// DB Related
@@ -312,9 +316,10 @@ public class Main extends MapActivity implements LocationListener
 	{
 		menu.add(0, MENU_QUIT, 0, R.string.MENU_QUIT_LABEL).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 		menu.add(0, MENU_STATS, 0, R.string.MENU_STATS_LABEL).setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL).setIcon(android.R.drawable.ic_menu_mapmode);
+		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL).setIcon(android.R.drawable.ic_menu_mylocation);
 		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, R.string.MENU_TOGGLE_FOLLOW_ME_LABEL)
 				.setIcon(android.R.drawable.ic_menu_directions);
+		menu.add(0, MENU_TOGGLE_MAP_MODE, 0, R.string.MENU_TOGGLE_MAP_MODE).setIcon(android.R.drawable.ic_menu_mapmode);
 
 		return true;
 	}
@@ -333,8 +338,7 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId())
-		{
+		switch (item.getItemId()) {
 			case MENU_QUIT:
 			{
 				Intent i = new Intent();
@@ -364,6 +368,12 @@ public class Main extends MapActivity implements LocationListener
 				follow_me = !follow_me;
 				break;
 			}
+			case MENU_TOGGLE_MAP_MODE:
+			{
+				map_mode = !map_mode;
+				mapview.setSatellite(map_mode);
+				break;
+			}
 		}
 		return false;
 	}
@@ -371,8 +381,7 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
-		switch (id)
-		{
+		switch (id) {
 			case DIALOG_STATS:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -693,7 +702,7 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Miscellaneous
 	//
-	
+
 	private void notify_error(Exception e)
 	{
 		Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();

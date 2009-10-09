@@ -58,3 +58,5 @@ v1.6
       displayed briefly in a passive pop-up that hides in a short time.
       
     - New program icon.
+    
+    - Mapview now can be displayed with terrain also.
