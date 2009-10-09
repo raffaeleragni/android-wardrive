@@ -1,11 +1,13 @@
 
- - Realize an interface to see detailed list and details of the WiFis
-   
- - Realize a method to synchronize the databases, maybe phone to phone, maybe
-   via bluetooth
-
  - Start/Stop the service via a specific menu command and save that setting
    to preferences.
    Also keep the old "quit" menu method.
+
+ - Realize an interface to see detailed list and details of the WiFis
+   (maybe solved when hiding the closed WiFis? - open ones are fewer...)
    
  - Find a way (best efficient) to triangulate WiFi positions
+
+ - Realize a method to synchronize the databases, maybe phone to phone, maybe
+   via bluetooth (centralized web repository could grow too much and be
+   unhandling by the small android application)
