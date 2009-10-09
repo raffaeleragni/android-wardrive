@@ -60,3 +60,9 @@ v1.6
     - New program icon.
     
     - Mapview now can be displayed with terrain also.
+    
+v1.7
+
+	- The user can now decide if to display open or closed wifis, or both
+
+	

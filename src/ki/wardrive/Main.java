@@ -88,7 +88,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final String CONF_SHOW_CLOSED = "show_closed";
 
-	private static final int MAX_WIFI_VISIBLE = 20;
+	private static final int MAX_WIFI_VISIBLE = 50;
 
 	private SharedPreferences settings;
 
