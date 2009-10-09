@@ -1,6 +1,7 @@
 /*
  *   wardrive - android wardriving application
  *   Copyright (C) 2009 Raffaele Ragni
+ *   http://code.google.com/p/wardrive-android/
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -36,6 +37,7 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -91,17 +93,21 @@ public class Main extends MapActivity implements LocationListener
 	// Interface Related
 	//
 
-	private static final int MENU_QUIT = 0;
-
-	private static final int MENU_STATS = MENU_QUIT + 1;
-
-	private static final int MENU_TOGGLE_LABELS = MENU_STATS + 1;
-
-	private static final int MENU_TOGGLE_FOLLOW_ME = MENU_TOGGLE_LABELS + 1;
+	private static final int MENU_TOGGLE_FOLLOW_ME = 0;
 
 	private static final int MENU_TOGGLE_MAP_MODE = MENU_TOGGLE_FOLLOW_ME + 1;
 
+	private static final int MENU_TOGGLE_LABELS = MENU_TOGGLE_MAP_MODE + 1;
+
+	private static final int MENU_STATS = MENU_TOGGLE_LABELS + 1;
+
+	private static final int MENU_ABOUT = MENU_STATS + 1;
+
+	private static final int MENU_QUIT = MENU_ABOUT + 1;
+
 	private static final int DIALOG_STATS = 0;
+
+	private static final int DIALOG_ABOUT = DIALOG_STATS + 1;
 
 	private static final int QUADRANT_DOTS_SCALING_CONSTANT = 3;
 
@@ -120,7 +126,7 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_labels = false;
 
 	public boolean follow_me = true;
-	
+
 	public boolean map_mode = false;
 
 	//
@@ -314,12 +320,13 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu)
 	{
-		menu.add(0, MENU_QUIT, 0, R.string.MENU_QUIT_LABEL).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
-		menu.add(0, MENU_STATS, 0, R.string.MENU_STATS_LABEL).setIcon(android.R.drawable.ic_menu_info_details);
-		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL).setIcon(android.R.drawable.ic_menu_mylocation);
 		menu.add(0, MENU_TOGGLE_FOLLOW_ME, 0, R.string.MENU_TOGGLE_FOLLOW_ME_LABEL)
 				.setIcon(android.R.drawable.ic_menu_directions);
-		menu.add(0, MENU_TOGGLE_MAP_MODE, 0, R.string.MENU_TOGGLE_MAP_MODE).setIcon(android.R.drawable.ic_menu_mapmode);
+		menu.add(0, MENU_TOGGLE_MAP_MODE, 0, R.string.MENU_TOGGLE_MAP_MODE_LABEL).setIcon(android.R.drawable.ic_menu_mapmode);
+		menu.add(0, MENU_TOGGLE_LABELS, 0, R.string.MENU_TOGGLE_LABELS_LABEL).setIcon(android.R.drawable.ic_menu_mylocation);
+		menu.add(0, MENU_STATS, 0, R.string.MENU_STATS_LABEL).setIcon(android.R.drawable.ic_menu_view);
+		menu.add(0, MENU_ABOUT, 0, R.string.MENU_ABOUT_LABEL).setIcon(android.R.drawable.ic_menu_info_details);
+		menu.add(0, MENU_QUIT, 0, R.string.MENU_QUIT_LABEL).setIcon(android.R.drawable.ic_menu_close_clear_cancel);
 
 		return true;
 	}
@@ -374,6 +381,11 @@ public class Main extends MapActivity implements LocationListener
 				mapview.setSatellite(map_mode);
 				break;
 			}
+			case MENU_ABOUT:
+			{
+				showDialog(DIALOG_ABOUT);
+				break;
+			}
 		}
 		return false;
 	}
@@ -386,6 +398,12 @@ public class Main extends MapActivity implements LocationListener
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(print_stats());
+				return builder.create();
+			}
+			case DIALOG_ABOUT:
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(getResources().getText(R.string.ABOUT_BOX));
 				return builder.create();
 			}
 		}
@@ -705,6 +723,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private void notify_error(Exception e)
 	{
+		Log.e(this.getClass().getName(), e.getMessage(), e);
 		Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
 	}
 

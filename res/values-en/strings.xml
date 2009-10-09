@@ -7,7 +7,8 @@
     <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFis</string>
     <string name="MENU_TOGGLE_LABELS_LABEL">Labels</string>
     <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">Follow</string>
-    <string name="MENU_TOGGLE_MAP_MODE">Map</string>
+    <string name="MENU_TOGGLE_MAP_MODE_LABEL">Map</string>
+    <string name="MENU_ABOUT_LABEL">About</string>
     <string name="MESSAGE_STATISTICS">Statistics:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nOf which open: </string>

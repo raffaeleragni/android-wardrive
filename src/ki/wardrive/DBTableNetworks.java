@@ -1,6 +1,7 @@
 /*
  *   wardrive - android wardriving application
  *   Copyright (C) 2009 Raffaele Ragni
+ *   http://code.google.com/p/wardrive-android/
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by

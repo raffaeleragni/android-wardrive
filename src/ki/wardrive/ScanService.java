@@ -1,6 +1,7 @@
 /*
  *   wardrive - android wardriving application
  *   Copyright (C) 2009 Raffaele Ragni
+ *   http://code.google.com/p/wardrive-android/
  *
  *   This program is free software: you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -98,7 +99,7 @@ public class ScanService extends Service
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 	}
 
@@ -135,7 +136,7 @@ public class ScanService extends Service
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 	}
 
@@ -173,7 +174,7 @@ public class ScanService extends Service
 					}
 					catch (Exception e)
 					{
-						Log.e(this.getClass().getName(), "", e);
+						notify_error(e);
 					}
 				}
 			}
@@ -201,7 +202,7 @@ public class ScanService extends Service
 				}
 				catch (Exception e)
 				{
-					Log.e(this.getClass().getName(), "", e);
+					notify_error(e);
 				}
 			}
 		}
@@ -272,7 +273,7 @@ public class ScanService extends Service
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 	}
 
@@ -307,7 +308,7 @@ public class ScanService extends Service
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 	}
 
@@ -330,7 +331,7 @@ public class ScanService extends Service
 		}
 		catch (Exception e)
 		{
-			Log.e(this.getClass().getName(), "", e);
+			notify_error(e);
 		}
 	}
 
@@ -382,5 +383,10 @@ public class ScanService extends Service
 	public IBinder onBind(Intent intent)
 	{
 		return null;
+	}
+
+	private void notify_error(Exception e)
+	{
+		Log.e(this.getClass().getName(), e.getMessage(), e);
 	}
 }
