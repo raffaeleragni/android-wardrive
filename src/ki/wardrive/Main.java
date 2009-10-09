@@ -329,6 +329,11 @@ public class Main extends MapActivity implements LocationListener
 	{
 		MenuInflater mi = getMenuInflater();
 		mi.inflate(R.menu.options_menu, menu);
+		menu.findItem(R.menu_id.FOLLOW).setChecked(follow_me);
+		menu.findItem(R.menu_id.MAP_MODE).setChecked(map_mode);
+		menu.findItem(R.menu_id.LABELS).setChecked(show_labels);
+		menu.findItem(R.menu_id.SHOW_CLOSED).setChecked(show_closed);
+		menu.findItem(R.menu_id.SHOW_OPEN).setChecked(show_open);
 		return true;
 	}
 
