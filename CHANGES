@@ -65,4 +65,6 @@ v1.7
 
 	- The user can now decide if to display open or closed wifis, or both
 
-	
+	- Start/Stop the service via a specific menu command and save that setting
+      to preferences.
+   
