@@ -51,3 +51,10 @@ v1.5
     - Now the scanning is backed into a service independent from the action.
       The service is stopped when clicking the "quit" menu entry.
       (Something like G-Mon does)
+      
+v1.6
+
+    - Errors shouldn't make the application to quit now. Instead they're
+      displayed briefly in a passive pop-up that hides in a short time.
+      
+    - New program icon.
