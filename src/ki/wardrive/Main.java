@@ -84,6 +84,10 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final String CONF_MAP_MODE = "map_mode";
 
+	private static final String CONF_SHOW_OPEN = "show_open";
+
+	private static final String CONF_SHOW_CLOSED = "show_closed";
+
 	private static final int MAX_WIFI_VISIBLE = 20;
 
 	private SharedPreferences settings;
@@ -119,6 +123,10 @@ public class Main extends MapActivity implements LocationListener
 	public boolean follow_me = true;
 
 	public boolean map_mode = false;
+
+	public boolean show_open = true;
+
+	public boolean show_closed = false;
 
 	//
 	// DB Related
@@ -165,6 +173,8 @@ public class Main extends MapActivity implements LocationListener
 			show_labels = settings.getBoolean(CONF_SHOW_LABELS, show_labels);
 			follow_me = settings.getBoolean(CONF_FOLLOW, follow_me);
 			map_mode = settings.getBoolean(CONF_MAP_MODE, map_mode);
+			show_open = settings.getBoolean(CONF_SHOW_OPEN, show_open);
+			show_closed = settings.getBoolean(CONF_SHOW_CLOSED, show_closed);
 
 			GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, DEFAULT_LAT), settings.getInt(LAST_LON, DEFAULT_LON));
 
@@ -261,6 +271,8 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putBoolean(CONF_SHOW_LABELS, show_labels);
 			settings_editor.putBoolean(CONF_FOLLOW, follow_me);
 			settings_editor.putBoolean(CONF_MAP_MODE, map_mode);
+			settings_editor.putBoolean(CONF_SHOW_OPEN, show_open);
+			settings_editor.putBoolean(CONF_SHOW_CLOSED, show_closed);
 			GeoPoint p = mapview.getProjection().fromPixels(mapview.getWidth() / 2, mapview.getHeight() / 2);
 			settings_editor.putInt(LAST_LAT, p.getLatitudeE6());
 			settings_editor.putInt(LAST_LON, p.getLongitudeE6());
@@ -319,11 +331,6 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onPrepareOptionsMenu(Menu menu)
 	{
-		/*((MenuItem) findViewById(R.menu_id.LABELS)).setChecked(show_labels);
-		((MenuItem) findViewById(R.menu_id.FOLLOW)).setChecked(follow_me);
-		((MenuItem) findViewById(R.menu_id.MAP_MODE)).setChecked(map_mode);*/
-
-		// TODO Auto-generated method stub
 		return super.onPrepareOptionsMenu(menu);
 	}
 
@@ -352,23 +359,40 @@ public class Main extends MapActivity implements LocationListener
 				overlays_closed.show_labels = show_labels;
 				overlays_opened.show_labels = show_labels;
 				overlays_me.show_labels = show_labels;
+				item.setChecked(show_labels);
 				mapview.invalidate();
 				break;
 			}
 			case R.menu_id.FOLLOW:
 			{
 				follow_me = !follow_me;
+				item.setChecked(follow_me);
 				break;
 			}
 			case R.menu_id.MAP_MODE:
 			{
 				map_mode = !map_mode;
+				item.setChecked(map_mode);
 				mapview.setSatellite(map_mode);
 				break;
 			}
 			case R.menu_id.ABOUT:
 			{
 				showDialog(DIALOG_ABOUT);
+				break;
+			}
+			case R.menu_id.SHOW_OPEN:
+			{
+				show_open = !show_open;
+				item.setChecked(show_open);
+				mapview.invalidate();
+				break;
+			}
+			case R.menu_id.SHOW_CLOSED:
+			{
+				show_closed = !show_closed;
+				item.setChecked(show_closed);
+				mapview.invalidate();
 				break;
 			}
 		}
@@ -532,12 +556,22 @@ public class Main extends MapActivity implements LocationListener
 		{
 			try
 			{
-				if (database == null)
+				if (type == OTYPE_OPEN_WIFI && !show_open)
+				{
+					return;
+				}
+				
+				if (type == OTYPE_CLOSED_WIFI && !show_closed)
 				{
 					return;
 				}
 
-				if (OTYPE_MY_LOCATION == type)
+				if (database == null)
+				{
+					return;
+				}
+				
+				if (type == OTYPE_MY_LOCATION)
 				{
 					if (last_location != null)
 					{
