@@ -136,8 +136,6 @@ public class Main extends MapActivity implements LocationListener
 	// DB Related
 	//
 
-	private static final String DATABASE_FULL_PATH = "/sdcard/wardrive.db3";
-
 	private SQLiteDatabase database;
 
 	//
@@ -208,7 +206,7 @@ public class Main extends MapActivity implements LocationListener
 			service_intent.setClass(this, ScanService.class);
 			startService(service_intent);
 
-			database = SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null);
+			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.DATABASE_FULL_PATH, null);
 			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
