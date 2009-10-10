@@ -67,4 +67,8 @@ v1.7
 
 	- Start/Stop the service via a specific menu command and save that setting
       to preferences.
-   
+
+v1.8
+
+    - The user can now delete the database completely (an empty file remains)
+    

@@ -1,4 +1,5 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
+	<item android:id="@+menu_id/DELETE" android:title="@string/MENU_DELETE_LABEL" android:icon="@drawable/ic_menu_delete"/>
 	<item android:id="@+menu_id/STATS" android:title="@string/MENU_STATS_LABEL" android:icon="@drawable/ic_menu_view"/>
 	<item android:id="@+menu_id/ABOUT" android:title="@string/MENU_ABOUT_LABEL" android:icon="@drawable/ic_menu_info_details"/>
 	<item android:id="@+menu_id/SERVICE" android:title="@string/MENU_SERVICE_LABEL" android:icon="@drawable/ic_menu_manage"/>

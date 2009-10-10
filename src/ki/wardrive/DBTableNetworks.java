@@ -65,4 +65,6 @@ public class DBTableNetworks
 	public static final String CREATE_INDEX_LATLON = "create index if not exists networks_latlon_idx on networks(lat, lon)";
 
 	public static final String CREATE_INDEX_CAPABILITIES = "create index if not exists networks_capabilities_idx on networks(capabilities)";
+	
+	public static final String DELETE_ALL_WIFI = "delete from networks";
 }

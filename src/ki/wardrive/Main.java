@@ -21,6 +21,7 @@ package ki.wardrive;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.database.Cursor;
@@ -66,95 +67,97 @@ public class Main extends MapActivity implements LocationListener
 	// Program related
 	//
 
-	private static int OTYPE_MY_LOCATION = 0;
+	private static int					OTYPE_MY_LOCATION						= 0;
 
-	private static int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
+	private static int					OTYPE_OPEN_WIFI							= OTYPE_MY_LOCATION + 1;
 
-	private static int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
+	private static int					OTYPE_CLOSED_WIFI						= OTYPE_OPEN_WIFI + 1;
 
-	private static final String LAST_LAT = "last_lat";
+	private static final String			LAST_LAT								= "last_lat";
 
-	private static final String LAST_LON = "last_lon";
+	private static final String			LAST_LON								= "last_lon";
 
-	private static final String ZOOM_LEVEL = "zoom_level";
+	private static final String			ZOOM_LEVEL								= "zoom_level";
 
-	private static final String CONF_SHOW_LABELS = "show_labels";
+	private static final String			CONF_SHOW_LABELS						= "show_labels";
 
-	private static final String CONF_FOLLOW = "follow";
+	private static final String			CONF_FOLLOW								= "follow";
 
-	private static final String CONF_MAP_MODE = "map_mode";
+	private static final String			CONF_MAP_MODE							= "map_mode";
 
-	private static final String CONF_SHOW_OPEN = "show_open";
+	private static final String			CONF_SHOW_OPEN							= "show_open";
 
-	private static final String CONF_SHOW_CLOSED = "show_closed";
+	private static final String			CONF_SHOW_CLOSED						= "show_closed";
 
-	private static final int MAX_WIFI_VISIBLE = 50;
+	private static final int			MAX_WIFI_VISIBLE						= 50;
 
-	private SharedPreferences settings;
+	private SharedPreferences			settings;
 
-	private SharedPreferences.Editor settings_editor;
+	private SharedPreferences.Editor	settings_editor;
 
-	private WakeLock wake_lock;
+	private WakeLock					wake_lock;
 
-	public boolean service = true;
+	public boolean						service									= true;
 
-	private Intent service_intent = null;
+	private Intent						service_intent							= null;
 
 	//
 	// Interface Related
 	//
 
-	private static final int DIALOG_STATS = 0;
+	private static final int			DIALOG_STATS							= 0;
 
-	private static final int DIALOG_ABOUT = DIALOG_STATS + 1;
+	private static final int			DIALOG_ABOUT							= DIALOG_STATS + 1;
 
-	private static final int QUADRANT_DOTS_SCALING_CONSTANT = 3;
+	private static final int			DIALOG_DELETE_ALL_WIFI					= DIALOG_ABOUT + 1;
 
-	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
+	private static final int			QUADRANT_DOTS_SCALING_CONSTANT			= 3;
 
-	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 3;
+	private static final int			QUADRANT_DOTS_SCALING_FACTOR			= 12;
 
-	private MapView mapview;
+	private static final int			QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE	= 3;
 
-	private Overlays overlays_closed;
+	private MapView						mapview;
 
-	private Overlays overlays_opened;
+	private Overlays					overlays_closed;
 
-	private Overlays overlays_me;
+	private Overlays					overlays_opened;
 
-	public boolean show_labels = false;
+	private Overlays					overlays_me;
 
-	public boolean follow_me = true;
+	public boolean						show_labels								= false;
 
-	public boolean map_mode = false;
+	public boolean						follow_me								= true;
 
-	public boolean show_open = true;
+	public boolean						map_mode								= false;
 
-	public boolean show_closed = false;
+	public boolean						show_open								= true;
+
+	public boolean						show_closed								= false;
 
 	//
 	// DB Related
 	//
 
-	private SQLiteDatabase database;
+	private SQLiteDatabase				database;
 
 	//
 	// Location Related
 	//
 
-	private static final int DEFAULT_LAT = 0;
+	private static final int			DEFAULT_LAT								= 0;
 
-	private static final int DEFAULT_LON = 0;
+	private static final int			DEFAULT_LON								= 0;
 
-	private static final int DEFAULT_ZOOM_LEVEL = 17;
+	private static final int			DEFAULT_ZOOM_LEVEL						= 17;
 
-	public static final int GPS_EVENT_WAIT = 30000;
+	public static final int				GPS_EVENT_WAIT							= 30000;
 
-	public static final int GPS_EVENT_METERS = 30;
+	public static final int				GPS_EVENT_METERS						= 30;
 
-	private LocationManager location_manager;
+	private LocationManager				location_manager;
 
-	private Location last_location = null;
+	private Location					last_location							= null;
 
 	//
 	// Status change
@@ -213,7 +216,7 @@ public class Main extends MapActivity implements LocationListener
 			service_intent = new Intent();
 			service_intent.setClass(this, ScanService.class);
 			startService(service_intent);
-			
+
 			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -351,7 +354,8 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
-		switch (item.getItemId()) {
+		switch (item.getItemId())
+		{
 			case R.menu_id.QUIT:
 			{
 				stopService(service_intent);
@@ -420,6 +424,11 @@ public class Main extends MapActivity implements LocationListener
 				}
 				break;
 			}
+			case R.menu_id.DELETE:
+			{
+				showDialog(DIALOG_DELETE_ALL_WIFI);
+				break;
+			}
 		}
 		return false;
 	}
@@ -440,9 +449,38 @@ public class Main extends MapActivity implements LocationListener
 				builder.setMessage(getResources().getText(R.string.ABOUT_BOX));
 				return builder.create();
 			}
+			case DIALOG_DELETE_ALL_WIFI:
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(getResources().getText(R.string.MENU_DELETE_WARNING_LABEL));
+				builder.setCancelable(false);
+				builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				{
+				    public void onClick(DialogInterface dialog, int id)
+				    {
+				    	delete_all_wifi();
+				    }
+				});
+				builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+				{
+				    public void onClick(DialogInterface dialog, int id)
+				    {
+				         dialog.cancel();
+				    }
+				});
+				return builder.create();
+			}
 		}
 
 		return super.onCreateDialog(id);
+	}
+
+	private void delete_all_wifi()
+	{
+		if (database != null)
+		{
+			database.execSQL(DBTableNetworks.DELETE_ALL_WIFI);
+		}
 	}
 
 	private String print_stats()
@@ -509,39 +547,39 @@ public class Main extends MapActivity implements LocationListener
 
 	public class Overlays extends ItemizedOverlay<OverlayItem>
 	{
-		private static final int CIRCLE_RADIUS = 4;
+		private static final int	CIRCLE_RADIUS			= 4;
 
-		private static final int INFO_WINDOW_HEIGHT = 16;
+		private static final int	INFO_WINDOW_HEIGHT		= 16;
 
-		private Paint paint_circle;
+		private Paint				paint_circle;
 
-		private TextPaint paint_text;
+		private TextPaint			paint_text;
 
-		private Point point = new Point();
+		private Point				point					= new Point();
 
-		private RectF rect = null;
+		private RectF				rect					= null;
 
-		private int type;
+		private int					type;
 
-		public boolean show_labels = false;
+		public boolean				show_labels				= false;
 
-		private int quadrants_x = 2;
+		private int					quadrants_x				= 2;
 
-		private int quadrants_y = 2;
+		private int					quadrants_y				= 2;
 
-		private int quadrant_w = 0;
+		private int					quadrant_w				= 0;
 
-		private int quadrant_h = 0;
+		private int					quadrant_h				= 0;
 
-		private int max_radius_for_quadrant = 0;
+		private int					max_radius_for_quadrant	= 0;
 
-		private int count = 0;
+		private int					count					= 0;
 
-		private double avg_lat = 0;
+		private double				avg_lat					= 0;
 
-		private double avg_lon = 0;
+		private double				avg_lon					= 0;
 
-		private int zoom_divider = 1;
+		private int					zoom_divider			= 1;
 
 		public Overlays(int type, Drawable d, int a, int r, int g, int b)
 		{
