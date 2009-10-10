@@ -89,12 +89,6 @@ public class ScanService extends Service
 				registerReceiver(wifiEvent, i);
 			}
 
-			if (database != null)
-			{
-				database.execSQL(DBTableNetworks.CREATE_TABLE_NETWORKS);
-				database.execSQL(DBTableNetworks.CREATE_INDEX_LATLON);
-			}
-
 			started = true;
 		}
 		catch (Exception e)

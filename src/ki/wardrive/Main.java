@@ -202,11 +202,18 @@ public class Main extends MapActivity implements LocationListener
 			mapview.getOverlays().add(overlays_opened);
 			mapview.getOverlays().add(overlays_me);
 
+			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.DATABASE_FULL_PATH, null);
+			if (database != null)
+			{
+				database.execSQL(DBTableNetworks.CREATE_TABLE_NETWORKS);
+				database.execSQL(DBTableNetworks.CREATE_INDEX_LATLON);
+				database.execSQL(DBTableNetworks.CREATE_INDEX_CAPABILITIES);
+			}
+
 			service_intent = new Intent();
 			service_intent.setClass(this, ScanService.class);
 			startService(service_intent);
-
-			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.DATABASE_FULL_PATH, null);
+			
 			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
