@@ -95,9 +95,9 @@ public class Main extends MapActivity implements LocationListener
 	private SharedPreferences.Editor settings_editor;
 
 	private WakeLock wake_lock;
-	
+
 	public boolean service = true;
-	
+
 	private Intent service_intent = null;
 
 	//
@@ -131,7 +131,7 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
-	
+
 	//
 	// DB Related
 	//
@@ -478,24 +478,21 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	public void onLocationChanged(Location location)
 	{
-		if (location != null)
+		try
 		{
-			try
+			if (follow_me && location != null)
 			{
 				last_location = location;
 				int e6lat = (int) (location.getLatitude() * 1E6);
 				int e6lon = (int) (location.getLongitude() * 1E6);
 				GeoPoint p = new GeoPoint(e6lat, e6lon);
-				if (follow_me)
-				{
-					mapview.getController().animateTo(p);
-				}
+				mapview.getController().animateTo(p);
 				mapview.invalidate();
 			}
-			catch (Exception e)
-			{
-				notify_error(e);
-			}
+		}
+		catch (Exception e)
+		{
+			notify_error(e);
 		}
 	}
 
@@ -578,7 +575,7 @@ public class Main extends MapActivity implements LocationListener
 				{
 					return;
 				}
-				
+
 				if (type == OTYPE_CLOSED_WIFI && !show_closed)
 				{
 					return;
@@ -588,7 +585,7 @@ public class Main extends MapActivity implements LocationListener
 				{
 					return;
 				}
-				
+
 				if (type == OTYPE_MY_LOCATION)
 				{
 					if (last_location != null)
