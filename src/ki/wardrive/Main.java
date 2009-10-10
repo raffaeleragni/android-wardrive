@@ -95,6 +95,10 @@ public class Main extends MapActivity implements LocationListener
 	private SharedPreferences.Editor settings_editor;
 
 	private WakeLock wake_lock;
+	
+	public boolean service = true;
+	
+	private Intent service_intent = null;
 
 	//
 	// Interface Related
@@ -127,10 +131,6 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
-	
-	public boolean service = true;
-
-	private Intent service_intent = null;
 	
 	//
 	// DB Related
