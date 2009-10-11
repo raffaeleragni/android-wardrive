@@ -3,7 +3,7 @@
     <string name="app_name">wardrive</string>
     <string name="GPS_LABEL_ME">ME</string>
     <string name="MENU_QUIT_LABEL">Quit</string>
-    <string name="MENU_STATS_LABEL">Stats</string>
+    <string name="MENU_STATS_LABEL">Statistics</string>
     <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFis</string>
     <string name="MENU_TOGGLE_LABELS_LABEL">Labels</string>
     <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">Follow</string>
@@ -11,10 +11,10 @@
     <string name="MENU_ABOUT_LABEL">About</string>
     <string name="MENU_SHOW_OPEN_LABEL">Open</string>
     <string name="MENU_SHOW_CLOSED_LABEL">Closed</string>
-    <string name="MENU_MORE_LABEL">More</string>
-    <string name="MENU_DELETE_LABEL">Delete</string>
+    <string name="MENU_OPTIONS_LABEL">Options</string>
+    <string name="MENU_DELETE_LABEL">Delete ALL</string>
     <string name="MENU_DELETE_WARNING_LABEL">This will delete ALL data collected, continue?</string>
-    <string name="MENU_SERVICE_LABEL">Service</string>
+    <string name="MENU_SERVICE_LABEL">Service ON/OFF</string>
     <string name="MESSAGE_STATISTICS">Statistics:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nOf which open: </string>

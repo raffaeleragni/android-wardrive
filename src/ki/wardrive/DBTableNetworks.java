@@ -59,12 +59,12 @@ public class DBTableNetworks
 	public static final String SELECT_COUNT_WIFIS = "select count(bssid) from networks";
 
 	public static final String SELECT_COUNT_OPEN = "select count(bssid) from networks where capabilities = ''";
-	
+
 	public static final String CREATE_TABLE_NETWORKS = "create table if not exists networks (bssid text primary key, ssid text, capabilities text, level integer, frequency integer, lat real, lon real, alt real, timestamp integer)";
 
 	public static final String CREATE_INDEX_LATLON = "create index if not exists networks_latlon_idx on networks(lat, lon)";
 
 	public static final String CREATE_INDEX_CAPABILITIES = "create index if not exists networks_capabilities_idx on networks(capabilities)";
-	
+
 	public static final String DELETE_ALL_WIFI = "delete from networks";
 }
