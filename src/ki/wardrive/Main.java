@@ -310,7 +310,6 @@ public class Main extends MapActivity implements LocationListener
 		super.onDestroy();
 	}
 
-	@Override
 	public void onProviderDisabled(String provider)
 	{
 		if (LocationManager.GPS_PROVIDER.equals(provider) && location_manager != null)
@@ -319,7 +318,6 @@ public class Main extends MapActivity implements LocationListener
 		}
 	}
 
-	@Override
 	public void onProviderEnabled(String provider)
 	{
 		if (LocationManager.GPS_PROVIDER.equals(provider) && location_manager != null)
@@ -521,7 +519,6 @@ public class Main extends MapActivity implements LocationListener
 	// Events
 	//
 
-	@Override
 	public void onLocationChanged(Location location)
 	{
 		try
@@ -819,7 +816,6 @@ public class Main extends MapActivity implements LocationListener
 		}
 	}
 
-	@Override
 	public void onStatusChanged(String provider, int status, Bundle extras)
 	{
 	}
