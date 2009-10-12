@@ -5,7 +5,8 @@
 		android:icon="@drawable/ic_menu_view" />
 	<item android:id="@+menu_id/ABOUT" android:title="@string/MENU_ABOUT_LABEL"
 		android:icon="@drawable/ic_menu_info_details" />
-	<item android:id="@+menu_id/KML_EXPORT" android:title="@string/MENU_KML_EXPORT_LABEL"></item>
+	<item android:id="@+menu_id/KML_EXPORT" android:title="@string/MENU_KML_EXPORT_LABEL"
+		android:icon="@drawable/ic_menu_save"></item>
 	<item android:id="@+menu_id/QUIT" android:title="@string/MENU_QUIT_LABEL"
 		android:icon="@drawable/ic_menu_close_clear_cancel" />
 	<item android:id="@+menu_id/OPTIONS" android:title="@string/MENU_OPTIONS_LABEL"
