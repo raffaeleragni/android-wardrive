@@ -16,6 +16,7 @@
     <string name="MENU_DELETE_WARNING_LABEL">This will delete ALL data collected, continue?</string>
     <string name="MENU_SERVICE_LABEL">Service ON/OFF</string>
     <string name="MENU_KML_EXPORT_LABEL">Export to KML</string>
+    <string name="MESSAGE_STARTING_KML_EXPORT">Starting KML export...</string>
     <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML file exported</string>
     <string name="MESSAGE_STATISTICS">Statistics:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>

@@ -2,24 +2,7 @@ package ki.wardrive;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.text.DecimalFormat; /*
- *   wardrive - android wardriving application
- *   Copyright (C) 2009 Raffaele Ragni
- *   http://code.google.com/p/wardrive-android/
- *
- *   This program is free software: you can redistribute it and/or modify
- *   it under the terms of the GNU General Public License as published by
- *   the Free Software Foundation, either version 3 of the License, or
- *   (at your option) any later version.
- *   
- *   This program is distributed in the hope that it will be useful,
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *   GNU General Public License for more details.
- *
- *   You should have received a copy of the GNU General Public License
- *   along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
+import java.io.IOException;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -32,11 +15,9 @@ import android.util.Log;
  */
 public class KMLExport
 {
-	private static DecimalFormat df = new DecimalFormat("#.#");
+	private static final String ROOT_START = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document>";
 
-	private static final String ROOT_START = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\">";
-
-	private static final String ROOT_END = "\n</kml>";
+	private static final String ROOT_END = "\n</Document></kml>";
 
 	private static final String MARK_START = "\n\t<Placemark>";
 
@@ -68,6 +49,12 @@ public class KMLExport
 
 	private static final String GENERICS_INFO_END = "</b>";
 
+	private static final String FOLDER_1 = "\n<Folder><Name>Open WiFis</Name>";
+
+	private static final String FOLDER_2 = "\n</Folder><Folder><Name>Closed WiFis</Name>";
+
+	private static final String FOLDER_END = "\n</Folder>";
+
 	public static boolean export(SQLiteDatabase database, File file)
 	{
 		try
@@ -87,41 +74,43 @@ public class KMLExport
 				Cursor c = null;
 				try
 				{
+					fw.append(FOLDER_1);
+
 					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT }, null, null, null, null, null);
+							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT }, DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION, null,
+							null, null, null);
 
 					if (c != null && c.moveToFirst())
 					{
 						do
 						{
-							fw.append(MARK_START);
-							fw.append(NAME_START);
-							fw.append(c.getString(1)); //SSID
-							fw.append(NAME_END);
-							fw.append(DESCRIPTION_START);
-							fw.append(GENERICS_INFO_1);
-							fw.append(c.getString(0)); //BSSID
-							fw.append(GENERICS_INFO_2);
-							fw.append(c.getString(2)); //CAPABILITIES
-							fw.append(GENERICS_INFO_3);
-							fw.append(c.getString(3)); //FREQUENCY
-							fw.append(GENERICS_INFO_4);
-							fw.append(c.getString(4)); //LEVEL
-							fw.append(GENERICS_INFO_END);
-							fw.append(DESCRIPTION_END);
-							fw.append(POINT_START);
-							fw.append(COORDINATES_START);
-							fw.append(df.format(c.getDouble(5)) + "," + df.format(c.getDouble(6)) + ","
-									+ df.format(c.getDouble(7))); // LAT, LON, ALT
-							fw.append(COORDINATES_END);
-							fw.append(POINT_END);
-							fw.append(MARK_END);
+							write_mark(c, fw);
 						}
 						while (c.moveToNext());
 					}
+
+					fw.append(FOLDER_2);
+
+					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT }, DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION, null,
+							null, null, null);
+
+					if (c != null && c.moveToFirst())
+					{
+						do
+						{
+							write_mark(c, fw);
+						}
+						while (c.moveToNext());
+					}
+
+					fw.append(FOLDER_END);
 				}
 				finally
 				{
@@ -145,6 +134,31 @@ public class KMLExport
 			Log.e(KMLExport.class.getName(), "", e);
 		}
 		return false;
+	}
+
+	private static void write_mark(Cursor c, FileWriter fw) throws IOException
+	{
+		fw.append(MARK_START);
+		fw.append(NAME_START);
+		fw.append(c.getString(1)); //SSID
+		fw.append(NAME_END);
+		fw.append(DESCRIPTION_START);
+		fw.append(GENERICS_INFO_1);
+		fw.append(c.getString(0)); //BSSID
+		fw.append(GENERICS_INFO_2);
+		fw.append(c.getString(2)); //CAPABILITIES
+		fw.append(GENERICS_INFO_3);
+		fw.append(c.getString(3)); //FREQUENCY
+		fw.append(GENERICS_INFO_4);
+		fw.append(c.getString(4)); //LEVEL
+		fw.append(GENERICS_INFO_END);
+		fw.append(DESCRIPTION_END);
+		fw.append(POINT_START);
+		fw.append(COORDINATES_START);
+		fw.append(c.getDouble(6) + "," + c.getDouble(5) + "," + c.getDouble(7)); // LAT, LON, ALT
+		fw.append(COORDINATES_END);
+		fw.append(POINT_END);
+		fw.append(MARK_END);
 	}
 
 	private static void destroy_cursor(Cursor c)

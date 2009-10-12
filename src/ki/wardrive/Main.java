@@ -37,6 +37,8 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.text.TextPaint;
@@ -108,6 +110,8 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Interface Related
 	//
+
+	private static final int EVENT_KML_EXPORT_DONE = 0;
 
 	private static final int DIALOG_STATS = 0;
 
@@ -433,16 +437,42 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.KML_EXPORT:
 			{
-				if (KMLExport.export(database, new File(KML_EXPORT_FILE)))
-				{
-					Toast.makeText(this, getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML), Toast.LENGTH_SHORT)
-							.show();
-				}
+				Toast.makeText(Main.this, getResources().getString(R.string.MESSAGE_STARTING_KML_EXPORT), Toast.LENGTH_SHORT)
+						.show();
+				new Thread(kml_export_proc).start();
+
 				break;
 			}
 		}
 		return false;
 	}
+
+	private Runnable kml_export_proc = new Runnable()
+	{
+		public void run()
+		{
+			if (KMLExport.export(database, new File(KML_EXPORT_FILE)))
+			{
+				message_handler.sendMessage(Message.obtain(message_handler, EVENT_KML_EXPORT_DONE));
+			}
+		}
+	};
+
+	private Handler message_handler = new Handler()
+	{
+		@Override
+		public void handleMessage(Message msg)
+		{
+			switch (msg.what)
+			{
+				case EVENT_KML_EXPORT_DONE:
+				{
+					Toast.makeText(Main.this, getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML),
+							Toast.LENGTH_SHORT).show();
+				}
+			}
+		}
+	};
 
 	@Override
 	protected Dialog onCreateDialog(int id)

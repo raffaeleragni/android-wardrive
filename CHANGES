@@ -80,3 +80,8 @@ v1.10
 
 	- Exportable KML files
 	
+	- "Export KML" moved to the top stack of the menu. The delete button should
+	  be theorically the less used one in the application and so moved in the
+	  "options" group.
+	  
+	
