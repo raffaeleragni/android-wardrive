@@ -15,6 +15,8 @@
     <string name="MENU_DELETE_LABEL">Cancella TUTTO</string>
     <string name="MENU_DELETE_WARNING_LABEL">Verranno cancellati tutti i dati finora salvati. Continuare?</string>
     <string name="MENU_SERVICE_LABEL">Servizio ON/OFF</string>
+    <string name="MENU_KML_EXPORT_LABEL">Esporta in KML</string>
+    <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">File KML esportato</string>
     <string name="MESSAGE_STATISTICS">Statistiche:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotale WiFi in database: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nDi cui aperte: </string>

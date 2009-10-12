@@ -18,6 +18,8 @@
  */
 package ki.wardrive;
 
+import java.io.File;
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Context;
@@ -67,11 +69,13 @@ public class Main extends MapActivity implements LocationListener
 	// Program related
 	//
 
-	private static int OTYPE_MY_LOCATION = 0;
+	private static final String KML_EXPORT_FILE = "/sdcard/wardrive.kml";
 
-	private static int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
+	private static final int OTYPE_MY_LOCATION = 0;
 
-	private static int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
+	private static final int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
+
+	private static final int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
 
 	private static final String LAST_LAT = "last_lat";
 
@@ -425,6 +429,15 @@ public class Main extends MapActivity implements LocationListener
 			case R.menu_id.DELETE:
 			{
 				showDialog(DIALOG_DELETE_ALL_WIFI);
+				break;
+			}
+			case R.menu_id.KML_EXPORT:
+			{
+				if (KMLExport.export(database, new File(KML_EXPORT_FILE)))
+				{
+					Toast.makeText(this, getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML), Toast.LENGTH_SHORT)
+							.show();
+				}
 				break;
 			}
 		}

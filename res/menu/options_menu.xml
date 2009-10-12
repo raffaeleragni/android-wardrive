@@ -22,6 +22,7 @@
 			<item android:id="@+menu_id/SHOW_CLOSED" android:title="@string/MENU_SHOW_CLOSED_LABEL"
 				android:enabled="true" android:checkable="true" android:checked="false"
 				android:visible="true"></item>
+			<item android:id="@+menu_id/KML_EXPORT" android:title="@string/MENU_KML_EXPORT_LABEL"></item>
 		</menu>
 	</item>
 </menu>
