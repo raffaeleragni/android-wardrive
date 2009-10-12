@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">wardrive</string>
+    <string name="GPS_LABEL_ME">JA</string>
+    <string name="MENU_QUIT_LABEL">Wyjście</string>
+    <string name="MENU_STATS_LABEL">Statystyki</string>
+    <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFi</string>
+    <string name="MENU_TOGGLE_LABELS_LABEL">Nazwy sieci</string>
+    <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">Śledź Mnie</string>
+    <string name="MENU_TOGGLE_MAP_MODE_LABEL">Mapa</string>
+    <string name="MENU_ABOUT_LABEL">O Programie..</string>
+    <string name="MENU_SHOW_OPEN_LABEL">Otwarte</string>
+    <string name="MENU_SHOW_CLOSED_LABEL">Zabezpieczone</string>
+    <string name="MENU_OPTIONS_LABEL">Opcje</string>
+    <string name="MENU_DELETE_LABEL">Skasuj WSZYSTKO</string>
+    <string name="MENU_DELETE_WARNING_LABEL">Spowoduje to usunięcie WSZYSTKICH zebranych danych, kontynuować?</string>
+    <string name="MENU_SERVICE_LABEL">Usługa  WŁĄCZ/WYŁĄCZ</string>
+    <string name="MESSAGE_STATISTICS">Statystyki:</string>
+    <string name="MESSAGE_STATISTICS_COUNT">\nWszystkich WiFi w bazie: </string>
+    <string name="MESSAGE_STATISTICS_OPEN">\nW tym otwartych: </string>
+</resources>
