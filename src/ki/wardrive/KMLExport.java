@@ -49,9 +49,9 @@ public class KMLExport
 
 	private static final String GENERICS_INFO_END = "</b>";
 
-	private static final String FOLDER_1 = "\n<Folder><Name>Open WiFis</Name>";
+	private static final String FOLDER_1 = "\n<Folder><name>Open WiFis</name>";
 
-	private static final String FOLDER_2 = "\n</Folder><Folder><Name>Closed WiFis</Name>";
+	private static final String FOLDER_2 = "\n</Folder><Folder><name>Closed WiFis</name>";
 
 	private static final String FOLDER_END = "\n</Folder>";
 
