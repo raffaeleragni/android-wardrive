@@ -143,10 +143,12 @@ public class ScanService extends Service
 
 		public void onProviderEnabled(String provider)
 		{
+			toast(getResources().getString(R.string.GPS_ENABLED));
 		}
 
 		public void onProviderDisabled(String provider)
 		{
+			toast(getResources().getString(R.string.GPS_DISABLED));
 		}
 
 		public void onLocationChanged(Location location)
@@ -345,7 +347,7 @@ public class ScanService extends Service
 
 			if (started)
 			{
-				notification_bar_message("wardrive Service started");
+				notification_bar_message(getResources().getString(R.string.SERVICE_STARTED));
 			}
 		}
 	}
@@ -359,7 +361,7 @@ public class ScanService extends Service
 
 			if (!started)
 			{
-				notification_bar_message("wardrive Service stopped");
+				notification_bar_message(getResources().getString(R.string.SERVICE_STOPPED));
 			}
 		}
 
