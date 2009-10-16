@@ -88,3 +88,6 @@ v1.11
 
     - GPS status is printed in toast message by the service when it changes.
     
+v1.12
+
+    - Previous had a Bad Google API KEy for certificate.
