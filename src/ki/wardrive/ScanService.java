@@ -39,6 +39,7 @@ import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
+import android.widget.Toast;
 
 public class ScanService extends Service
 {
@@ -344,13 +345,7 @@ public class ScanService extends Service
 
 			if (started)
 			{
-				NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-				Notification n = new Notification(R.drawable.icon, "wardrive Service started", System.currentTimeMillis());
-				Context context = getApplicationContext();
-				Intent notificationIntent = new Intent(this, ScanService.class);
-				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-				n.setLatestEventInfo(context, "wardrive Service started", "", contentIntent);
-				nm.notify(1, n);
+				notification_bar_message("wardrive Service started");
 			}
 		}
 	}
@@ -364,17 +359,27 @@ public class ScanService extends Service
 
 			if (!started)
 			{
-				NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-				Notification n = new Notification(R.drawable.icon, "wardrive Service stopped", System.currentTimeMillis());
-				Context context = getApplicationContext();
-				Intent notificationIntent = new Intent(this, ScanService.class);
-				PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-				n.setLatestEventInfo(context, "wardrive Service stopped", "", contentIntent);
-				nm.notify(1, n);
+				notification_bar_message("wardrive Service stopped");
 			}
 		}
 
 		super.onDestroy();
+	}
+
+	public void toast(String message)
+	{
+		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+	}
+
+	public void notification_bar_message(String message)
+	{
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
+		Context context = getApplicationContext();
+		Intent notificationIntent = new Intent(this, ScanService.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		n.setLatestEventInfo(context, message, "", contentIntent);
+		nm.notify(1, n);
 	}
 
 	@Override

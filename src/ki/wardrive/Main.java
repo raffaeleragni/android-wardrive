@@ -22,6 +22,9 @@ import java.io.File;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -437,8 +440,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.KML_EXPORT:
 			{
-				Toast.makeText(Main.this, getResources().getString(R.string.MESSAGE_STARTING_KML_EXPORT), Toast.LENGTH_SHORT)
-						.show();
+				toast(getResources().getString(R.string.MESSAGE_STARTING_KML_EXPORT));
 				new Thread(kml_export_proc).start();
 
 				break;
@@ -467,8 +469,7 @@ public class Main extends MapActivity implements LocationListener
 			{
 				case EVENT_KML_EXPORT_DONE:
 				{
-					Toast.makeText(Main.this, getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML),
-							Toast.LENGTH_SHORT).show();
+					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML));
 				}
 			}
 		}
@@ -840,6 +841,22 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Miscellaneous
 	//
+
+	public void toast(String message)
+	{
+		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+	}
+
+	public void notification_bar_message(String message)
+	{
+		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+		Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
+		Context context = getApplicationContext();
+		Intent notificationIntent = new Intent(this, ScanService.class);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		n.setLatestEventInfo(context, message, "", contentIntent);
+		nm.notify(1, n);
+	}
 
 	private void notify_error(Exception e)
 	{
