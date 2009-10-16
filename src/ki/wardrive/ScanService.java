@@ -58,7 +58,7 @@ public class ScanService extends Service
 
 	private SQLiteDatabase database;
 
-	private int gpsWaitTime = 30000;
+	private int gpsWaitTime = 60000;
 
 	private int gpsMeterSpan = 50;
 
