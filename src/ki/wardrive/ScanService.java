@@ -63,6 +63,8 @@ public class ScanService extends Service
 	private int gpsMeterSpan = 50;
 
 	private boolean started = false;
+	
+	private int old_gps_status = -1;
 
 	private void start_services()
 	{
@@ -140,8 +142,9 @@ public class ScanService extends Service
 	{
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
+			if (LocationManager.GPS_PROVIDER.equals(provider) && old_gps_status != status)
 			{
+				old_gps_status = status;
 				String sstatus = "undefined";
 				switch (status)
 				{
@@ -155,7 +158,7 @@ public class ScanService extends Service
 						sstatus = "available";
 						break;
 				}
-				toast(getResources().getString(R.string.GPS_STATUS) + sstatus);
+				toast(getResources().getString(R.string.GPS_STATUS) + " " + sstatus);
 			}
 		}
 

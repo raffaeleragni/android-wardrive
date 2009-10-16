@@ -25,7 +25,7 @@
     <string name="SERVICE_STOPPED">wardrive Service stopped</string>
     <string name="GPS_ENABLED">GPS enabled</string>
     <string name="GPS_DISABLED">GPS disabled</string>
-    <string name="GPS_STATUS">GPS status: </string>
+    <string name="GPS_STATUS">GPS status:</string>
     <string name="ABOUT_BOX"><![CDATA[
 wardrive - android wardriving application\n
 Copyright (C) 2009 Raffaele Ragni\n
