@@ -34,6 +34,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.location.LocationProvider;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -139,16 +140,39 @@ public class ScanService extends Service
 	{
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				String sstatus = "undefined";
+				switch (status)
+				{
+					case LocationProvider.OUT_OF_SERVICE:
+						sstatus = "out of service";
+						break;
+					case LocationProvider.TEMPORARILY_UNAVAILABLE:
+						sstatus = "temporarily unavailable";
+						break;
+					case LocationProvider.AVAILABLE:
+						sstatus = "available";
+						break;
+				}
+				toast(getResources().getString(R.string.GPS_STATUS) + sstatus);
+			}
 		}
 
 		public void onProviderEnabled(String provider)
 		{
-			toast(getResources().getString(R.string.GPS_ENABLED));
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				toast(getResources().getString(R.string.GPS_ENABLED));
+			}
 		}
 
 		public void onProviderDisabled(String provider)
 		{
-			toast(getResources().getString(R.string.GPS_DISABLED));
+			if (LocationManager.GPS_PROVIDER.equals(provider))
+			{
+				toast(getResources().getString(R.string.GPS_DISABLED));
+			}
 		}
 
 		public void onLocationChanged(Location location)

@@ -25,4 +25,5 @@
     <string name="SERVICE_STOPPED">Servizio wardrive arrestato</string>
     <string name="GPS_ENABLED">GPS abilitato</string>
     <string name="GPS_DISABLED">GPS disabilitato</string>
+    <string name="GPS_STATUS">Stato GPS: </string>
 </resources>
