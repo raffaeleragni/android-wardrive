@@ -84,4 +84,7 @@ v1.10
 	  be theorically the less used one in the application and so moved in the
 	  "options" group.
 	  
-	
+v1.11
+
+    - GPS status is printed in toast message by the service when it changes.
+    
