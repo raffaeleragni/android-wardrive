@@ -152,20 +152,21 @@ public class ScanService extends Service
 		{
 			if (location != null)
 			{
-				synchronized (LAST_LOCATION_LOCK)
+				try
 				{
-					try
+					synchronized (LAST_LOCATION_LOCK)
 					{
 						last_location = location;
-						if (wifi_manager != null)
-						{
-							wifi_manager.startScan();
-						}
 					}
-					catch (Exception e)
+
+					if (wifi_manager != null)
 					{
-						notify_error(e);
+						wifi_manager.startScan();
 					}
+				}
+				catch (Exception e)
+				{
+					notify_error(e);
 				}
 			}
 		}
@@ -176,24 +177,31 @@ public class ScanService extends Service
 		@Override
 		public void onReceive(Context context, Intent intent)
 		{
-			synchronized (LAST_LOCATION_LOCK)
+			Double lat = null, lon = null, alt = null;
+			try
 			{
-				try
+				synchronized (LAST_LOCATION_LOCK)
 				{
 					if (last_location != null)
 					{
-						List<ScanResult> results = wifi_manager.getScanResults();
-						for (ScanResult result : results)
-						{
-							process_wifi_result(result, last_location.getLatitude(), last_location.getLongitude(), last_location
-									.getAltitude());
-						}
+						lat = last_location.getLatitude();
+						lon = last_location.getLongitude();
+						alt = last_location.getAltitude();
 					}
 				}
-				catch (Exception e)
+
+				if (lat != null && lon != null && alt != null)
 				{
-					notify_error(e);
+					List<ScanResult> results = wifi_manager.getScanResults();
+					for (ScanResult result : results)
+					{
+						process_wifi_result(result, lat, lon, alt);
+					}
 				}
+			}
+			catch (Exception e)
+			{
+				notify_error(e);
 			}
 		}
 	};
