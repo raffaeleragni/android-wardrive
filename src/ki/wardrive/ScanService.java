@@ -60,7 +60,7 @@ public class ScanService extends Service
 
 	private int gpsWaitTime = 60000;
 
-	private int gpsMeterSpan = 10;
+	private int gpsMeterSpan = 0;
 
 	private boolean started = false;
 	
