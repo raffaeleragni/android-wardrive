@@ -323,18 +323,10 @@ public class Main extends MapActivity implements LocationListener
 
 	public void onProviderDisabled(String provider)
 	{
-		if (LocationManager.GPS_PROVIDER.equals(provider) && location_manager != null)
-		{
-			location_manager.removeUpdates(Main.this);
-		}
 	}
 
 	public void onProviderEnabled(String provider)
 	{
-		if (LocationManager.GPS_PROVIDER.equals(provider) && location_manager != null)
-		{
-			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_EVENT_WAIT, GPS_EVENT_METERS, Main.this);
-		}
 	}
 
 	//
