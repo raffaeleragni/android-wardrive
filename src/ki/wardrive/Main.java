@@ -162,7 +162,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int DEFAULT_ZOOM_LEVEL = 17;
 
-	public static final int GPS_EVENT_WAIT = 5000;
+	public static final int GPS_EVENT_WAIT = 60000;
 
 	public static final int GPS_EVENT_METERS = 10;
 
