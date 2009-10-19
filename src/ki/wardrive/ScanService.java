@@ -60,11 +60,13 @@ public class ScanService extends Service
 
 	private int gpsWaitTime = 60000;
 
-	private int gpsMeterSpan = 50;
+	private int gpsMeterSpan = 10;
 
 	private boolean started = false;
 	
 	private int old_gps_status = -1;
+	
+	private boolean enabletoasts = false;
 
 	private void start_services()
 	{
@@ -397,7 +399,10 @@ public class ScanService extends Service
 
 	public void toast(String message)
 	{
-		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+		if (enabletoasts)
+		{
+			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+		}
 	}
 
 	public void notification_bar_message(String message)
