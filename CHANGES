@@ -1,4 +1,3 @@
-
 v1.0
 
     - Scans for visible wireless networks and stores them in sqlite3 DB, in the
@@ -91,3 +90,8 @@ v1.11
 v1.12
 
     - Previous had a Bad Google API KEy for certificate.
+    
+v1.13
+
+    - Faster service and maps updates.
+    
