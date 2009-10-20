@@ -222,6 +222,7 @@ public class Main extends MapActivity implements LocationListener
 				database.execSQL(DBTableNetworks.CREATE_TABLE_NETWORKS);
 				database.execSQL(DBTableNetworks.CREATE_INDEX_LATLON);
 				database.execSQL(DBTableNetworks.CREATE_INDEX_CAPABILITIES);
+				database.execSQL(DBTableNetworks.OPTIMIZATION_SQL);
 			}
 
 			service_intent = new Intent();

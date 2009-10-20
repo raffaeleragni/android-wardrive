@@ -76,6 +76,11 @@ public class ScanService extends Service
 			wifi_manager = wifi_manager == null ? (WifiManager) getSystemService(Context.WIFI_SERVICE) : wifi_manager;
 			database = database == null ? SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null) : database;
 
+			if (database != null)
+			{
+				database.execSQL(DBTableNetworks.OPTIMIZATION_SQL);
+			}
+			
 			if (location_manager != null)
 			{
 				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gpsWaitTime, gpsMeterSpan,

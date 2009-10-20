@@ -67,4 +67,6 @@ public class DBTableNetworks
 	public static final String CREATE_INDEX_CAPABILITIES = "create index if not exists networks_capabilities_idx on networks(capabilities)";
 
 	public static final String DELETE_ALL_WIFI = "delete from networks";
+	
+	public static final String OPTIMIZATION_SQL = "PRAGMA synchronous=OFF; PRAGMA count_changes=OFF; VACUUM;";
 }
