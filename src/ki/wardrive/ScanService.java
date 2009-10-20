@@ -44,8 +44,6 @@ import android.widget.Toast;
 
 public class ScanService extends Service
 {
-	private static final String DATABASE_FULL_PATH = "/sdcard/wardrive.db3";
-
 	private Object LAST_LOCATION_LOCK = new Object();
 
 	private LocationManager location_manager;
@@ -62,15 +60,13 @@ public class ScanService extends Service
 
 	private int old_gps_status = -1;
 
-	private boolean enabletoasts = false;
-
 	private void start_services()
 	{
 		try
 		{
 			location_manager = location_manager == null ? (LocationManager) getSystemService(LOCATION_SERVICE) : location_manager;
 			wifi_manager = wifi_manager == null ? (WifiManager) getSystemService(Context.WIFI_SERVICE) : wifi_manager;
-			database = database == null ? SQLiteDatabase.openOrCreateDatabase(DATABASE_FULL_PATH, null) : database;
+			database = database == null ? SQLiteDatabase.openOrCreateDatabase(Constants.DATABASE_FULL_PATH, null) : database;
 
 			if (database != null)
 			{
@@ -354,7 +350,7 @@ public class ScanService extends Service
 
 	public void toast(String message)
 	{
-		if (enabletoasts)
+		if (Constants.SERVICE_TOASTS_ENABLED)
 		{
 			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
 		}

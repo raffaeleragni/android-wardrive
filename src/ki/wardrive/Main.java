@@ -74,8 +74,6 @@ public class Main extends MapActivity implements LocationListener
 	// Program related
 	//
 
-	private static final String KML_EXPORT_FILE = "/sdcard/wardrive.kml";
-
 	private static final int OTYPE_MY_LOCATION = 0;
 
 	private static final int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
@@ -98,8 +96,6 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final String CONF_SHOW_CLOSED = "show_closed";
 
-	private static final int MAX_WIFI_VISIBLE = 50;
-
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
@@ -121,12 +117,6 @@ public class Main extends MapActivity implements LocationListener
 	private static final int DIALOG_ABOUT = DIALOG_STATS + 1;
 
 	private static final int DIALOG_DELETE_ALL_WIFI = DIALOG_ABOUT + 1;
-
-	private static final int QUADRANT_DOTS_SCALING_CONSTANT = 3;
-
-	private static final int QUADRANT_DOTS_SCALING_FACTOR = 12;
-
-	private static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 3;
 
 	private MapView mapview;
 
@@ -156,12 +146,6 @@ public class Main extends MapActivity implements LocationListener
 	// Location Related
 	//
 
-	private static final int DEFAULT_LAT = 0;
-
-	private static final int DEFAULT_LON = 0;
-
-	private static final int DEFAULT_ZOOM_LEVEL = 17;
-
 	private LocationManager location_manager;
 
 	private Location last_location = null;
@@ -188,11 +172,12 @@ public class Main extends MapActivity implements LocationListener
 			show_open = settings.getBoolean(CONF_SHOW_OPEN, show_open);
 			show_closed = settings.getBoolean(CONF_SHOW_CLOSED, show_closed);
 
-			GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, DEFAULT_LAT), settings.getInt(LAST_LON, DEFAULT_LON));
+			GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(LAST_LON,
+					Constants.DEFAULT_LON));
 
 			mapview = (MapView) findViewById(R.id.mapview);
 			mapview.getController().animateTo(point);
-			mapview.getController().setZoom(settings.getInt(ZOOM_LEVEL, DEFAULT_ZOOM_LEVEL));
+			mapview.getController().setZoom(settings.getInt(ZOOM_LEVEL, Constants.DEFAULT_ZOOM_LEVEL));
 			mapview.setBuiltInZoomControls(true);
 			mapview.setClickable(true);
 			mapview.setLongClickable(true);
@@ -442,7 +427,7 @@ public class Main extends MapActivity implements LocationListener
 	{
 		public void run()
 		{
-			if (KMLExport.export(database, new File(KML_EXPORT_FILE)))
+			if (KMLExport.export(database, new File(Constants.KML_EXPORT_FILE)))
 			{
 				message_handler.sendMessage(Message.obtain(message_handler, EVENT_KML_EXPORT_DONE));
 			}
@@ -688,8 +673,9 @@ public class Main extends MapActivity implements LocationListener
 
 					if (c != null && c.moveToFirst())
 					{
-						if (c.getCount() <= MAX_WIFI_VISIBLE
-								|| mapView.getZoomLevel() >= mapView.getMaxZoomLevel() - QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE)
+						if (c.getCount() <= Constants.MAX_WIFI_VISIBLE
+								|| mapView.getZoomLevel() >= mapView.getMaxZoomLevel()
+										- Constants.QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE)
 						{
 							do
 							{
@@ -705,8 +691,10 @@ public class Main extends MapActivity implements LocationListener
 
 							max_radius_for_quadrant = quadrant_w > quadrant_h ? quadrant_h / 2 : quadrant_w / 2;
 
-							zoom_divider = mapView.getZoomLevel() - QUADRANT_DOTS_SCALING_FACTOR + QUADRANT_DOTS_SCALING_CONSTANT;
-							max_radius_for_quadrant /= zoom_divider >= 0 ? QUADRANT_DOTS_SCALING_CONSTANT : -zoom_divider;
+							zoom_divider = mapView.getZoomLevel() - Constants.QUADRANT_DOTS_SCALING_FACTOR
+									+ Constants.QUADRANT_DOTS_SCALING_CONSTANT;
+							max_radius_for_quadrant /= zoom_divider >= 0 ? Constants.QUADRANT_DOTS_SCALING_CONSTANT
+									: -zoom_divider;
 
 							for (int x = 0; x < quadrants_x; x++)
 							{
