@@ -162,10 +162,6 @@ public class Main extends MapActivity implements LocationListener
 
 	private static final int DEFAULT_ZOOM_LEVEL = 17;
 
-	public static final int GPS_EVENT_WAIT = 1000;
-
-	public static final int GPS_EVENT_METERS = 0;
-
 	private LocationManager location_manager;
 
 	private Location last_location = null;
@@ -271,8 +267,8 @@ public class Main extends MapActivity implements LocationListener
 		{
 			if (location_manager != null)
 			{
-				location_manager
-						.requestLocationUpdates(LocationManager.GPS_PROVIDER, GPS_EVENT_WAIT, GPS_EVENT_METERS, Main.this);
+				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Constants.MAPS_GPS_EVENT_WAIT,
+						Constants.MAPS_GPS_EVENT_METERS, Main.this);
 			}
 		}
 		catch (Exception e)

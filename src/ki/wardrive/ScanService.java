@@ -58,14 +58,10 @@ public class ScanService extends Service
 
 	private SQLiteDatabase database;
 
-	private int gpsWaitTime = 5000;
-
-	private int gpsMeterSpan = 10;
-
 	private boolean started = false;
-	
+
 	private int old_gps_status = -1;
-	
+
 	private boolean enabletoasts = false;
 
 	private void start_services()
@@ -80,11 +76,11 @@ public class ScanService extends Service
 			{
 				database.execSQL(DBTableNetworks.OPTIMIZATION_SQL);
 			}
-			
+
 			if (location_manager != null)
 			{
-				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gpsWaitTime, gpsMeterSpan,
-						location_listener);
+				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Constants.SERVICE_GPS_EVENT_WAIT,
+						Constants.SERVICE_GPS_EVENT_METERS, location_listener);
 			}
 
 			if (wifi_manager != null)
@@ -321,52 +317,6 @@ public class ScanService extends Service
 				c.close();
 			}
 			c = null;
-		}
-	}
-
-	public int getGpsWaitTime()
-	{
-		return gpsWaitTime;
-	}
-
-	public synchronized void setGpsWaitTime(int gpsWaitTime)
-	{
-		this.gpsWaitTime = gpsWaitTime;
-		try
-		{
-			if (location_manager != null)
-			{
-				location_manager.removeUpdates(location_listener);
-				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, this.gpsWaitTime, gpsMeterSpan,
-						location_listener);
-			}
-		}
-		catch (Exception e)
-		{
-			notify_error(e);
-		}
-	}
-
-	public int getGpsMeterSpan()
-	{
-		return gpsMeterSpan;
-	}
-
-	public synchronized void setGpsMeterSpan(int gpsMeterSpan)
-	{
-		this.gpsMeterSpan = gpsMeterSpan;
-		try
-		{
-			if (location_manager != null)
-			{
-				location_manager.removeUpdates(location_listener);
-				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gpsWaitTime, this.gpsMeterSpan,
-						location_listener);
-			}
-		}
-		catch (Exception e)
-		{
-			notify_error(e);
 		}
 	}
 
