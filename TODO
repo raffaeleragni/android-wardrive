@@ -2,3 +2,6 @@
  - Find a way to send data to WiGLE, or adapt KML file for being readable from it.
 
  - Display AP info in someway.
+ 
+ - Find the perfect seconds/meter combination for both maps and service
+   Last setting: 500/0 and 3000/3. Should draw too much battery theorically.
