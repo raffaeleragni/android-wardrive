@@ -1,8 +1,4 @@
 
- - Find a way (best efficient) to triangulate WiFi positions
+ - Find a way to send data to WiGLE, or adapt KML file for being readable from it.
 
- - Realize a method to synchronize the databases, maybe phone to phone, maybe
-   via bluetooth (centralized web repository could grow too much and be
-   unhandling by the small android application)
-
- - Add exporting in KML format.
+ - Display AP info in someway.
