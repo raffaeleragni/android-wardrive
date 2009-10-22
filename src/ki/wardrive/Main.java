@@ -460,18 +460,15 @@ public class Main extends MapActivity implements LocationListener
 			{
 				long tstamp = settings.getLong(CONF_SYNC_TSTAMP, 0);
 				long newtstamp = System.currentTimeMillis();
-				
+
 				URL url = new URL(Constants.SYNC_ONLINE_URL);
 				int inserted_count = SyncOnlineExport.export(tstamp, database, url, message_handler);
-				if (inserted_count > 0)
-				{
-					Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
-					Bundle b = new Bundle();
-					b.putInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, inserted_count);
-					msg.setData(b);
-					message_handler.sendMessage(msg);
-				}
-				
+				Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
+				Bundle b = new Bundle();
+				b.putInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, inserted_count);
+				msg.setData(b);
+				message_handler.sendMessage(msg);
+
 				settings_editor.putLong(CONF_SYNC_TSTAMP, newtstamp);
 				settings_editor.commit();
 			}
