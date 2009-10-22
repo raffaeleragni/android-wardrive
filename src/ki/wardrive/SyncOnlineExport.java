@@ -1,10 +1,7 @@
 package ki.wardrive;
 
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
 import java.net.URL;
-import java.nio.CharBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +21,8 @@ import android.os.Message;
 
 public class SyncOnlineExport
 {
-	public static int export(SQLiteDatabase database, URL url, Handler message_handler) throws IllegalStateException, IOException
+	public static int export(long tstamp, SQLiteDatabase database, URL url, Handler message_handler)
+			throws IllegalStateException, IOException
 	{
 		int inserted_count = 0;
 		int count = 0;
@@ -39,8 +37,8 @@ public class SyncOnlineExport
 					DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
 					DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY,
 					DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
-					DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, null, null, null,
-					null, null);
+					DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP },
+					DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP_AFTER, new String[] { "" + tstamp }, null, null, null);
 
 			if (c != null && c.moveToFirst())
 			{
@@ -66,16 +64,7 @@ public class SyncOnlineExport
 						HttpResponse response = client.execute(post);
 						if (response != null)
 						{
-							Reader r = new InputStreamReader(response.getEntity().getContent());
-							CharBuffer cb = CharBuffer.allocate(50);
-							r.read(cb);
-							try
-							{
-								inserted_count += Integer.parseInt(cb.toString());
-							}
-							catch (NumberFormatException e)
-							{
-							}
+							inserted_count += count;
 
 							Message msg = Message.obtain(message_handler, Main.EVENT_SYNC_ONLINE_PROGRESS);
 							Bundle b = new Bundle();

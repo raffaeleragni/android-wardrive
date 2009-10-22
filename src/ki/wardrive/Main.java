@@ -97,6 +97,8 @@ public class Main extends MapActivity implements LocationListener
 
 	public static final String CONF_SHOW_CLOSED = "show_closed";
 
+	public static final String CONF_SYNC_TSTAMP = "sync_tstamp";
+
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
@@ -456,8 +458,11 @@ public class Main extends MapActivity implements LocationListener
 		{
 			try
 			{
+				long tstamp = settings.getLong(CONF_SYNC_TSTAMP, 0);
+				long newtstamp = System.currentTimeMillis();
+				
 				URL url = new URL(Constants.SYNC_ONLINE_URL);
-				int inserted_count = SyncOnlineExport.export(database, url, message_handler);
+				int inserted_count = SyncOnlineExport.export(tstamp, database, url, message_handler);
 				if (inserted_count > 0)
 				{
 					Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
@@ -466,6 +471,9 @@ public class Main extends MapActivity implements LocationListener
 					msg.setData(b);
 					message_handler.sendMessage(msg);
 				}
+				
+				settings_editor.putLong(CONF_SYNC_TSTAMP, newtstamp);
+				settings_editor.commit();
 			}
 			catch (Exception e)
 			{

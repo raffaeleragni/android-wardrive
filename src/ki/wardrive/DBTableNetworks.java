@@ -50,6 +50,8 @@ public class DBTableNetworks
 
 	public static final String TABLE_NETWORKS_FIELD_TIMESTAMP = "timestamp";
 
+	public static final String TABLE_NETWORKS_FIELD_TIMESTAMP_AFTER = "timestamp > ?";
+
 	public static final String TABLE_NETWORKS_LOCATION_BETWEEN = "lat >= ? and lat <= ? and lon >= ? and lon <= ?";
 
 	public static final String TABLE_NETWORKS_OPEN_CONDITION = "capabilities = ''";

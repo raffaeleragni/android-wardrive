@@ -98,4 +98,8 @@ v1.13
 v2.0
 
 	- Send WiFis to online database http://wardrivedb.appstop.com/
-	 
+
+v2.1
+
+	- Sends only the newly updated WiFis based on the last sync date.
+	
