@@ -1,5 +1,6 @@
 
- - Find a way to send data to WiGLE, or adapt KML file for being readable from it.
+ - Find a way to send only new scans. Save the timestamp of the syncronization
+   and send only the new ones.
 
  - Display AP info in someway.
  
