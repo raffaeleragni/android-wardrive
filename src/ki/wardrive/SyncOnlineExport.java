@@ -1,5 +1,6 @@
 package ki.wardrive;
 
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
@@ -20,11 +21,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.util.Log;
 
 public class SyncOnlineExport
 {
-	public static int export(SQLiteDatabase database, URL url, Handler message_handler)
+	public static int export(SQLiteDatabase database, URL url, Handler message_handler) throws IllegalStateException, IOException
 	{
 		int inserted_count = 0;
 		BasicNameValuePair action = new BasicNameValuePair("action", "post_spots");
@@ -57,30 +57,24 @@ public class SyncOnlineExport
 
 					if (values.size() == Constants.SYNC_ONLINE_BUFFER || c.isLast())
 					{
-						try
-						{
-							HttpClient client = new DefaultHttpClient();
-							HttpPost post = new HttpPost(Constants.SYNC_ONLINE_URL);
-							post.setEntity(new UrlEncodedFormEntity(values));
-							HttpResponse response = client.execute(post);
-							if (response != null)
-							{
-								Reader r = new InputStreamReader(response.getEntity().getContent());
-								CharBuffer cb = CharBuffer.allocate(50);
-								r.read(cb);
-								inserted_count += Integer.parseInt(cb.toString());
 
-								Message msg = Message.obtain(message_handler, Main.EVENT_SYNC_ONLINE_PROGRESS);
-								Bundle b = new Bundle();
-								b.putInt(Main.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT,
-										(int) (((double) c.getPosition() / (double) c.getCount()) * 100));
-								msg.setData(b);
-								message_handler.sendMessage(msg);
-							}
-						}
-						catch (Exception e)
+						HttpClient client = new DefaultHttpClient();
+						HttpPost post = new HttpPost(Constants.SYNC_ONLINE_URL);
+						post.setEntity(new UrlEncodedFormEntity(values));
+						HttpResponse response = client.execute(post);
+						if (response != null)
 						{
-							Log.e(SyncOnlineExport.class.getName(), "error posting data", e);
+							Reader r = new InputStreamReader(response.getEntity().getContent());
+							CharBuffer cb = CharBuffer.allocate(50);
+							r.read(cb);
+							inserted_count += Integer.parseInt(cb.toString());
+
+							Message msg = Message.obtain(message_handler, Main.EVENT_SYNC_ONLINE_PROGRESS);
+							Bundle b = new Bundle();
+							b.putInt(Main.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT,
+									(int) (((double) c.getPosition() / (double) c.getCount()) * 100));
+							msg.setData(b);
+							message_handler.sendMessage(msg);
 						}
 
 						values.clear();

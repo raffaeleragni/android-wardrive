@@ -19,7 +19,6 @@
 package ki.wardrive;
 
 import java.io.File;
-import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.app.AlertDialog;
@@ -466,7 +465,7 @@ public class Main extends MapActivity implements LocationListener
 					message_handler.sendMessage(msg);
 				}
 			}
-			catch (MalformedURLException e)
+			catch (Exception e)
 			{
 				notify_error(e);
 			}
@@ -489,7 +488,7 @@ public class Main extends MapActivity implements LocationListener
 				case EVENT_SYNC_ONLINE_PROGRESS:
 				{
 					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
-							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
+							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT) + "%");
 					break;
 				}
 
