@@ -3,8 +3,8 @@
 		android:icon="@drawable/ic_menu_manage" />
 	<item android:id="@+menu_id/STATS" android:title="@string/MENU_STATS_LABEL"
 		android:icon="@drawable/ic_menu_view" />
-	<item android:id="@+menu_id/ABOUT" android:title="@string/MENU_ABOUT_LABEL"
-		android:icon="@drawable/ic_menu_info_details" />
+	<item android:id="@+menu_id/SYNC_ONLINE_DB" android:title="@string/MENU_SYNC_ONLINE_DB"
+		android:icon="@drawable/ic_menu_refresh"></item>
 	<item android:id="@+menu_id/KML_EXPORT" android:title="@string/MENU_KML_EXPORT_LABEL"
 		android:icon="@drawable/ic_menu_save"></item>
 	<item android:id="@+menu_id/QUIT" android:title="@string/MENU_QUIT_LABEL"
@@ -27,6 +27,7 @@
 			<item android:id="@+menu_id/SHOW_CLOSED" android:title="@string/MENU_SHOW_CLOSED_LABEL"
 				android:enabled="true" android:checkable="true" android:checked="false"
 				android:visible="true"></item>
+			<item android:id="@+menu_id/ABOUT" android:title="@string/MENU_ABOUT_LABEL"/>
 			<item android:id="@+menu_id/DELETE" android:title="@string/MENU_DELETE_LABEL" />
 		</menu>
 	</item>

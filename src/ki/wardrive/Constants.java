@@ -20,6 +20,10 @@ package ki.wardrive;
 
 public class Constants
 {
+	public static final String SYNC_ONLINE_URL = "http://wardrivedb.appspot.com/main";
+
+	public static final int SYNC_ONLINE_BUFFER = 100;
+
 	public static final String DATABASE_FULL_PATH = "/sdcard/wardrive.db3";
 
 	public static final String KML_EXPORT_FILE = "/sdcard/wardrive.kml";

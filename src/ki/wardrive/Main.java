@@ -19,6 +19,8 @@
 package ki.wardrive;
 
 import java.io.File;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -111,6 +113,8 @@ public class Main extends MapActivity implements LocationListener
 	//
 
 	private static final int EVENT_KML_EXPORT_DONE = 0;
+
+	private static final int EVENT_SYNC_ONLINE_DONE = 1;
 
 	private static final int DIALOG_STATS = 0;
 
@@ -419,6 +423,13 @@ public class Main extends MapActivity implements LocationListener
 
 				break;
 			}
+			case R.menu_id.SYNC_ONLINE_DB:
+			{
+				toast(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE));
+				new Thread(sync_online_proc).start();
+
+				break;
+			}
 		}
 		return false;
 	}
@@ -434,6 +445,26 @@ public class Main extends MapActivity implements LocationListener
 		}
 	};
 
+	private Runnable sync_online_proc = new Runnable()
+	{
+		public void run()
+		{
+			try
+			{
+				URL url = new URL(Constants.SYNC_ONLINE_URL);
+				int inserted_count = SyncOnlineExport.export(database, url);
+				if (inserted_count > 0)
+				{
+					message_handler.sendMessage(Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE + inserted_count));
+				}
+			}
+			catch (MalformedURLException e)
+			{
+				notify_error(e);
+			}
+		}
+	};
+
 	private Handler message_handler = new Handler()
 	{
 		@Override
@@ -444,6 +475,13 @@ public class Main extends MapActivity implements LocationListener
 				case EVENT_KML_EXPORT_DONE:
 				{
 					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML));
+					break;
+				}
+
+				case EVENT_SYNC_ONLINE_DONE:
+				{
+					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE));
+					break;
 				}
 			}
 		}
