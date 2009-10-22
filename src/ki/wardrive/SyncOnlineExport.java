@@ -24,7 +24,10 @@ public class SyncOnlineExport
 	public static int export(SQLiteDatabase database, URL url)
 	{
 		int inserted_count = 0;
-		List<NameValuePair> values = new ArrayList<NameValuePair>(9);
+		BasicNameValuePair action = new BasicNameValuePair("action", "post_spots");
+		List<NameValuePair> values = new ArrayList<NameValuePair>(10);
+		values.add(action);
+		
 		Cursor c = null;
 		try
 		{
@@ -72,6 +75,7 @@ public class SyncOnlineExport
 						}
 
 						values.clear();
+						values.add(action);
 					}
 				}
 				while (c.moveToNext());
