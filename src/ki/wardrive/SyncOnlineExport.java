@@ -51,9 +51,9 @@ public class SyncOnlineExport
 					values.add(new BasicNameValuePair("capabilities", c.getString(2)));
 					values.add(new BasicNameValuePair("levels", c.getString(3)));
 					values.add(new BasicNameValuePair("frequencies", c.getString(4)));
-					values.add(new BasicNameValuePair("lats", c.getString(5)));
-					values.add(new BasicNameValuePair("lons", c.getString(6)));
-					values.add(new BasicNameValuePair("alts", c.getString(7)));
+					values.add(new BasicNameValuePair("lats", "" + c.getDouble(5)));
+					values.add(new BasicNameValuePair("lons", "" + c.getDouble(6)));
+					values.add(new BasicNameValuePair("alts", "" + c.getDouble(7)));
 					values.add(new BasicNameValuePair("timestamps", c.getString(8)));
 					count++;
 
