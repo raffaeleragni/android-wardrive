@@ -27,6 +27,7 @@ public class SyncOnlineExport
 	public static int export(SQLiteDatabase database, URL url, Handler message_handler) throws IllegalStateException, IOException
 	{
 		int inserted_count = 0;
+		int count = 0;
 		BasicNameValuePair action = new BasicNameValuePair("action", "post_spots");
 		List<NameValuePair> values = new ArrayList<NameValuePair>(10);
 		values.add(action);
@@ -54,11 +55,13 @@ public class SyncOnlineExport
 					values.add(new BasicNameValuePair("lons", c.getString(6)));
 					values.add(new BasicNameValuePair("alts", c.getString(7)));
 					values.add(new BasicNameValuePair("timestamps", c.getString(8)));
-
-					if (values.size() == Constants.SYNC_ONLINE_BUFFER || c.isLast())
+					count++;
+					
+					if (count == Constants.SYNC_ONLINE_BUFFER || c.isLast())
 					{
 						HttpClient client = new DefaultHttpClient();
 						HttpPost post = new HttpPost(Constants.SYNC_ONLINE_URL);
+						values.add(new BasicNameValuePair("spots_count", "" + count));
 						post.setEntity(new UrlEncodedFormEntity(values));
 						HttpResponse response = client.execute(post);
 						if (response != null)
@@ -76,6 +79,7 @@ public class SyncOnlineExport
 							message_handler.sendMessage(msg);
 						}
 
+						count = 0;
 						values.clear();
 						values.add(action);
 					}
