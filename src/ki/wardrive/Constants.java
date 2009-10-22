@@ -20,7 +20,9 @@ package ki.wardrive;
 
 public class Constants
 {
-	public static final String SYNC_ONLINE_URL = "http://wardrivedb.appspot.com/main";
+	public static final String SYNC_ONLINE_URL = "http://localhost:8080/main";
+
+//	public static final String SYNC_ONLINE_URL = "http://wardrivedb.appspot.com/main";
 
 	public static final int SYNC_ONLINE_BUFFER = 100;
 

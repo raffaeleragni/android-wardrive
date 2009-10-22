@@ -17,17 +17,20 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 public class SyncOnlineExport
 {
-	public static int export(SQLiteDatabase database, URL url)
+	public static int export(SQLiteDatabase database, URL url, Handler message_handler)
 	{
 		int inserted_count = 0;
 		BasicNameValuePair action = new BasicNameValuePair("action", "post_spots");
 		List<NameValuePair> values = new ArrayList<NameValuePair>(10);
 		values.add(action);
-		
+
 		Cursor c = null;
 		try
 		{
@@ -52,7 +55,7 @@ public class SyncOnlineExport
 					values.add(new BasicNameValuePair("alts", c.getString(7)));
 					values.add(new BasicNameValuePair("timestamps", c.getString(8)));
 
-					if (values.size() == Constants.SYNC_ONLINE_BUFFER)
+					if (values.size() == Constants.SYNC_ONLINE_BUFFER || c.isLast())
 					{
 						try
 						{
@@ -62,11 +65,16 @@ public class SyncOnlineExport
 							HttpResponse response = client.execute(post);
 							if (response != null)
 							{
-								Reader r = new InputStreamReader(response.getEntity().getContent(), response.getEntity()
-										.getContentEncoding().getValue());
+								Reader r = new InputStreamReader(response.getEntity().getContent());
 								CharBuffer cb = CharBuffer.allocate(50);
 								r.read(cb);
 								inserted_count += Integer.parseInt(cb.toString());
+
+								Message msg = Message.obtain(message_handler, Main.EVENT_SYNC_ONLINE_PROGRESS);
+								Bundle b = new Bundle();
+								b.putInt(Main.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, inserted_count);
+								msg.setData(b);
+								message_handler.sendMessage(msg);
 							}
 						}
 						catch (Exception e)
@@ -85,7 +93,7 @@ public class SyncOnlineExport
 		{
 			destroy_cursor(c);
 		}
-		
+
 		return inserted_count;
 	}
 

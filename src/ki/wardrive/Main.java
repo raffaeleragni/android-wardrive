@@ -76,27 +76,27 @@ public class Main extends MapActivity implements LocationListener
 	// Program related
 	//
 
-	private static final int OTYPE_MY_LOCATION = 0;
+	public static final int OTYPE_MY_LOCATION = 0;
 
-	private static final int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
+	public static final int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
 
-	private static final int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
+	public static final int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
 
-	private static final String LAST_LAT = "last_lat";
+	public static final String LAST_LAT = "last_lat";
 
-	private static final String LAST_LON = "last_lon";
+	public static final String LAST_LON = "last_lon";
 
-	private static final String ZOOM_LEVEL = "zoom_level";
+	public static final String ZOOM_LEVEL = "zoom_level";
 
-	private static final String CONF_SHOW_LABELS = "show_labels";
+	public static final String CONF_SHOW_LABELS = "show_labels";
 
-	private static final String CONF_FOLLOW = "follow";
+	public static final String CONF_FOLLOW = "follow";
 
-	private static final String CONF_MAP_MODE = "map_mode";
+	public static final String CONF_MAP_MODE = "map_mode";
 
-	private static final String CONF_SHOW_OPEN = "show_open";
+	public static final String CONF_SHOW_OPEN = "show_open";
 
-	private static final String CONF_SHOW_CLOSED = "show_closed";
+	public static final String CONF_SHOW_CLOSED = "show_closed";
 
 	private SharedPreferences settings;
 
@@ -112,15 +112,19 @@ public class Main extends MapActivity implements LocationListener
 	// Interface Related
 	//
 
-	private static final int EVENT_KML_EXPORT_DONE = 0;
+	public static final int EVENT_KML_EXPORT_DONE = 0;
 
-	private static final int EVENT_SYNC_ONLINE_DONE = 1;
+	public static final int EVENT_SYNC_ONLINE_PROGRESS = 1;
 
-	private static final int DIALOG_STATS = 0;
+	public static final String EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT = "inserted_count";
 
-	private static final int DIALOG_ABOUT = DIALOG_STATS + 1;
+	public static final int EVENT_SYNC_ONLINE_DONE = 2;
 
-	private static final int DIALOG_DELETE_ALL_WIFI = DIALOG_ABOUT + 1;
+	public static final int DIALOG_STATS = 0;
+
+	public static final int DIALOG_ABOUT = DIALOG_STATS + 1;
+
+	public static final int DIALOG_DELETE_ALL_WIFI = DIALOG_ABOUT + 1;
 
 	private MapView mapview;
 
@@ -452,10 +456,14 @@ public class Main extends MapActivity implements LocationListener
 			try
 			{
 				URL url = new URL(Constants.SYNC_ONLINE_URL);
-				int inserted_count = SyncOnlineExport.export(database, url);
+				int inserted_count = SyncOnlineExport.export(database, url, message_handler);
 				if (inserted_count > 0)
 				{
-					message_handler.sendMessage(Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE + inserted_count));
+					Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
+					Bundle b = new Bundle();
+					b.putInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, inserted_count);
+					msg.setData(b);
+					message_handler.sendMessage(msg);
 				}
 			}
 			catch (MalformedURLException e)
@@ -478,9 +486,17 @@ public class Main extends MapActivity implements LocationListener
 					break;
 				}
 
+				case EVENT_SYNC_ONLINE_PROGRESS:
+				{
+					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
+							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
+					break;
+				}
+
 				case EVENT_SYNC_ONLINE_DONE:
 				{
-					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE));
+					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE)
+							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
 					break;
 				}
 			}
