@@ -16,7 +16,7 @@
     <string name="MENU_DELETE_WARNING_LABEL">Verranno cancellati tutti i dati finora salvati. Continuare?</string>
     <string name="MENU_SERVICE_LABEL">Servizio ON/OFF</string>
     <string name="MENU_KML_EXPORT_LABEL">Esporta in KML</string>
-    <string name="MENU_SYNC_ONLINE_DB">Sincronizza online</string>
+    <string name="MENU_SYNC_ONLINE_DB">Invia a databse online</string>
     <string name="MESSAGE_STARTING_KML_EXPORT">Inizio esportazione KML...</string>
     <string name="MESSAGE_STARTING_SYNC_ONLINE">Invio al database online...</string>
     <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">File KML esportato</string>
