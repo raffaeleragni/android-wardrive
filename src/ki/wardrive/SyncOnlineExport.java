@@ -57,7 +57,6 @@ public class SyncOnlineExport
 
 					if (values.size() == Constants.SYNC_ONLINE_BUFFER || c.isLast())
 					{
-
 						HttpClient client = new DefaultHttpClient();
 						HttpPost post = new HttpPost(Constants.SYNC_ONLINE_URL);
 						post.setEntity(new UrlEncodedFormEntity(values));
