@@ -56,7 +56,7 @@ public class SyncOnlineExport
 					values.add(new BasicNameValuePair("alts", c.getString(7)));
 					values.add(new BasicNameValuePair("timestamps", c.getString(8)));
 					count++;
-					
+
 					if (count == Constants.SYNC_ONLINE_BUFFER || c.isLast())
 					{
 						HttpClient client = new DefaultHttpClient();
@@ -69,7 +69,13 @@ public class SyncOnlineExport
 							Reader r = new InputStreamReader(response.getEntity().getContent());
 							CharBuffer cb = CharBuffer.allocate(50);
 							r.read(cb);
-							inserted_count += Integer.parseInt(cb.toString());
+							try
+							{
+								inserted_count += Integer.parseInt(cb.toString());
+							}
+							catch (NumberFormatException e)
+							{
+							}
 
 							Message msg = Message.obtain(message_handler, Main.EVENT_SYNC_ONLINE_PROGRESS);
 							Bundle b = new Bundle();

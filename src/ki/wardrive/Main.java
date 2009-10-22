@@ -493,7 +493,7 @@ public class Main extends MapActivity implements LocationListener
 
 				case EVENT_SYNC_ONLINE_PROGRESS:
 				{
-					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
+					toast(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE) + " "
 							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT) + "%");
 					break;
 				}
