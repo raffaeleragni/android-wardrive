@@ -119,6 +119,8 @@ public class Main extends MapActivity implements LocationListener
 
 	public static final int EVENT_SYNC_ONLINE_DONE = 2;
 
+	public static final int EVENT_NOTIFY_ERROR = 3;
+
 	public static final int DIALOG_STATS = 0;
 
 	public static final int DIALOG_ABOUT = DIALOG_STATS + 1;
@@ -467,7 +469,11 @@ public class Main extends MapActivity implements LocationListener
 			}
 			catch (Exception e)
 			{
-				notify_error(e);
+				Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
+				Bundle b = new Bundle();
+				b.putSerializable("exception", e);
+				msg.setData(b);
+				message_handler.sendMessage(msg);
 			}
 		}
 	};
@@ -496,6 +502,12 @@ public class Main extends MapActivity implements LocationListener
 				{
 					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE)
 							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
+					break;
+				}
+
+				case EVENT_NOTIFY_ERROR:
+				{
+					notify_error((Exception) msg.getData().getSerializable("exception"));
 					break;
 				}
 			}
