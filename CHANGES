@@ -102,4 +102,9 @@ v2.0
 v2.1
 
 	- Sends only the newly updated WiFis based on the last sync date.
-	
+
+v2.2
+
+	- Updates timestamps only if effectively updates any info in the record.
+	  This will prevent to send duplicate data on sync.
+	  
