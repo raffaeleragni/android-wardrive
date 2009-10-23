@@ -244,10 +244,12 @@ public class ScanService extends Service
 			boolean toadd = false;
 			boolean toupdate = false;
 			boolean toupdate_coords = false;
+			boolean toupdate_values = false;
 			try
 			{
-				cursor = database.query(DBTableNetworks.TABLE_NETWORKS,
-						new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL },
+				cursor = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] {
+						DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID,
+						DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY },
 						DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS, new String[] { result.BSSID }, null, null, null);
 				if (!cursor.moveToFirst())
 				{
@@ -255,8 +257,10 @@ public class ScanService extends Service
 				}
 				else
 				{
-					toupdate = true;
+					toupdate_values = !cursor.getString(1).equals(result.SSID)
+							|| !cursor.getString(2).equals(result.capabilities) || cursor.getInt(3) != result.frequency;
 					toupdate_coords = result.level > cursor.getInt(0);
+					toupdate = toupdate_values || toupdate_coords;
 				}
 			}
 			finally
@@ -282,10 +286,14 @@ public class ScanService extends Service
 			else if (toupdate)
 			{
 				ContentValues values = new ContentValues();
-				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, result.SSID);
-				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
-				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
-				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
+
+				if (toupdate_values)
+				{
+					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, result.SSID);
+					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, result.capabilities);
+					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, result.frequency);
+				}
+
 				if (toupdate_coords)
 				{
 					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, lat);
@@ -294,6 +302,7 @@ public class ScanService extends Service
 					values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, result.level);
 				}
 
+				values.put(DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP, System.currentTimeMillis());
 				database.update(DBTableNetworks.TABLE_NETWORKS, values, DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS,
 						new String[] { result.BSSID });
 			}
