@@ -107,4 +107,8 @@ v2.2
 
 	- Updates timestamps only if effectively updates any info in the record.
 	  This will prevent to send duplicate data on sync.
-	  
+
+v2.3
+
+    - Lighter syncronization to server, sends smaller packets now (20 each).
+    
