@@ -563,6 +563,7 @@ public class Main extends MapActivity implements LocationListener
 				{
 					public void onClick(DialogInterface dialog, int id)
 					{
+						dialog.cancel();
 						delete_all_wifi();
 					}
 				});
