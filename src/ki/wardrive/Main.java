@@ -149,6 +149,8 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
+	
+	private boolean sending_sync = false;
 
 	private ProgressDialog progressDialog;
 
@@ -438,7 +440,10 @@ public class Main extends MapActivity implements LocationListener
 			case R.menu_id.SYNC_ONLINE_DB:
 			{
 				showDialog(DIALOG_SYNC_PROGRESS);
-				new Thread(sync_online_proc).start();
+				if (!sending_sync)
+				{
+					new Thread(sync_online_proc).start();
+				}
 
 				break;
 			}
@@ -467,6 +472,7 @@ public class Main extends MapActivity implements LocationListener
 				long newtstamp = System.currentTimeMillis();
 
 				URL url = new URL(Constants.SYNC_ONLINE_URL);
+				sending_sync = true;
 				int inserted_count = SyncOnlineExport.export(tstamp, database, url, message_handler);
 				Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
 				Bundle b = new Bundle();
@@ -512,6 +518,7 @@ public class Main extends MapActivity implements LocationListener
 
 				case EVENT_SYNC_ONLINE_DONE:
 				{
+					sending_sync = false;
 					if (progressDialog.isShowing())
 					{
 						dismissDialog(DIALOG_SYNC_PROGRESS);
@@ -573,6 +580,7 @@ public class Main extends MapActivity implements LocationListener
 				progressDialog = new ProgressDialog(this);
 				progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				progressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE));
+				progressDialog.setProgress(0);
 				progressDialog.setCancelable(true);
 				return progressDialog;
 			}
