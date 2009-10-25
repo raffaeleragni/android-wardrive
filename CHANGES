@@ -111,4 +111,8 @@ v2.2
 v2.3
 
     - Lighter syncronization to server, sends smaller packets now (20 each).
+
+v2.4
+
+    - Progress bar while sending to server.
     

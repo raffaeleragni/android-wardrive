@@ -20,7 +20,7 @@
     <string name="MESSAGE_STARTING_KML_EXPORT">Starting KML export...</string>
     <string name="MESSAGE_STARTING_SYNC_ONLINE">Sending to online database...</string>
     <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML file exported</string>
-    <string name="MESSAGE_SUCCESFULLY_SYNC_ONLINE">Sending to database complete, new items: </string>
+    <string name="MESSAGE_SUCCESFULLY_SYNC_ONLINE">Sending to database complete, updated items: </string>
     <string name="MESSAGE_STATISTICS">Statistics:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nOf which open: </string>
