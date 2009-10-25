@@ -503,13 +503,19 @@ public class Main extends MapActivity implements LocationListener
 
 				case EVENT_SYNC_ONLINE_PROGRESS:
 				{
-					progressDialog.setProgress(msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
+					if (progressDialog.isShowing())
+					{
+						progressDialog.setProgress(msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
+					}
 					break;
 				}
 
 				case EVENT_SYNC_ONLINE_DONE:
 				{
-					dismissDialog(DIALOG_SYNC_PROGRESS);
+					if (progressDialog.isShowing())
+					{
+						dismissDialog(DIALOG_SYNC_PROGRESS);
+					}
 					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
 							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
 					break;
@@ -567,7 +573,7 @@ public class Main extends MapActivity implements LocationListener
 				progressDialog = new ProgressDialog(this);
 				progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				progressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE));
-				progressDialog.setCancelable(false);
+				progressDialog.setCancelable(true);
 				return progressDialog;
 			}
 		}
