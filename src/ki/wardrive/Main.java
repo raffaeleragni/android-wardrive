@@ -362,6 +362,27 @@ public class Main extends MapActivity implements LocationListener
 				stopService(service_intent);
 
 				finish();
+				
+				Runnable killproc = new Runnable()
+				{
+					public void run()
+					{
+						try
+						{
+							Thread.sleep(3000);
+						}
+						catch (InterruptedException e)
+						{
+						}
+						//
+						// We don't know if service could be still running since we don't have much control over it.
+						// And, some user reported it drawing battery also after being closed.
+						//
+						//android.os.Process.killProcess(android.os.Process.myPid());
+						System.exit(0);
+					}
+				};
+				new Thread(killproc).start();
 
 				return true;
 			}

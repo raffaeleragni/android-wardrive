@@ -371,7 +371,7 @@ public class ScanService extends Service
 		Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
 		Context context = getApplicationContext();
 		Intent notificationIntent = new Intent(this, ScanService.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, Notification.FLAG_AUTO_CANCEL);
 		n.setLatestEventInfo(context, message, "", contentIntent);
 		nm.notify(1, n);
 	}
