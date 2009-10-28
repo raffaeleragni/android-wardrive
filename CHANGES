@@ -121,4 +121,7 @@ v2.5
     - Sending to server now is never started more than once, remains in
       background, and the progress bar can be resumed by choosing "send" again.
     
-    
+v2.6
+
+    - Force quit of the application when calling quit.
+      This should solve the issue about drawing battery even when closing the app.
