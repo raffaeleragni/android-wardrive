@@ -632,8 +632,8 @@ public class Main extends MapActivity implements LocationListener
 				open = c.getInt(0);
 				c.close();
 
-				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_LAST, new String[] { settings.getString(
-						CONF_LASTSERVICE_TSTAMP, "0") });
+				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_LAST, new String[] { ""
+						+ settings.getLong(CONF_LASTSERVICE_TSTAMP, 0) });
 				c.moveToFirst();
 				last = c.getInt(0);
 
