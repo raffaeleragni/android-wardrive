@@ -24,6 +24,9 @@
     <string name="MESSAGE_STATISTICS">Statistics:</string>
     <string name="MESSAGE_STATISTICS_COUNT">\nTotal WiFis in DB: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nOf which open: </string>
+    <string name="MESSAGE_STATISTICS_CLOSED">\nOf which closed: </string>
+    <string name="MESSAGE_STATISTICS_LASTAPP_TSTAMP">\n: Last application run:</string>
+    <string name="MESSAGE_STATISTICS_LASTSERVICE_TSTAMP">\n: Last service run:</string>
     <string name="SERVICE_STARTED">wardrive Service started</string>
     <string name="SERVICE_STOPPED">wardrive Service stopped</string>
     <string name="GPS_ENABLED">GPS enabled</string>

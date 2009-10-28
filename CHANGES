@@ -125,3 +125,8 @@ v2.6
 
     - Force quit of the application when calling quit.
       This should solve the issue about drawing battery even when closing the app.
+      
+v2.7
+
+    - Also shows closed wifis count on statistics.
+    - Shows last running dates for application and service on statistics.

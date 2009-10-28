@@ -20,6 +20,8 @@ package ki.wardrive;
 
 import java.io.File;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -100,6 +102,10 @@ public class Main extends MapActivity implements LocationListener
 
 	public static final String CONF_SYNC_TSTAMP = "sync_tstamp";
 
+	public static final String CONF_LASTAPP_TSTAMP = "lastapp_tstamp";
+
+	public static final String CONF_LASTSERVICE_TSTAMP = "lastservice_tstamp";
+
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
@@ -132,6 +138,8 @@ public class Main extends MapActivity implements LocationListener
 
 	public static final int DIALOG_SYNC_PROGRESS = DIALOG_DELETE_ALL_WIFI + 1;
 
+	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	
 	private MapView mapview;
 
 	private Overlays overlays_closed;
@@ -300,6 +308,8 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putInt(LAST_LAT, p.getLatitudeE6());
 			settings_editor.putInt(LAST_LON, p.getLongitudeE6());
 			settings_editor.commit();
+			
+			save_app_tstamp();
 		}
 		catch (Exception e)
 		{
@@ -360,6 +370,8 @@ public class Main extends MapActivity implements LocationListener
 			case R.menu_id.QUIT:
 			{
 				stopService(service_intent);
+				save_service_tstamp();
+				save_app_tstamp();
 
 				finish();
 				
@@ -443,6 +455,7 @@ public class Main extends MapActivity implements LocationListener
 				else
 				{
 					stopService(service_intent);
+					save_service_tstamp();
 				}
 				break;
 			}
@@ -628,19 +641,27 @@ public class Main extends MapActivity implements LocationListener
 			Cursor c = null;
 			try
 			{
+				int total, open;
+				
 				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_WIFIS, null);
-				if (c.moveToFirst())
-				{
-					sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
-					sb.append(c.getInt(0));
-				}
+				c.moveToFirst();
+				total = c.getInt(0);
 				c.close();
+				
 				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_OPEN, null);
-				if (c.moveToFirst())
-				{
-					sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
-					sb.append(c.getInt(0));
-				}
+				c.moveToFirst();
+				open = c.getInt(0);
+				
+				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
+				sb.append(total);
+				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
+				sb.append(open);
+				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_CLOSED));
+				sb.append(total - open);
+				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTAPP_TSTAMP));
+				sb.append(sdf.format(new Date(settings.getLong(CONF_LASTAPP_TSTAMP, 0))));
+				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTSERVICE_TSTAMP));
+				sb.append(sdf.format(new Date(settings.getLong(CONF_LASTSERVICE_TSTAMP, 0))));
 			}
 			finally
 			{
@@ -936,6 +957,18 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Miscellaneous
 	//
+	
+	public void save_app_tstamp()
+	{
+		settings_editor.putLong(CONF_LASTAPP_TSTAMP, System.currentTimeMillis());
+		settings_editor.commit();
+	}
+
+	public void save_service_tstamp()
+	{
+		settings_editor.putLong(CONF_LASTSERVICE_TSTAMP, System.currentTimeMillis());
+		settings_editor.commit();
+	}
 
 	public void toast(String message)
 	{
