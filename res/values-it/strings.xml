@@ -25,8 +25,8 @@
     <string name="MESSAGE_STATISTICS_COUNT">\nTotale WiFi in database: </string>
     <string name="MESSAGE_STATISTICS_OPEN">\nDi cui aperte: </string>
     <string name="MESSAGE_STATISTICS_CLOSED">\nDi cui chiuse: </string>
-    <string name="MESSAGE_STATISTICS_LASTAPP_TSTAMP">\n: Ultima esecuzione applicazione:</string>
-    <string name="MESSAGE_STATISTICS_LASTSERVICE_TSTAMP">\n: Ultima esecuzione servizio:</string>
+    <string name="MESSAGE_STATISTICS_LASTAPP_TSTAMP">\nUltima esecuzione applicazione:</string>
+    <string name="MESSAGE_STATISTICS_LASTSERVICE_TSTAMP">\nUltima esecuzione servizio:</string>
     <string name="SERVICE_STARTED">Servizio wardrive avviato</string>
     <string name="SERVICE_STOPPED">Servizio wardrive arrestato</string>
     <string name="GPS_ENABLED">GPS abilitato</string>

@@ -659,9 +659,9 @@ public class Main extends MapActivity implements LocationListener
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_CLOSED));
 				sb.append(total - open);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTAPP_TSTAMP));
-				sb.append(sdf.format(new Date(settings.getLong(CONF_LASTAPP_TSTAMP, 0))));
+				sb.append("\n    " + sdf.format(new Date(settings.getLong(CONF_LASTAPP_TSTAMP, 0))));
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTSERVICE_TSTAMP));
-				sb.append(sdf.format(new Date(settings.getLong(CONF_LASTSERVICE_TSTAMP, 0))));
+				sb.append("\n    " + sdf.format(new Date(settings.getLong(CONF_LASTSERVICE_TSTAMP, 0))));
 			}
 			finally
 			{
