@@ -139,7 +139,7 @@ public class Main extends MapActivity implements LocationListener
 	public static final int DIALOG_SYNC_PROGRESS = DIALOG_DELETE_ALL_WIFI + 1;
 
 	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-	
+
 	private MapView mapview;
 
 	private Overlays overlays_closed;
@@ -157,7 +157,7 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
-	
+
 	private boolean sending_sync = false;
 
 	private ProgressDialog progressDialog;
@@ -308,7 +308,7 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putInt(LAST_LAT, p.getLatitudeE6());
 			settings_editor.putInt(LAST_LON, p.getLongitudeE6());
 			settings_editor.commit();
-			
+
 			save_app_tstamp();
 		}
 		catch (Exception e)
@@ -374,28 +374,6 @@ public class Main extends MapActivity implements LocationListener
 				save_app_tstamp();
 
 				finish();
-				
-				// This could be a model violation
-//				Runnable killproc = new Runnable()
-//				{
-//					public void run()
-//					{
-//						try
-//						{
-//							Thread.sleep(3000);
-//						}
-//						catch (InterruptedException e)
-//						{
-//						}
-//						//
-//						// We don't know if service could be still running since we don't have much control over it.
-//						// And, some user reported it drawing battery also after being closed.
-//						//
-//						//android.os.Process.killProcess(android.os.Process.myPid());
-//						System.exit(0);
-//					}
-//				};
-//				new Thread(killproc).start();
 
 				return true;
 			}
@@ -642,23 +620,31 @@ public class Main extends MapActivity implements LocationListener
 			Cursor c = null;
 			try
 			{
-				int total, open;
-				
+				int total, open, last;
+
 				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_WIFIS, null);
 				c.moveToFirst();
 				total = c.getInt(0);
 				c.close();
-				
+
 				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_OPEN, null);
 				c.moveToFirst();
 				open = c.getInt(0);
-				
+				c.close();
+
+				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_LAST, new String[] { settings.getString(
+						CONF_LASTSERVICE_TSTAMP, "0") });
+				c.moveToFirst();
+				last = c.getInt(0);
+
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
 				sb.append(total);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
 				sb.append(open);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_CLOSED));
 				sb.append(total - open);
+				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_NEW_WIFIS));
+				sb.append(last);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTAPP_TSTAMP));
 				sb.append("\n    " + sdf.format(new Date(settings.getLong(CONF_LASTAPP_TSTAMP, 0))));
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTSERVICE_TSTAMP));
@@ -958,7 +944,7 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Miscellaneous
 	//
-	
+
 	public void save_app_tstamp()
 	{
 		settings_editor.putLong(CONF_LASTAPP_TSTAMP, System.currentTimeMillis());

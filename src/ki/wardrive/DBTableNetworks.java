@@ -62,6 +62,8 @@ public class DBTableNetworks
 
 	public static final String SELECT_COUNT_OPEN = "select count(bssid) from networks where capabilities = ''";
 
+	public static final String SELECT_COUNT_LAST = "select count(bssid) from networks where timestamp >= ?";
+
 	public static final String CREATE_TABLE_NETWORKS = "create table if not exists networks (bssid text primary key, ssid text, capabilities text, level integer, frequency integer, lat real, lon real, alt real, timestamp integer)";
 
 	public static final String CREATE_INDEX_LATLON = "create index if not exists networks_latlon_idx on networks(lat, lon)";

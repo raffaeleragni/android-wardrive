@@ -130,3 +130,5 @@ v2.7
 
     - Also shows closed wifis count on statistics.
     - Shows last running dates for application and service on statistics.
+    - Show last catched wifis since the last service run on statistics.
+    
