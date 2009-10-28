@@ -638,13 +638,13 @@ public class Main extends MapActivity implements LocationListener
 				last = c.getInt(0);
 
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
-				sb.append(total);
+				sb.append(" " + total);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
-				sb.append(open);
+				sb.append(" " + open);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_CLOSED));
-				sb.append(total - open);
+				sb.append(" " + (total - open));
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_NEW_WIFIS));
-				sb.append(last);
+				sb.append(" " + last);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTAPP_TSTAMP));
 				sb.append("\n    " + sdf.format(new Date(settings.getLong(CONF_LASTAPP_TSTAMP, 0))));
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTSERVICE_TSTAMP));
