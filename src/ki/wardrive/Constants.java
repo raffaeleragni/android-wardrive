@@ -51,4 +51,50 @@ public class Constants
 	public static final int SERVICE_GPS_EVENT_METERS = 3;
 
 	public static final boolean SERVICE_TOASTS_ENABLED = false;
+
+	public static final int OTYPE_MY_LOCATION = 0;
+
+	public static final int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
+
+	public static final int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
+
+	public static final String LAST_LAT = "last_lat";
+
+	public static final String LAST_LON = "last_lon";
+
+	public static final String ZOOM_LEVEL = "zoom_level";
+
+	public static final String CONF_SHOW_LABELS = "show_labels";
+
+	public static final String CONF_FOLLOW = "follow";
+
+	public static final String CONF_MAP_MODE = "map_mode";
+
+	public static final String CONF_SHOW_OPEN = "show_open";
+
+	public static final String CONF_SHOW_CLOSED = "show_closed";
+
+	public static final String CONF_SYNC_TSTAMP = "sync_tstamp";
+
+	public static final String CONF_LASTAPP_TSTAMP = "lastapp_tstamp";
+
+	public static final String CONF_LASTSERVICE_TSTAMP = "lastservice_tstamp";
+
+	public static final int EVENT_KML_EXPORT_DONE = 0;
+
+	public static final int EVENT_SYNC_ONLINE_PROGRESS = 1;
+
+	public static final String EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT = "inserted_count";
+
+	public static final int EVENT_SYNC_ONLINE_DONE = 2;
+
+	public static final int EVENT_NOTIFY_ERROR = 3;
+
+	public static final int DIALOG_STATS = 0;
+
+	public static final int DIALOG_ABOUT = DIALOG_STATS + 1;
+
+	public static final int DIALOG_DELETE_ALL_WIFI = DIALOG_ABOUT + 1;
+
+	public static final int DIALOG_SYNC_PROGRESS = DIALOG_DELETE_ALL_WIFI + 1;
 }

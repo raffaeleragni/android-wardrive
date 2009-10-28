@@ -68,10 +68,10 @@ public class SyncOnlineExport
 
 							if (!c.isLast())
 							{
-								Message msg = Message.obtain(message_handler, Main.EVENT_SYNC_ONLINE_PROGRESS);
+								Message msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_PROGRESS);
 								Bundle b = new Bundle();
-								b.putInt(Main.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT,
-										(int) (((double) c.getPosition() / (double) c.getCount()) * 100));
+								b.putInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, (int) (((double) c
+										.getPosition() / (double) c.getCount()) * 100));
 								msg.setData(b);
 								message_handler.sendMessage(msg);
 							}

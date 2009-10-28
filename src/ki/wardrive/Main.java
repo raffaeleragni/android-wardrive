@@ -78,34 +78,6 @@ public class Main extends MapActivity implements LocationListener
 	// Program related
 	//
 
-	public static final int OTYPE_MY_LOCATION = 0;
-
-	public static final int OTYPE_OPEN_WIFI = OTYPE_MY_LOCATION + 1;
-
-	public static final int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
-
-	public static final String LAST_LAT = "last_lat";
-
-	public static final String LAST_LON = "last_lon";
-
-	public static final String ZOOM_LEVEL = "zoom_level";
-
-	public static final String CONF_SHOW_LABELS = "show_labels";
-
-	public static final String CONF_FOLLOW = "follow";
-
-	public static final String CONF_MAP_MODE = "map_mode";
-
-	public static final String CONF_SHOW_OPEN = "show_open";
-
-	public static final String CONF_SHOW_CLOSED = "show_closed";
-
-	public static final String CONF_SYNC_TSTAMP = "sync_tstamp";
-
-	public static final String CONF_LASTAPP_TSTAMP = "lastapp_tstamp";
-
-	public static final String CONF_LASTSERVICE_TSTAMP = "lastservice_tstamp";
-
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
@@ -120,25 +92,7 @@ public class Main extends MapActivity implements LocationListener
 	// Interface Related
 	//
 
-	public static final int EVENT_KML_EXPORT_DONE = 0;
-
-	public static final int EVENT_SYNC_ONLINE_PROGRESS = 1;
-
-	public static final String EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT = "inserted_count";
-
-	public static final int EVENT_SYNC_ONLINE_DONE = 2;
-
-	public static final int EVENT_NOTIFY_ERROR = 3;
-
-	public static final int DIALOG_STATS = 0;
-
-	public static final int DIALOG_ABOUT = DIALOG_STATS + 1;
-
-	public static final int DIALOG_DELETE_ALL_WIFI = DIALOG_ABOUT + 1;
-
-	public static final int DIALOG_SYNC_PROGRESS = DIALOG_DELETE_ALL_WIFI + 1;
-
-	private static SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
 
 	private MapView mapview;
 
@@ -192,18 +146,18 @@ public class Main extends MapActivity implements LocationListener
 			settings = getPreferences(MODE_PRIVATE);
 			settings_editor = settings.edit();
 
-			show_labels = settings.getBoolean(CONF_SHOW_LABELS, show_labels);
-			follow_me = settings.getBoolean(CONF_FOLLOW, follow_me);
-			map_mode = settings.getBoolean(CONF_MAP_MODE, map_mode);
-			show_open = settings.getBoolean(CONF_SHOW_OPEN, show_open);
-			show_closed = settings.getBoolean(CONF_SHOW_CLOSED, show_closed);
+			show_labels = settings.getBoolean(Constants.CONF_SHOW_LABELS, show_labels);
+			follow_me = settings.getBoolean(Constants.CONF_FOLLOW, follow_me);
+			map_mode = settings.getBoolean(Constants.CONF_MAP_MODE, map_mode);
+			show_open = settings.getBoolean(Constants.CONF_SHOW_OPEN, show_open);
+			show_closed = settings.getBoolean(Constants.CONF_SHOW_CLOSED, show_closed);
 
-			GeoPoint point = new GeoPoint(settings.getInt(LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(LAST_LON,
-					Constants.DEFAULT_LON));
+			GeoPoint point = new GeoPoint(settings.getInt(Constants.LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(
+					Constants.LAST_LON, Constants.DEFAULT_LON));
 
 			mapview = (MapView) findViewById(R.id.mapview);
 			mapview.getController().animateTo(point);
-			mapview.getController().setZoom(settings.getInt(ZOOM_LEVEL, Constants.DEFAULT_ZOOM_LEVEL));
+			mapview.getController().setZoom(settings.getInt(Constants.ZOOM_LEVEL, Constants.DEFAULT_ZOOM_LEVEL));
 			mapview.setBuiltInZoomControls(true);
 			mapview.setClickable(true);
 			mapview.setLongClickable(true);
@@ -211,9 +165,9 @@ public class Main extends MapActivity implements LocationListener
 
 			Drawable d = getResources().getDrawable(R.drawable.empty);
 
-			overlays_closed = new Overlays(OTYPE_CLOSED_WIFI, d, 96, 255, 0, 0);
-			overlays_opened = new Overlays(OTYPE_OPEN_WIFI, d, 192, 0, 200, 0);
-			overlays_me = new Overlays(OTYPE_MY_LOCATION, d, 255, 0, 0, 255);
+			overlays_closed = new Overlays(Constants.OTYPE_CLOSED_WIFI, d, 96, 255, 0, 0);
+			overlays_opened = new Overlays(Constants.OTYPE_OPEN_WIFI, d, 192, 0, 200, 0);
+			overlays_me = new Overlays(Constants.OTYPE_MY_LOCATION, d, 255, 0, 0, 255);
 
 			overlays_closed.show_labels = show_labels;
 			overlays_opened.show_labels = show_labels;
@@ -298,15 +252,15 @@ public class Main extends MapActivity implements LocationListener
 				location_manager.removeUpdates(Main.this);
 			}
 
-			settings_editor.putInt(ZOOM_LEVEL, mapview.getZoomLevel());
-			settings_editor.putBoolean(CONF_SHOW_LABELS, show_labels);
-			settings_editor.putBoolean(CONF_FOLLOW, follow_me);
-			settings_editor.putBoolean(CONF_MAP_MODE, map_mode);
-			settings_editor.putBoolean(CONF_SHOW_OPEN, show_open);
-			settings_editor.putBoolean(CONF_SHOW_CLOSED, show_closed);
+			settings_editor.putInt(Constants.ZOOM_LEVEL, mapview.getZoomLevel());
+			settings_editor.putBoolean(Constants.CONF_SHOW_LABELS, show_labels);
+			settings_editor.putBoolean(Constants.CONF_FOLLOW, follow_me);
+			settings_editor.putBoolean(Constants.CONF_MAP_MODE, map_mode);
+			settings_editor.putBoolean(Constants.CONF_SHOW_OPEN, show_open);
+			settings_editor.putBoolean(Constants.CONF_SHOW_CLOSED, show_closed);
 			GeoPoint p = mapview.getProjection().fromPixels(mapview.getWidth() / 2, mapview.getHeight() / 2);
-			settings_editor.putInt(LAST_LAT, p.getLatitudeE6());
-			settings_editor.putInt(LAST_LON, p.getLongitudeE6());
+			settings_editor.putInt(Constants.LAST_LAT, p.getLatitudeE6());
+			settings_editor.putInt(Constants.LAST_LON, p.getLongitudeE6());
 			settings_editor.commit();
 
 			save_app_tstamp();
@@ -379,7 +333,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.STATS:
 			{
-				showDialog(DIALOG_STATS);
+				showDialog(Constants.DIALOG_STATS);
 				return true;
 			}
 			case R.menu_id.LABELS:
@@ -407,7 +361,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.ABOUT:
 			{
-				showDialog(DIALOG_ABOUT);
+				showDialog(Constants.DIALOG_ABOUT);
 				break;
 			}
 			case R.menu_id.SHOW_OPEN:
@@ -440,7 +394,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.DELETE:
 			{
-				showDialog(DIALOG_DELETE_ALL_WIFI);
+				showDialog(Constants.DIALOG_DELETE_ALL_WIFI);
 				break;
 			}
 			case R.menu_id.KML_EXPORT:
@@ -452,7 +406,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.SYNC_ONLINE_DB:
 			{
-				showDialog(DIALOG_SYNC_PROGRESS);
+				showDialog(Constants.DIALOG_SYNC_PROGRESS);
 				if (!sending_sync)
 				{
 					new Thread(sync_online_proc).start();
@@ -470,7 +424,7 @@ public class Main extends MapActivity implements LocationListener
 		{
 			if (KMLExport.export(database, new File(Constants.KML_EXPORT_FILE)))
 			{
-				message_handler.sendMessage(Message.obtain(message_handler, EVENT_KML_EXPORT_DONE));
+				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_DONE));
 			}
 		}
 	};
@@ -481,24 +435,24 @@ public class Main extends MapActivity implements LocationListener
 		{
 			try
 			{
-				long tstamp = settings.getLong(CONF_SYNC_TSTAMP, 0);
+				long tstamp = settings.getLong(Constants.CONF_SYNC_TSTAMP, 0);
 				long newtstamp = System.currentTimeMillis();
 
 				URL url = new URL(Constants.SYNC_ONLINE_URL);
 				sending_sync = true;
 				int inserted_count = SyncOnlineExport.export(tstamp, database, url, message_handler);
-				Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
+				Message msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_DONE);
 				Bundle b = new Bundle();
-				b.putInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, inserted_count);
+				b.putInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, inserted_count);
 				msg.setData(b);
 				message_handler.sendMessage(msg);
 
-				settings_editor.putLong(CONF_SYNC_TSTAMP, newtstamp);
+				settings_editor.putLong(Constants.CONF_SYNC_TSTAMP, newtstamp);
 				settings_editor.commit();
 			}
 			catch (Exception e)
 			{
-				Message msg = Message.obtain(message_handler, EVENT_SYNC_ONLINE_DONE);
+				Message msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_DONE);
 				Bundle b = new Bundle();
 				b.putSerializable("exception", e);
 				msg.setData(b);
@@ -514,34 +468,34 @@ public class Main extends MapActivity implements LocationListener
 		{
 			switch (msg.what)
 			{
-				case EVENT_KML_EXPORT_DONE:
+				case Constants.EVENT_KML_EXPORT_DONE:
 				{
 					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML));
 					break;
 				}
 
-				case EVENT_SYNC_ONLINE_PROGRESS:
+				case Constants.EVENT_SYNC_ONLINE_PROGRESS:
 				{
 					if (progressDialog.isShowing())
 					{
-						progressDialog.setProgress(msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
+						progressDialog.setProgress(msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
 					}
 					break;
 				}
 
-				case EVENT_SYNC_ONLINE_DONE:
+				case Constants.EVENT_SYNC_ONLINE_DONE:
 				{
 					sending_sync = false;
 					if (progressDialog.isShowing())
 					{
-						dismissDialog(DIALOG_SYNC_PROGRESS);
+						dismissDialog(Constants.DIALOG_SYNC_PROGRESS);
 					}
 					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
-							+ msg.getData().getInt(EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
+							+ msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
 					break;
 				}
 
-				case EVENT_NOTIFY_ERROR:
+				case Constants.EVENT_NOTIFY_ERROR:
 				{
 					notify_error((Exception) msg.getData().getSerializable("exception"));
 					break;
@@ -555,19 +509,19 @@ public class Main extends MapActivity implements LocationListener
 	{
 		switch (id)
 		{
-			case DIALOG_STATS:
+			case Constants.DIALOG_STATS:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(print_stats());
 				return builder.create();
 			}
-			case DIALOG_ABOUT:
+			case Constants.DIALOG_ABOUT:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getText(R.string.ABOUT_BOX));
 				return builder.create();
 			}
-			case DIALOG_DELETE_ALL_WIFI:
+			case Constants.DIALOG_DELETE_ALL_WIFI:
 			{
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getText(R.string.MENU_DELETE_WARNING_LABEL));
@@ -588,7 +542,7 @@ public class Main extends MapActivity implements LocationListener
 				});
 				return builder.create();
 			}
-			case DIALOG_SYNC_PROGRESS:
+			case Constants.DIALOG_SYNC_PROGRESS:
 			{
 				progressDialog = new ProgressDialog(this);
 				progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -633,7 +587,7 @@ public class Main extends MapActivity implements LocationListener
 				c.close();
 
 				c = database.rawQuery(DBTableNetworks.SELECT_COUNT_LAST, new String[] { ""
-						+ settings.getLong(CONF_LASTSERVICE_TSTAMP, 0) });
+						+ settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0) });
 				c.moveToFirst();
 				last = c.getInt(0);
 
@@ -646,9 +600,9 @@ public class Main extends MapActivity implements LocationListener
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_NEW_WIFIS));
 				sb.append(" " + last);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTAPP_TSTAMP));
-				sb.append("\n    " + sdf.format(new Date(settings.getLong(CONF_LASTAPP_TSTAMP, 0))));
+				sb.append("\n    " + sdf.format(new Date(settings.getLong(Constants.CONF_LASTAPP_TSTAMP, 0))));
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTSERVICE_TSTAMP));
-				sb.append("\n    " + sdf.format(new Date(settings.getLong(CONF_LASTSERVICE_TSTAMP, 0))));
+				sb.append("\n    " + sdf.format(new Date(settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0))));
 			}
 			finally
 			{
@@ -758,12 +712,12 @@ public class Main extends MapActivity implements LocationListener
 		{
 			try
 			{
-				if (type == OTYPE_OPEN_WIFI && !show_open)
+				if (type == Constants.OTYPE_OPEN_WIFI && !show_open)
 				{
 					return;
 				}
 
-				if (type == OTYPE_CLOSED_WIFI && !show_closed)
+				if (type == Constants.OTYPE_CLOSED_WIFI && !show_closed)
 				{
 					return;
 				}
@@ -773,7 +727,7 @@ public class Main extends MapActivity implements LocationListener
 					return;
 				}
 
-				if (type == OTYPE_MY_LOCATION)
+				if (type == Constants.OTYPE_MY_LOCATION)
 				{
 					if (last_location != null)
 					{
@@ -793,7 +747,7 @@ public class Main extends MapActivity implements LocationListener
 							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID },
 							DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
 									+ " and "
-									+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
+									+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
 											: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
 									bottom_right), null, null, null);
 
@@ -841,7 +795,7 @@ public class Main extends MapActivity implements LocationListener
 															DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LON },
 													DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
 															+ " and "
-															+ (OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
+															+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
 																	: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION),
 													compose_latlon_between(top_left, bottom_right), null, null, null);
 
@@ -947,13 +901,13 @@ public class Main extends MapActivity implements LocationListener
 
 	public void save_app_tstamp()
 	{
-		settings_editor.putLong(CONF_LASTAPP_TSTAMP, System.currentTimeMillis());
+		settings_editor.putLong(Constants.CONF_LASTAPP_TSTAMP, System.currentTimeMillis());
 		settings_editor.commit();
 	}
 
 	public void save_service_tstamp()
 	{
-		settings_editor.putLong(CONF_LASTSERVICE_TSTAMP, System.currentTimeMillis());
+		settings_editor.putLong(Constants.CONF_LASTSERVICE_TSTAMP, System.currentTimeMillis());
 		settings_editor.commit();
 	}
 
