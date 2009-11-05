@@ -566,7 +566,7 @@ public class Main extends MapActivity implements LocationListener
 
 	private String print_stats()
 	{
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(getResources().getString(R.string.MESSAGE_STATISTICS));
 
 		if (database != null)
