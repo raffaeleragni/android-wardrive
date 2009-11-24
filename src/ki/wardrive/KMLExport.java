@@ -33,7 +33,13 @@ import android.util.Log;
  */
 public class KMLExport
 {
-	private static final String ROOT_START = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document>";
+	private static final String STYLE_RED = "<styleUrl>#red</styleUrl>";
+	
+	private static final String STYLE_YELLOW = "<styleUrl>#yellow</styleUrl>";
+	
+	private static final String STYLE_GREEN = "<styleUrl>#green</styleUrl>";
+	
+	private static final String ROOT_START = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\"><Document><Style id=\"red\"><IconStyle><Icon><href>http://maps.google.com/mapfiles/ms/icons/red-dot.png</href></Icon></IconStyle></Style> <Style id=\"yellow\"><IconStyle><Icon><href>http://maps.google.com/mapfiles/ms/icons/yellow-dot.png</href></Icon></IconStyle></Style><Style id=\"green\"><IconStyle><Icon><href>http://maps.google.com/mapfiles/ms/icons/green-dot.png</href></Icon></IconStyle></Style>";
 
 	private static final String ROOT_END = "\n</Document></kml>";
 
@@ -156,6 +162,9 @@ public class KMLExport
 
 	private static void write_mark(Cursor c, FileWriter fw) throws IOException
 	{
+		String cap = c.getString(2);
+		boolean open = cap == null || cap.length() == 0;
+		boolean wep = cap != null && cap.contains("WEP");
 		fw.append(MARK_START);
 		fw.append(NAME_START);
 		fw.append(c.getString(1)); //SSID
@@ -164,13 +173,14 @@ public class KMLExport
 		fw.append(GENERICS_INFO_1);
 		fw.append(c.getString(0)); //BSSID
 		fw.append(GENERICS_INFO_2);
-		fw.append(c.getString(2)); //CAPABILITIES
+		fw.append(cap); //CAPABILITIES
 		fw.append(GENERICS_INFO_3);
 		fw.append(c.getString(3)); //FREQUENCY
 		fw.append(GENERICS_INFO_4);
 		fw.append(c.getString(4)); //LEVEL
 		fw.append(GENERICS_INFO_END);
 		fw.append(DESCRIPTION_END);
+		fw.append(open ? STYLE_GREEN : (wep ? STYLE_YELLOW : STYLE_RED)); // Dot color
 		fw.append(POINT_START);
 		fw.append(COORDINATES_START);
 		fw.append(c.getDouble(6) + "," + c.getDouble(5) + "," + c.getDouble(7)); // LAT, LON, ALT
