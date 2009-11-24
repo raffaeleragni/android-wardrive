@@ -131,4 +131,8 @@ v2.7
     - Also shows closed wifis count on statistics.
     - Shows last running dates for application and service on statistics.
     - Show last catched wifis since the last service run on statistics.
+
+v2.8
+
+    - XML export now has colored dots depending of WiFis security methods.
     
