@@ -135,4 +135,8 @@ v2.7
 v2.8
 
     - XML export now has colored dots depending of WiFis security methods.
-    
+
+v2.9
+
+	- Sending to online database now only sends open wifis.
+	

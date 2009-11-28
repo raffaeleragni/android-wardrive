@@ -38,7 +38,8 @@ public class SyncOnlineExport
 					DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY,
 					DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
 					DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP },
-					DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP_AFTER, new String[] { "" + tstamp }, null, null, null);
+					DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP_AFTER + " and "
+							+ DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION, new String[] { "" + tstamp }, null, null, null);
 
 			if (c != null && c.moveToFirst())
 			{
