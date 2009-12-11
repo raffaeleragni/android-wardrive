@@ -140,4 +140,10 @@ v2.9
 
 	- Sending to online database now only sends open wifis.
 	- Asks the user to send all WiFis to online db, or to send only new ones.
-	
+
+v2.10
+
+	- Shows yellow for WEP wifis.
+	- When service is stopped or started only a toast is displayed, and not any
+	  other notifications (users couldn't delete the notification).
+	  

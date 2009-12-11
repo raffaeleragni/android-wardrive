@@ -165,9 +165,9 @@ public class Main extends MapActivity implements LocationListener
 
 			Drawable d = getResources().getDrawable(R.drawable.empty);
 
-			overlays_closed = new Overlays(Constants.OTYPE_CLOSED_WIFI, d, 96, 255, 0, 0);
-			overlays_opened = new Overlays(Constants.OTYPE_OPEN_WIFI, d, 192, 0, 200, 0);
-			overlays_me = new Overlays(Constants.OTYPE_MY_LOCATION, d, 255, 0, 0, 255);
+			overlays_closed = new Overlays(Constants.OTYPE_CLOSED_WIFI, d);
+			overlays_opened = new Overlays(Constants.OTYPE_OPEN_WIFI, d);
+			overlays_me = new Overlays(Constants.OTYPE_MY_LOCATION, d);
 
 			overlays_closed.show_labels = show_labels;
 			overlays_opened.show_labels = show_labels;
@@ -717,7 +717,7 @@ public class Main extends MapActivity implements LocationListener
 
 		private int zoom_divider = 1;
 
-		public Overlays(int type, Drawable d, int a, int r, int g, int b)
+		public Overlays(int type, Drawable d)
 		{
 			super(d);
 			populate();
@@ -725,7 +725,6 @@ public class Main extends MapActivity implements LocationListener
 			this.type = type;
 
 			paint_circle = new Paint();
-			paint_circle.setARGB(a, r, g, b);
 			paint_circle.setAntiAlias(true);
 
 			paint_text = new TextPaint();
@@ -784,7 +783,7 @@ public class Main extends MapActivity implements LocationListener
 				try
 				{
 					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LAT,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID },
+							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES },
 							DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
 									+ " and "
 									+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
@@ -799,6 +798,20 @@ public class Main extends MapActivity implements LocationListener
 						{
 							do
 							{
+								String cap = c.getString(3);
+								if (cap == null || cap.length() == 0)
+								{
+									paint_circle.setARGB(192, 0, 200, 0);
+								}
+								else if (cap.contains("WEP"))
+								{
+									paint_circle.setARGB(192, 235, 160, 23);
+								}
+								else
+								{
+									paint_circle.setARGB(96, 255, 0, 0);
+								}
+								
 								draw_single(canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
 										(int) (c.getDouble(1) * 1E6)), c.getString(2));
 							}
@@ -806,6 +819,16 @@ public class Main extends MapActivity implements LocationListener
 						}
 						else
 						{
+							String cap = c.getString(3);
+							if (cap == null || cap.length() == 0)
+							{
+								paint_circle.setARGB(192, 0, 200, 0);
+							}
+							else
+							{
+								paint_circle.setARGB(96, 255, 0, 0);
+							}
+							
 							quadrant_w = (mapView.getWidth() / quadrants_x);
 							quadrant_h = (mapView.getHeight() / quadrants_y);
 

@@ -336,7 +336,7 @@ public class ScanService extends Service
 
 			if (started)
 			{
-				notification_bar_message(getResources().getString(R.string.SERVICE_STARTED));
+				Toast.makeText(this, R.string.SERVICE_STARTED, Toast.LENGTH_SHORT).show();
 			}
 		}
 	}
@@ -350,7 +350,7 @@ public class ScanService extends Service
 
 			if (!started)
 			{
-				notification_bar_message(getResources().getString(R.string.SERVICE_STOPPED));
+				Toast.makeText(this, R.string.SERVICE_STOPPED, Toast.LENGTH_SHORT).show();
 			}
 		}
 
