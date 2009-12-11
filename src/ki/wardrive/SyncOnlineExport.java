@@ -33,6 +33,12 @@ public class SyncOnlineExport
 		Cursor c = null;
 		try
 		{
+			Message msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_PROGRESS);
+			Bundle b = new Bundle();
+			b.putInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, 0);
+			msg.setData(b);
+			message_handler.sendMessage(msg);
+			
 			c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
 					DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
 					DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY,
@@ -69,8 +75,8 @@ public class SyncOnlineExport
 
 							if (!c.isLast())
 							{
-								Message msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_PROGRESS);
-								Bundle b = new Bundle();
+								msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_PROGRESS);
+								b = new Bundle();
 								b.putInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, (int) (((double) c
 										.getPosition() / (double) c.getCount()) * 100));
 								msg.setData(b);

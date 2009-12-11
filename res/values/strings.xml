@@ -17,6 +17,7 @@
     <string name="MENU_SERVICE_LABEL">Service ON/OFF</string>
     <string name="MENU_KML_EXPORT_LABEL">Export to KML</string>
     <string name="MENU_SYNC_ONLINE_DB">Send to online DB</string>
+    <string name="MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION">Send all WiFis? (No will send only new ones)</string>
     <string name="MESSAGE_STARTING_KML_EXPORT">Starting KML export...</string>
     <string name="MESSAGE_STARTING_SYNC_ONLINE">Sending to online database...</string>
     <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML file exported</string>

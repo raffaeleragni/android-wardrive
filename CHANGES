@@ -139,4 +139,5 @@ v2.8
 v2.9
 
 	- Sending to online database now only sends open wifis.
+	- Asks the user to send all WiFis to online db, or to send only new ones.
 	

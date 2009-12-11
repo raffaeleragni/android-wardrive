@@ -406,12 +406,15 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.SYNC_ONLINE_DB:
 			{
-				showDialog(Constants.DIALOG_SYNC_PROGRESS);
 				if (!sending_sync)
 				{
-					new Thread(sync_online_proc).start();
+					showDialog(Constants.DIALOG_SYNC_ALL);
 				}
-
+				else
+				{
+					showDialog(Constants.DIALOG_SYNC_PROGRESS);
+				}
+				
 				break;
 			}
 		}
@@ -429,13 +432,16 @@ public class Main extends MapActivity implements LocationListener
 		}
 	};
 
-	private Runnable sync_online_proc = new Runnable()
+	private class SyncOnlineProc implements Runnable
 	{
+		public boolean only_new = true;
+
 		public void run()
 		{
 			try
 			{
 				long tstamp = settings.getLong(Constants.CONF_SYNC_TSTAMP, 0);
+				tstamp = only_new ? tstamp : 0;
 				long newtstamp = System.currentTimeMillis();
 
 				URL url = new URL(Constants.SYNC_ONLINE_URL);
@@ -459,7 +465,9 @@ public class Main extends MapActivity implements LocationListener
 				message_handler.sendMessage(msg);
 			}
 		}
-	};
+	}
+	
+	private SyncOnlineProc sync_online_proc = new SyncOnlineProc();
 
 	private Handler message_handler = new Handler()
 	{
@@ -550,6 +558,38 @@ public class Main extends MapActivity implements LocationListener
 				progressDialog.setProgress(0);
 				progressDialog.setCancelable(true);
 				return progressDialog;
+			}
+			case Constants.DIALOG_SYNC_ALL:
+			{
+				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder.setMessage(getResources().getText(R.string.MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION));
+				builder.setCancelable(false);
+				builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				{
+					public void onClick(DialogInterface dialog, int id)
+					{
+						showDialog(Constants.DIALOG_SYNC_PROGRESS);
+						if (!sending_sync)
+						{
+							sync_online_proc.only_new = false;
+							new Thread(sync_online_proc).start();
+						}
+					}
+				});
+				builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+				{
+					public void onClick(DialogInterface dialog, int id)
+					{
+						showDialog(Constants.DIALOG_SYNC_PROGRESS);
+						if (!sending_sync)
+						{
+							sync_online_proc.only_new = true;
+							new Thread(sync_online_proc).start();
+						}
+					}
+				});
+				
+				return builder.create();
 			}
 		}
 

@@ -97,4 +97,6 @@ public class Constants
 	public static final int DIALOG_DELETE_ALL_WIFI = DIALOG_ABOUT + 1;
 
 	public static final int DIALOG_SYNC_PROGRESS = DIALOG_DELETE_ALL_WIFI + 1;
+	
+	public static final int DIALOG_SYNC_ALL = DIALOG_SYNC_PROGRESS + 1;
 }
