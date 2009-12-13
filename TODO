@@ -1,2 +1,9 @@
 
  - Display AP info in someway.
+
+[WEB]
+Things to do when appengine gets better:
+ 
+ - queries with lat+lon directly
+ 
+ - query to fetch only new data (to sync on the phone)
