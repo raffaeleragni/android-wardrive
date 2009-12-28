@@ -146,4 +146,8 @@ v2.10
 	- Shows yellow for WEP wifis.
 	- When service is stopped or started only a toast is displayed, and not any
 	  other notifications (users couldn't delete the notification).
-	  
+
+v2.11
+
+	- KML export now writes also timestamp
+	

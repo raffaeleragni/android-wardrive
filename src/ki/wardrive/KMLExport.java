@@ -71,6 +71,8 @@ public class KMLExport
 
 	private static final String GENERICS_INFO_4 = "</b><br/>Level: <b>";
 
+	private static final String GENERICS_INFO_5 = "</b><br/>Timestamp: <b>";
+
 	private static final String GENERICS_INFO_END = "</b>";
 
 	private static final String FOLDER_1 = "\n<Folder><name>Open WiFis</name>";
@@ -104,7 +106,7 @@ public class KMLExport
 							DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT }, DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION, null,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION, null,
 							null, null, null);
 
 					if (c != null && c.moveToFirst())
@@ -122,7 +124,7 @@ public class KMLExport
 							DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT }, DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION, null,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION, null,
 							null, null, null);
 
 					if (c != null && c.moveToFirst())
@@ -167,17 +169,19 @@ public class KMLExport
 		boolean wep = cap != null && cap.contains("WEP");
 		fw.append(MARK_START);
 		fw.append(NAME_START);
-		fw.append(c.getString(1)); //SSID
+		fw.append(c.getString(1)); // SSID
 		fw.append(NAME_END);
 		fw.append(DESCRIPTION_START);
 		fw.append(GENERICS_INFO_1);
-		fw.append(c.getString(0)); //BSSID
+		fw.append(c.getString(0)); // BSSID
 		fw.append(GENERICS_INFO_2);
-		fw.append(cap); //CAPABILITIES
+		fw.append(cap); // CAPABILITIES
 		fw.append(GENERICS_INFO_3);
-		fw.append(c.getString(3)); //FREQUENCY
+		fw.append(c.getString(3)); // FREQUENCY
 		fw.append(GENERICS_INFO_4);
-		fw.append(c.getString(4)); //LEVEL
+		fw.append(c.getString(4)); // LEVEL
+		fw.append(GENERICS_INFO_5);
+		fw.append(c.getString(8)); // TIMESTAMP
 		fw.append(GENERICS_INFO_END);
 		fw.append(DESCRIPTION_END);
 		fw.append(open ? STYLE_GREEN : (wep ? STYLE_YELLOW : STYLE_RED)); // Dot color
