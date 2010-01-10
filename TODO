@@ -1,6 +1,8 @@
 
  - Display AP info in someway.
 
+ - Add sound when discovering new networks, or updating position/data
+
 [WEB]
 Things to do when appengine gets better:
  
