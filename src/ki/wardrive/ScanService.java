@@ -341,10 +341,11 @@ public class ScanService extends Service
 	{
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
-		n.defaults |= Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND | Notification.FLAG_AUTO_CANCEL;
+		n.defaults |= Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND;
+		n.flags |= Notification.FLAG_AUTO_CANCEL;
 		Context context = getApplicationContext();
 		Intent notificationIntent = new Intent(this, ScanService.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, n.defaults);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 		n.setLatestEventInfo(context, message, "", contentIntent);
 		nm.notify(1, n);
 	}
