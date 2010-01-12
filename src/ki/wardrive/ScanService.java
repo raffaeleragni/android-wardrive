@@ -344,7 +344,7 @@ public class ScanService extends Service
 		n.defaults |= Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND | Notification.FLAG_AUTO_CANCEL;
 		Context context = getApplicationContext();
 		Intent notificationIntent = new Intent(this, ScanService.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, Notification.FLAG_AUTO_CANCEL);
+		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, n.defaults);
 		n.setLatestEventInfo(context, message, "", contentIntent);
 		nm.notify(1, n);
 	}
