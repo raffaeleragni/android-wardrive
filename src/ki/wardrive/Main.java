@@ -25,9 +25,6 @@ import java.util.Date;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.Notification;
-import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -321,102 +318,102 @@ public class Main extends MapActivity implements LocationListener
 	{
 		switch (item.getItemId())
 		{
-			case R.menu_id.QUIT:
+		case R.menu_id.QUIT:
+		{
+			stopService(service_intent);
+			save_service_tstamp();
+			save_app_tstamp();
+
+			finish();
+
+			return true;
+		}
+		case R.menu_id.STATS:
+		{
+			showDialog(Constants.DIALOG_STATS);
+			return true;
+		}
+		case R.menu_id.LABELS:
+		{
+			show_labels = !show_labels;
+			overlays_closed.show_labels = show_labels;
+			overlays_opened.show_labels = show_labels;
+			overlays_me.show_labels = show_labels;
+			item.setChecked(show_labels);
+			mapview.invalidate();
+			break;
+		}
+		case R.menu_id.FOLLOW:
+		{
+			follow_me = !follow_me;
+			item.setChecked(follow_me);
+			break;
+		}
+		case R.menu_id.MAP_MODE:
+		{
+			map_mode = !map_mode;
+			item.setChecked(map_mode);
+			mapview.setSatellite(map_mode);
+			break;
+		}
+		case R.menu_id.ABOUT:
+		{
+			showDialog(Constants.DIALOG_ABOUT);
+			break;
+		}
+		case R.menu_id.SHOW_OPEN:
+		{
+			show_open = !show_open;
+			item.setChecked(show_open);
+			mapview.invalidate();
+			break;
+		}
+		case R.menu_id.SHOW_CLOSED:
+		{
+			show_closed = !show_closed;
+			item.setChecked(show_closed);
+			mapview.invalidate();
+			break;
+		}
+		case R.menu_id.SERVICE:
+		{
+			service = !service;
+			if (service)
+			{
+				startService(service_intent);
+			}
+			else
 			{
 				stopService(service_intent);
 				save_service_tstamp();
-				save_app_tstamp();
+			}
+			break;
+		}
+		case R.menu_id.DELETE:
+		{
+			showDialog(Constants.DIALOG_DELETE_ALL_WIFI);
+			break;
+		}
+		case R.menu_id.KML_EXPORT:
+		{
+			Toast.makeText(Main.this, R.string.MESSAGE_STARTING_KML_EXPORT, Toast.LENGTH_SHORT).show();
+			new Thread(kml_export_proc).start();
 
-				finish();
+			break;
+		}
+		case R.menu_id.SYNC_ONLINE_DB:
+		{
+			if (!sending_sync)
+			{
+				showDialog(Constants.DIALOG_SYNC_ALL);
+			}
+			else
+			{
+				showDialog(Constants.DIALOG_SYNC_PROGRESS);
+			}
 
-				return true;
-			}
-			case R.menu_id.STATS:
-			{
-				showDialog(Constants.DIALOG_STATS);
-				return true;
-			}
-			case R.menu_id.LABELS:
-			{
-				show_labels = !show_labels;
-				overlays_closed.show_labels = show_labels;
-				overlays_opened.show_labels = show_labels;
-				overlays_me.show_labels = show_labels;
-				item.setChecked(show_labels);
-				mapview.invalidate();
-				break;
-			}
-			case R.menu_id.FOLLOW:
-			{
-				follow_me = !follow_me;
-				item.setChecked(follow_me);
-				break;
-			}
-			case R.menu_id.MAP_MODE:
-			{
-				map_mode = !map_mode;
-				item.setChecked(map_mode);
-				mapview.setSatellite(map_mode);
-				break;
-			}
-			case R.menu_id.ABOUT:
-			{
-				showDialog(Constants.DIALOG_ABOUT);
-				break;
-			}
-			case R.menu_id.SHOW_OPEN:
-			{
-				show_open = !show_open;
-				item.setChecked(show_open);
-				mapview.invalidate();
-				break;
-			}
-			case R.menu_id.SHOW_CLOSED:
-			{
-				show_closed = !show_closed;
-				item.setChecked(show_closed);
-				mapview.invalidate();
-				break;
-			}
-			case R.menu_id.SERVICE:
-			{
-				service = !service;
-				if (service)
-				{
-					startService(service_intent);
-				}
-				else
-				{
-					stopService(service_intent);
-					save_service_tstamp();
-				}
-				break;
-			}
-			case R.menu_id.DELETE:
-			{
-				showDialog(Constants.DIALOG_DELETE_ALL_WIFI);
-				break;
-			}
-			case R.menu_id.KML_EXPORT:
-			{
-				toast(getResources().getString(R.string.MESSAGE_STARTING_KML_EXPORT));
-				new Thread(kml_export_proc).start();
-
-				break;
-			}
-			case R.menu_id.SYNC_ONLINE_DB:
-			{
-				if (!sending_sync)
-				{
-					showDialog(Constants.DIALOG_SYNC_ALL);
-				}
-				else
-				{
-					showDialog(Constants.DIALOG_SYNC_PROGRESS);
-				}
-				
-				break;
-			}
+			break;
+		}
 		}
 		return false;
 	}
@@ -466,7 +463,7 @@ public class Main extends MapActivity implements LocationListener
 			}
 		}
 	}
-	
+
 	private SyncOnlineProc sync_online_proc = new SyncOnlineProc();
 
 	private Handler message_handler = new Handler()
@@ -476,38 +473,41 @@ public class Main extends MapActivity implements LocationListener
 		{
 			switch (msg.what)
 			{
-				case Constants.EVENT_KML_EXPORT_DONE:
-				{
-					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML));
-					break;
-				}
+			case Constants.EVENT_KML_EXPORT_DONE:
+			{
+				Toast.makeText(Main.this, R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML, Toast.LENGTH_SHORT).show();
+				break;
+			}
 
-				case Constants.EVENT_SYNC_ONLINE_PROGRESS:
+			case Constants.EVENT_SYNC_ONLINE_PROGRESS:
+			{
+				if (progressDialog.isShowing())
 				{
-					if (progressDialog.isShowing())
-					{
-						progressDialog.setProgress(msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
-					}
-					break;
+					progressDialog.setProgress(msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
 				}
+				break;
+			}
 
-				case Constants.EVENT_SYNC_ONLINE_DONE:
+			case Constants.EVENT_SYNC_ONLINE_DONE:
+			{
+				sending_sync = false;
+				if (progressDialog.isShowing())
 				{
-					sending_sync = false;
-					if (progressDialog.isShowing())
-					{
-						dismissDialog(Constants.DIALOG_SYNC_PROGRESS);
-					}
-					toast(getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
-							+ msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
-					break;
+					dismissDialog(Constants.DIALOG_SYNC_PROGRESS);
 				}
+				Toast.makeText(
+						Main.this,
+						getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
+								+ msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT),
+						Toast.LENGTH_SHORT).show();
+				break;
+			}
 
-				case Constants.EVENT_NOTIFY_ERROR:
-				{
-					notify_error((Exception) msg.getData().getSerializable("exception"));
-					break;
-				}
+			case Constants.EVENT_NOTIFY_ERROR:
+			{
+				notify_error((Exception) msg.getData().getSerializable("exception"));
+				break;
+			}
 			}
 		}
 	};
@@ -517,80 +517,80 @@ public class Main extends MapActivity implements LocationListener
 	{
 		switch (id)
 		{
-			case Constants.DIALOG_STATS:
+		case Constants.DIALOG_STATS:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(print_stats());
+			return builder.create();
+		}
+		case Constants.DIALOG_ABOUT:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(getResources().getText(R.string.ABOUT_BOX));
+			return builder.create();
+		}
+		case Constants.DIALOG_DELETE_ALL_WIFI:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(getResources().getText(R.string.MENU_DELETE_WARNING_LABEL));
+			builder.setCancelable(false);
+			builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage(print_stats());
-				return builder.create();
-			}
-			case Constants.DIALOG_ABOUT:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage(getResources().getText(R.string.ABOUT_BOX));
-				return builder.create();
-			}
-			case Constants.DIALOG_DELETE_ALL_WIFI:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage(getResources().getText(R.string.MENU_DELETE_WARNING_LABEL));
-				builder.setCancelable(false);
-				builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				public void onClick(DialogInterface dialog, int id)
 				{
-					public void onClick(DialogInterface dialog, int id)
-					{
-						delete_all_wifi();
-					}
-				});
-				builder.setNegativeButton("No", new DialogInterface.OnClickListener()
-				{
-					public void onClick(DialogInterface dialog, int id)
-					{
-						dialog.cancel();
-					}
-				});
-				return builder.create();
-			}
-			case Constants.DIALOG_SYNC_PROGRESS:
+					delete_all_wifi();
+				}
+			});
+			builder.setNegativeButton("No", new DialogInterface.OnClickListener()
 			{
-				progressDialog = new ProgressDialog(this);
-				progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				progressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE));
-				progressDialog.setProgress(0);
-				progressDialog.setCancelable(true);
-				return progressDialog;
-			}
-			case Constants.DIALOG_SYNC_ALL:
+				public void onClick(DialogInterface dialog, int id)
+				{
+					dialog.cancel();
+				}
+			});
+			return builder.create();
+		}
+		case Constants.DIALOG_SYNC_PROGRESS:
+		{
+			progressDialog = new ProgressDialog(this);
+			progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+			progressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE));
+			progressDialog.setProgress(0);
+			progressDialog.setCancelable(true);
+			return progressDialog;
+		}
+		case Constants.DIALOG_SYNC_ALL:
+		{
+			AlertDialog.Builder builder = new AlertDialog.Builder(this);
+			builder.setMessage(getResources().getText(R.string.MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION));
+			builder.setCancelable(false);
+			builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
 			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
-				builder.setMessage(getResources().getText(R.string.MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION));
-				builder.setCancelable(false);
-				builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				public void onClick(DialogInterface dialog, int id)
 				{
-					public void onClick(DialogInterface dialog, int id)
+					showDialog(Constants.DIALOG_SYNC_PROGRESS);
+					if (!sending_sync)
 					{
-						showDialog(Constants.DIALOG_SYNC_PROGRESS);
-						if (!sending_sync)
-						{
-							sync_online_proc.only_new = false;
-							new Thread(sync_online_proc).start();
-						}
+						sync_online_proc.only_new = false;
+						new Thread(sync_online_proc).start();
 					}
-				});
-				builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+				}
+			});
+			builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+			{
+				public void onClick(DialogInterface dialog, int id)
 				{
-					public void onClick(DialogInterface dialog, int id)
+					showDialog(Constants.DIALOG_SYNC_PROGRESS);
+					if (!sending_sync)
 					{
-						showDialog(Constants.DIALOG_SYNC_PROGRESS);
-						if (!sending_sync)
-						{
-							sync_online_proc.only_new = true;
-							new Thread(sync_online_proc).start();
-						}
+						sync_online_proc.only_new = true;
+						new Thread(sync_online_proc).start();
 					}
-				});
-				
-				return builder.create();
-			}
+				}
+			});
+
+			return builder.create();
+		}
 		}
 
 		return super.onCreateDialog(id);
@@ -783,12 +783,12 @@ public class Main extends MapActivity implements LocationListener
 				try
 				{
 					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LAT,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES },
-							DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
-									+ " and "
-									+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
-											: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
-									bottom_right), null, null, null);
+							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID,
+							DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES }, DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
+							+ " and "
+							+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
+									: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
+							bottom_right), null, null, null);
 
 					if (c != null && c.moveToFirst())
 					{
@@ -811,7 +811,7 @@ public class Main extends MapActivity implements LocationListener
 								{
 									paint_circle.setARGB(96, 255, 0, 0);
 								}
-								
+
 								draw_single(canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
 										(int) (c.getDouble(1) * 1E6)), c.getString(2));
 							}
@@ -828,7 +828,7 @@ public class Main extends MapActivity implements LocationListener
 							{
 								paint_circle.setARGB(96, 255, 0, 0);
 							}
-							
+
 							quadrant_w = (mapView.getWidth() / quadrants_x);
 							quadrant_h = (mapView.getHeight() / quadrants_y);
 
@@ -972,22 +972,6 @@ public class Main extends MapActivity implements LocationListener
 	{
 		settings_editor.putLong(Constants.CONF_LASTSERVICE_TSTAMP, System.currentTimeMillis());
 		settings_editor.commit();
-	}
-
-	public void toast(String message)
-	{
-		Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-	}
-
-	public void notification_bar_message(String message)
-	{
-		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
-		Context context = getApplicationContext();
-		Intent notificationIntent = new Intent(this, ScanService.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-		n.setLatestEventInfo(context, message, "", contentIntent);
-		nm.notify(1, n);
 	}
 
 	private void notify_error(Exception e)

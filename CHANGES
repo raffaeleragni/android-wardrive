@@ -151,3 +151,8 @@ v2.11
 
 	- KML export now writes also timestamp
 	
+v2.12
+
+	- Sounds and vibrates with notification (auto-cancelable) when spotting a new
+	  WiFi. Doesn't notify when a WiFi is only updated, only when newly added.
+	  

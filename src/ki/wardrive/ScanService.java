@@ -34,7 +34,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
-import android.location.LocationProvider;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -57,8 +56,6 @@ public class ScanService extends Service
 	private SQLiteDatabase database;
 
 	private boolean started = false;
-
-	private int old_gps_status = -1;
 
 	private void start_services()
 	{
@@ -141,40 +138,14 @@ public class ScanService extends Service
 	{
 		public void onStatusChanged(String provider, int status, Bundle extras)
 		{
-			if (LocationManager.GPS_PROVIDER.equals(provider) && old_gps_status != status)
-			{
-				old_gps_status = status;
-				String sstatus = "undefined";
-				switch (status)
-				{
-					case LocationProvider.OUT_OF_SERVICE:
-						sstatus = "out of service";
-						break;
-					case LocationProvider.TEMPORARILY_UNAVAILABLE:
-						sstatus = "temporarily unavailable";
-						break;
-					case LocationProvider.AVAILABLE:
-						sstatus = "available";
-						break;
-				}
-				toast(getResources().getString(R.string.GPS_STATUS) + " " + sstatus);
-			}
 		}
 
 		public void onProviderEnabled(String provider)
 		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
-			{
-				toast(getResources().getString(R.string.GPS_ENABLED));
-			}
 		}
 
 		public void onProviderDisabled(String provider)
 		{
-			if (LocationManager.GPS_PROVIDER.equals(provider))
-			{
-				toast(getResources().getString(R.string.GPS_DISABLED));
-			}
 		}
 
 		public void onLocationChanged(Location location)
@@ -221,10 +192,16 @@ public class ScanService extends Service
 
 				if (lat != null && lon != null && alt != null)
 				{
+					boolean added = false;
 					List<ScanResult> results = wifi_manager.getScanResults();
 					for (ScanResult result : results)
 					{
-						process_wifi_result(result, lat, lon, alt);
+						added |= process_wifi_result(result, lat, lon, alt);
+					}
+					
+					if (added)
+					{
+						notification_bar_message("New WiFi(s) added to database.");
 					}
 				}
 			}
@@ -235,7 +212,7 @@ public class ScanService extends Service
 		}
 	};
 
-	private void process_wifi_result(ScanResult result, double lat, double lon, double alt)
+	private boolean process_wifi_result(ScanResult result, double lat, double lon, double alt)
 	{
 		try
 		{
@@ -306,10 +283,13 @@ public class ScanService extends Service
 				database.update(DBTableNetworks.TABLE_NETWORKS, values, DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS,
 						new String[] { result.BSSID });
 			}
+			
+			return toadd;
 		}
 		catch (Exception e)
 		{
 			notify_error(e);
+			return false;
 		}
 	}
 
@@ -357,18 +337,13 @@ public class ScanService extends Service
 		super.onDestroy();
 	}
 
-	public void toast(String message)
-	{
-		if (Constants.SERVICE_TOASTS_ENABLED)
-		{
-			Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
-		}
-	}
-
 	public void notification_bar_message(String message)
 	{
 		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
 		Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
+		n.defaults |= Notification.DEFAULT_VIBRATE;
+		n.defaults |= Notification.DEFAULT_SOUND;
+		n.defaults |= Notification.FLAG_AUTO_CANCEL;
 		Context context = getApplicationContext();
 		Intent notificationIntent = new Intent(this, ScanService.class);
 		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, Notification.FLAG_AUTO_CANCEL);
