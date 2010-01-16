@@ -935,14 +935,14 @@ public class Main extends MapActivity implements LocationListener
 									c = database
 											.query(
 													DBTableNetworks.TABLE_NETWORKS,
-													new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_COUNT_BSSID,
+													new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_COUNT_ROWID,
 															DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LAT,
 															DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LON },
 													DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
 															+ " and "
 															+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
 																	: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION),
-													compose_latlon_between(top_left, bottom_right), null, null, null);
+													compose_latlon_between(top_left, bottom_right), null, null, null, "limit 10");
 
 									if (c != null && c.moveToFirst())
 									{

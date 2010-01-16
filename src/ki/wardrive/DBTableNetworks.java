@@ -28,6 +28,8 @@ public class DBTableNetworks
 
 	public static final String TABLE_NETWORKS_FIELD_COUNT_BSSID = "count(bssid)";
 
+	public static final String TABLE_NETWORKS_FIELD_COUNT_ROWID = "count(rowid)";
+
 	public static final String TABLE_NETWORKS_FIELD_SUM_LAT = "sum(lat)";
 
 	public static final String TABLE_NETWORKS_FIELD_SUM_LON = "sum(lon)";
