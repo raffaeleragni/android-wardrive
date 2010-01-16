@@ -165,4 +165,8 @@ v2.13
 v2.14
 
     - Service start stop wasn't correctly notificating with toast messaged. 
+
+v2.14
+
+    - Unexpected service behaviour 
     

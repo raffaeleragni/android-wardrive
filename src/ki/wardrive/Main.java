@@ -218,6 +218,7 @@ public class Main extends MapActivity implements LocationListener
 			service_intent = new Intent();
 			service_intent.setClass(this, ScanService.class);
 			bindService(service_intent, service_connection, Context.BIND_AUTO_CREATE);
+			startService(service_intent);
 
 			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -375,6 +376,7 @@ public class Main extends MapActivity implements LocationListener
 		{
 			case R.menu_id.QUIT:
 			{
+				service_binder.stop_services();
 				stopService(service_intent);
 				save_service_tstamp();
 				save_app_tstamp();
@@ -436,10 +438,12 @@ public class Main extends MapActivity implements LocationListener
 				if (service)
 				{
 					service_binder.start_services();
+					startService(service_intent);
 				}
 				else
 				{
 					service_binder.stop_services();
+					stopService(service_intent);
 					save_service_tstamp();
 				}
 				break;
