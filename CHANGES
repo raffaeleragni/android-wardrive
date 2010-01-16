@@ -161,3 +161,8 @@ v2.13
     - Service can be better controlled by either diabling the notifications or
       by setting the GPS query interval.
       
+      
+v2.14
+
+    - Service start stop wasn't correctly notificating with toast messaged. 
+    

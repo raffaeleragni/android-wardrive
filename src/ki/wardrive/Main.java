@@ -148,6 +148,7 @@ public class Main extends MapActivity implements LocationListener
 			{
 				service_binder = (IScanService) service;
 				service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
+				service_binder.setNotificationsEnabled(notifications_enabled);
 			}
 		}
 
@@ -434,11 +435,11 @@ public class Main extends MapActivity implements LocationListener
 				service = !service;
 				if (service)
 				{
-					startService(service_intent);
+					service_binder.start_services();
 				}
 				else
 				{
-					stopService(service_intent);
+					service_binder.stop_services();
 					save_service_tstamp();
 				}
 				break;

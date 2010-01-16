@@ -92,6 +92,16 @@ public class ScanService extends Service
 			gps_meters = m;
 			reset_gps_precision(gps_seconds, gps_meters);
 		}
+
+		public void start_services()
+		{
+			ScanService.this.start_services();
+		}
+		
+		public void stop_services()
+		{
+			ScanService.this.stop_services();
+		}
 	}
 
 	private IScanServiceImpl binder = new IScanServiceImpl();
@@ -134,6 +144,11 @@ public class ScanService extends Service
 			}
 
 			started = true;
+			
+			if (started)
+			{
+				Toast.makeText(this, R.string.SERVICE_STARTED, Toast.LENGTH_SHORT).show();
+			}
 		}
 		catch (Exception e)
 		{
@@ -180,6 +195,11 @@ public class ScanService extends Service
 			}
 
 			started = false;
+			
+			if (!started)
+			{
+				Toast.makeText(this, R.string.SERVICE_STOPPED, Toast.LENGTH_SHORT).show();
+			}
 		}
 		catch (Exception e)
 		{
@@ -367,11 +387,6 @@ public class ScanService extends Service
 		if (!started)
 		{
 			start_services();
-
-			if (started)
-			{
-				Toast.makeText(this, R.string.SERVICE_STARTED, Toast.LENGTH_SHORT).show();
-			}
 		}
 	}
 
@@ -381,11 +396,6 @@ public class ScanService extends Service
 		if (started)
 		{
 			stop_services();
-
-			if (!started)
-			{
-				Toast.makeText(this, R.string.SERVICE_STOPPED, Toast.LENGTH_SHORT).show();
-			}
 		}
 
 		super.onDestroy();
