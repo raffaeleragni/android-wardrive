@@ -74,11 +74,15 @@ public class Constants
 
 	public static final String CONF_SHOW_CLOSED = "show_closed";
 
+	public static final String CONF_NOTIFICATIONS_ENABLED = "notifications_enabled";
+
 	public static final String CONF_SYNC_TSTAMP = "sync_tstamp";
 
 	public static final String CONF_LASTAPP_TSTAMP = "lastapp_tstamp";
 
 	public static final String CONF_LASTSERVICE_TSTAMP = "lastservice_tstamp";
+
+	public static final String CONF_GPS_TIMES = "gps_times";
 
 	public static final int EVENT_KML_EXPORT_DONE = 0;
 
@@ -99,4 +103,8 @@ public class Constants
 	public static final int DIALOG_SYNC_PROGRESS = DIALOG_DELETE_ALL_WIFI + 1;
 	
 	public static final int DIALOG_SYNC_ALL = DIALOG_SYNC_PROGRESS + 1;
+	
+	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
+	                        
+	public static final int[] GPS_METERS = {3, 10, 50};
 }

@@ -36,6 +36,7 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.wifi.ScanResult;
 import android.net.wifi.WifiManager;
+import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.util.Log;
@@ -57,6 +58,50 @@ public class ScanService extends Service
 
 	private boolean started = false;
 
+	private boolean notifications_enabled = false;
+
+	private int gps_seconds = Constants.SERVICE_GPS_EVENT_WAIT;
+
+	private int gps_meters = Constants.SERVICE_GPS_EVENT_METERS;
+
+	private class IScanServiceImpl extends Binder implements IScanService
+	{
+		public boolean getNotificationsEnabled()
+		{
+			return notifications_enabled;
+		}
+
+		public void setNotificationsEnabled(boolean notificationsEnabled)
+		{
+			notifications_enabled = notificationsEnabled;
+		}
+
+		public int getGpsSeconds()
+		{
+			return gps_seconds;
+		}
+		
+		public int getGpsMeters()
+		{
+			return gps_meters;
+		}
+
+		public void setGpsTimes(int s, int m)
+		{
+			gps_seconds = s;
+			gps_meters = m;
+			reset_gps_precision(gps_seconds, gps_meters);
+		}
+	}
+
+	private IScanServiceImpl binder = new IScanServiceImpl();
+
+	@Override
+	public IBinder onBind(Intent intent)
+	{
+		return binder;
+	}
+
 	private void start_services()
 	{
 		try
@@ -72,8 +117,7 @@ public class ScanService extends Service
 
 			if (location_manager != null)
 			{
-				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Constants.SERVICE_GPS_EVENT_WAIT,
-						Constants.SERVICE_GPS_EVENT_METERS, location_listener);
+				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gps_seconds, gps_meters, location_listener);
 			}
 
 			if (wifi_manager != null)
@@ -94,6 +138,15 @@ public class ScanService extends Service
 		catch (Exception e)
 		{
 			notify_error(e);
+		}
+	}
+
+	private void reset_gps_precision(int seconds, int meters)
+	{
+		if (location_manager != null)
+		{
+			location_manager.removeUpdates(location_listener);
+			location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, seconds, meters, location_listener);
 		}
 	}
 
@@ -198,7 +251,7 @@ public class ScanService extends Service
 					{
 						added |= process_wifi_result(result, lat, lon, alt);
 					}
-					
+
 					if (added)
 					{
 						notification_bar_message("New WiFi(s) added to database.");
@@ -226,8 +279,9 @@ public class ScanService extends Service
 			{
 				cursor = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] {
 						DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID,
-						DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY },
-						DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS, new String[] { result.BSSID }, null, null, null);
+						DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY,
+						DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS,
+						new String[] { result.BSSID }, null, null, null);
 				if (!cursor.moveToFirst())
 				{
 					toadd = true;
@@ -283,7 +337,7 @@ public class ScanService extends Service
 				database.update(DBTableNetworks.TABLE_NETWORKS, values, DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS,
 						new String[] { result.BSSID });
 			}
-			
+
 			return toadd;
 		}
 		catch (Exception e)
@@ -339,21 +393,18 @@ public class ScanService extends Service
 
 	public void notification_bar_message(String message)
 	{
-		NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-		Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
-		n.defaults |= Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND;
-		n.flags |= Notification.FLAG_AUTO_CANCEL;
-		Context context = getApplicationContext();
-		Intent notificationIntent = new Intent(this, ScanService.class);
-		PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-		n.setLatestEventInfo(context, message, "", contentIntent);
-		nm.notify(1, n);
-	}
-
-	@Override
-	public IBinder onBind(Intent intent)
-	{
-		return null;
+		if (notifications_enabled)
+		{
+			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			Notification n = new Notification(R.drawable.icon, message, System.currentTimeMillis());
+			n.defaults |= Notification.DEFAULT_VIBRATE | Notification.DEFAULT_SOUND;
+			n.flags |= Notification.FLAG_AUTO_CANCEL;
+			Context context = getApplicationContext();
+			Intent notificationIntent = new Intent(this, ScanService.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+			n.setLatestEventInfo(context, message, "", contentIntent);
+			nm.notify(1, n);
+		}
 	}
 
 	private void notify_error(Exception e)

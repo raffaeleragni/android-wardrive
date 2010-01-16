@@ -18,6 +18,11 @@
     <string name="MENU_KML_EXPORT_LABEL">Export to KML</string>
     <string name="MENU_SYNC_ONLINE_DB">Send to online DB</string>
     <string name="MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION">Send all WiFis? (No will send only new ones)</string>
+    <string name="MENU_TOGGLE_NOTIFICATIONS_ENABLED">Notifications enabled</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS">GPS Times</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_1">Short (3s, 3m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_2">Medium (10s, 10m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_3">Long (30s, 50m)</string>
     <string name="MESSAGE_STARTING_KML_EXPORT">Starting KML export...</string>
     <string name="MESSAGE_STARTING_SYNC_ONLINE">Sending to online database...</string>
     <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML file exported</string>
