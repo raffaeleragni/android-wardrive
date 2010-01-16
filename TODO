@@ -1,5 +1,10 @@
 
- - Display AP info in someway.
+ - Display AP info in someway. Filter/Search result list, find ones closest to
+   the user, focus on them.
+
+ - Add driving directions + distance to selected AP.
+ 
+ - Make APs selectable on map.
 
 [WEB]
 Things to do when appengine gets better:
