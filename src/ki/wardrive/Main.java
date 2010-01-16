@@ -147,6 +147,7 @@ public class Main extends MapActivity implements LocationListener
 			if (service instanceof IScanService)
 			{
 				service_binder = (IScanService) service;
+				service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
 			}
 		}
 
@@ -216,7 +217,6 @@ public class Main extends MapActivity implements LocationListener
 			service_intent = new Intent();
 			service_intent.setClass(this, ScanService.class);
 			bindService(service_intent, service_connection, Context.BIND_AUTO_CREATE);
-			service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
 
 			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
@@ -942,7 +942,7 @@ public class Main extends MapActivity implements LocationListener
 															+ " and "
 															+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
 																	: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION),
-													compose_latlon_between(top_left, bottom_right), null, null, null, "limit 10");
+													compose_latlon_between(top_left, bottom_right), null, null, null);
 
 									if (c != null && c.moveToFirst())
 									{
