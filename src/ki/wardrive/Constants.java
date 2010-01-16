@@ -42,7 +42,7 @@ public class Constants
 
 	public static final int QUADRANT_ACTIVATION_AT_ZOOM_DIFFERENCE = 3;
 
-	public static final int MAPS_GPS_EVENT_WAIT = 500;
+	public static final int MAPS_GPS_EVENT_WAIT = 2000;
 
 	public static final int MAPS_GPS_EVENT_METERS = 0;
 
