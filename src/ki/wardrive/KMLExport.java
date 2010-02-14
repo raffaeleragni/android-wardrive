@@ -21,6 +21,8 @@ package ki.wardrive;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.util.Date;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -73,6 +75,8 @@ public class KMLExport
 
 	private static final String GENERICS_INFO_5 = "</b><br/>Timestamp: <b>";
 
+	private static final String GENERICS_INFO_6 = "</b><br/>Date: <b>";
+
 	private static final String GENERICS_INFO_END = "</b>";
 
 	private static final String FOLDER_1 = "\n<Folder><name>Open WiFis</name>";
@@ -80,6 +84,8 @@ public class KMLExport
 	private static final String FOLDER_2 = "\n</Folder><Folder><name>Closed WiFis</name>";
 
 	private static final String FOLDER_END = "\n</Folder>";
+	
+	private static final DateFormat df = DateFormat.getDateTimeInstance();
 
 	public static boolean export(SQLiteDatabase database, File file)
 	{
@@ -181,7 +187,9 @@ public class KMLExport
 		fw.append(GENERICS_INFO_4);
 		fw.append(c.getString(4)); // LEVEL
 		fw.append(GENERICS_INFO_5);
-		fw.append(c.getString(8)); // TIMESTAMP
+		fw.append(c.getString(8));
+		fw.append(GENERICS_INFO_6);
+		fw.append(df.format(new Date(c.getLong(8)))); // READABLE DATE
 		fw.append(GENERICS_INFO_END);
 		fw.append(DESCRIPTION_END);
 		fw.append(open ? STYLE_GREEN : (wep ? STYLE_YELLOW : STYLE_RED)); // Dot color
