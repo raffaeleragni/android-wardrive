@@ -27,7 +27,7 @@
     <string name="MESSAGE_STATISTICS_CLOSED">\nDi cui chiuse: </string>
     <string name="MESSAGE_STATISTICS_LASTAPP_TSTAMP">\nUltima esecuzione applicazione:</string>
     <string name="MESSAGE_STATISTICS_LASTSERVICE_TSTAMP">\nUltima esecuzione servizio:</string>
-    <string name="MESSAGE_STATISTICS_NEW_WIFIS">\nNuove WiFi dall'ultimo avvio:</string>
+    <string name="MESSAGE_STATISTICS_NEW_WIFIS">\nNuove WiFi dall\'ultimo avvio:</string>
     <string name="SERVICE_STARTED">Servizio wardrive avviato</string>
     <string name="SERVICE_STOPPED">Servizio wardrive arrestato</string>
     <string name="GPS_ENABLED">GPS abilitato</string>

@@ -7,7 +7,6 @@
             <minimum-ant-version>1.7.0</minimum-ant-version>
             <explicit-platform explicit-source-supported="true"/>
             <source-roots>
-                <root id="src.gen.dir"/>
                 <root id="src.dir"/>
             </source-roots>
             <test-roots>
