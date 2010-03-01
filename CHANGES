@@ -173,4 +173,7 @@ v2.14
 v2.16
 
     - Added readable date in the KML export
-    
+
+v2.17
+
+    - Added a regexp filter for visible wifis

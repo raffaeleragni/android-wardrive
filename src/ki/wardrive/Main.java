@@ -94,7 +94,7 @@ public class Main extends MapActivity implements LocationListener
 	// Interface Related
 	//
 
-	private SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+    private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
 	private MapView mapview;
 
@@ -113,6 +113,12 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
+
+    private boolean filter_enabled = false;
+
+    private boolean filter_inverse = false;
+
+    private String filter_regexp = null;
 
 	private boolean sending_sync = false;
 
@@ -180,6 +186,9 @@ public class Main extends MapActivity implements LocationListener
 			show_closed = settings.getBoolean(Constants.CONF_SHOW_CLOSED, show_closed);
 			notifications_enabled = settings.getBoolean(Constants.CONF_NOTIFICATIONS_ENABLED, notifications_enabled);
 			gps_times = settings.getInt(Constants.CONF_GPS_TIMES, gps_times);
+            filter_enabled = settings.getBoolean(Constants.CONF_FILTER_ENABLED, filter_enabled);
+            filter_inverse = settings.getBoolean(Constants.CONF_FILTER_INVERSE, filter_inverse);
+            filter_regexp = settings.getString(Constants.CONF_FILTER_REGEXP, filter_regexp);
 
 			GeoPoint point = new GeoPoint(settings.getInt(Constants.LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(
 					Constants.LAST_LON, Constants.DEFAULT_LON));
@@ -289,6 +298,9 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putBoolean(Constants.CONF_SHOW_OPEN, show_open);
 			settings_editor.putBoolean(Constants.CONF_SHOW_CLOSED, show_closed);
 			settings_editor.putBoolean(Constants.CONF_NOTIFICATIONS_ENABLED, notifications_enabled);
+            settings_editor.putBoolean(Constants.CONF_FILTER_ENABLED, filter_enabled);
+            settings_editor.putBoolean(Constants.CONF_FILTER_INVERSE, filter_inverse);
+            settings_editor.putString(Constants.CONF_FILTER_REGEXP, filter_regexp);
 			settings_editor.putInt(Constants.CONF_GPS_TIMES, gps_times);
 			GeoPoint p = mapview.getProjection().fromPixels(mapview.getWidth() / 2, mapview.getHeight() / 2);
 			settings_editor.putInt(Constants.LAST_LAT, p.getLatitudeE6());
@@ -501,9 +513,28 @@ public class Main extends MapActivity implements LocationListener
 				service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
 				break;
 			}
+            case R.menu_id.FILTER_DIALOG:
+            {
+                showDialog(Constants.DIALOG_FILTER);
+                break;
+            }
 		}
 		return false;
 	}
+
+    //
+    // Called when the filter dialog OK button has been pressed
+    //
+    private WifiFillterDialog.WifiFillterDialogOKListener wifi_filter_ok_listener = new WifiFillterDialog.WifiFillterDialogOKListener()
+    {
+        public void ok(boolean filter_enabled, boolean filter_inverse, String filter_regexp)
+        {
+            Main.this.filter_enabled = filter_enabled;
+            Main.this.filter_inverse = filter_inverse;
+            Main.this.filter_regexp = filter_regexp;
+            mapview.invalidate();
+        }
+    };
 
 	private Runnable kml_export_proc = new Runnable()
 	{
@@ -678,6 +709,11 @@ public class Main extends MapActivity implements LocationListener
 
 				return builder.create();
 			}
+
+            case Constants.DIALOG_FILTER:
+            {
+                return new WifiFillterDialog(this, filter_enabled, filter_inverse, filter_regexp, wifi_filter_ok_listener);
+            }
 		}
 
 		return super.onCreateDialog(id);
@@ -717,6 +753,8 @@ public class Main extends MapActivity implements LocationListener
 						+ settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0) });
 				c.moveToFirst();
 				last = c.getInt(0);
+
+                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
 
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
 				sb.append(" " + total);
@@ -885,6 +923,20 @@ public class Main extends MapActivity implements LocationListener
 						{
 							do
 							{
+                                String ssid = c.getString(2);
+                                if (filter_enabled)
+                                {
+                                    boolean matches = ssid.matches(filter_regexp);
+                                    if (matches && filter_inverse)
+                                    {
+                                        continue;
+                                    }
+                                    else if (!matches && !filter_inverse)
+                                    {
+                                        continue;
+                                    }
+                                }
+
 								String cap = c.getString(3);
 								if (cap == null || cap.length() == 0)
 								{
@@ -900,7 +952,7 @@ public class Main extends MapActivity implements LocationListener
 								}
 
 								draw_single(canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
-										(int) (c.getDouble(1) * 1E6)), c.getString(2));
+										(int) (c.getDouble(1) * 1E6)), ssid);
 							}
 							while (c.moveToNext());
 						}

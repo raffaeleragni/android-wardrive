@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:orientation="vertical" android:stretchColumns="0"
+     android:layout_gravity="center_vertical|center_horizontal"
+     android:layout_height="wrap_content" android:layout_width="wrap_content">
+
+     <TableRow>
+          <TextView
+              android:textColor="#ffffff"
+              android:text="@string/WIFI_FILTER_DIALOG_FILTER_REGEXP"
+              android:textSize="16px"
+              android:layout_marginLeft="6dip"
+              android:layout_gravity="center_vertical"
+          />
+          
+     </TableRow>
+
+     <TableRow android:layout_width="fill_parent">
+          <EditText
+              android:id="@+id/editFilter"
+              android:layout_width="fill_parent"
+          />
+     </TableRow>
+
+     <TableRow>
+          <TextView
+              android:textColor="#ffffff"
+              android:text="@string/WIFI_FILTER_DIALOG_FILTER_ENABLED"
+              android:textSize="16px"
+              android:layout_marginLeft="6dip"
+              android:layout_gravity="center_vertical"
+          />
+          <CheckBox
+              android:id="@+id/filterEnabled"
+              android:layout_gravity="right|top"
+          />
+     </TableRow>
+
+     <TableRow>
+          <TextView
+              android:textColor="#ffffff"
+              android:text="@string/WIFI_FILTER_DIALOG_FILTER_INVERSE"
+              android:textSize="16px"
+              android:layout_marginLeft="6dip"
+              android:layout_gravity="center_vertical"
+          />
+          <CheckBox
+              android:id="@+id/filterInverse"
+              android:layout_gravity="right|top"
+           />
+     </TableRow>
+
+     <TableRow>
+        <Button
+            android:id="@+id/buttonOK"
+            android:text="@string/OK"
+            android:layout_gravity="center_horizontal"
+            android:width="55dip"
+        />
+     </TableRow>
+
+</TableLayout>
