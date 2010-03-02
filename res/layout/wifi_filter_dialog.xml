@@ -17,9 +17,7 @@
 
      <TableRow android:layout_width="fill_parent">
           <EditText
-              android:id="@+id/editFilter"
-              android:layout_width="fill_parent"
-          />
+              android:id="@+id/editFilter" android:maxWidth="250dip" android:width="250dip" android:minHeight="45dip"/>
      </TableRow>
 
      <TableRow>
@@ -54,9 +52,7 @@
         <Button
             android:id="@+id/buttonOK"
             android:text="@string/OK"
-            android:layout_gravity="center_horizontal"
-            android:width="55dip"
-        />
+            android:layout_gravity="center_horizontal" android:width="55dip"/>
      </TableRow>
 
 </TableLayout>
