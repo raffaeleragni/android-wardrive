@@ -177,3 +177,8 @@ v2.16
 v2.17
 
     - Added a regexp filter for visible wifis
+
+v2.18
+
+    - Android SDK version required grows from 3 to 4, Now supports any screen format
+    
