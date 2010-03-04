@@ -44,7 +44,7 @@ import android.widget.Toast;
 
 public class ScanService extends Service
 {
-	private Object LAST_LOCATION_LOCK = new Object();
+	private final Object LAST_LOCATION_LOCK = new Object();
 
 	private LocationManager location_manager;
 

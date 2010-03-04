@@ -1073,11 +1073,11 @@ public class Main extends MapActivity implements LocationListener
 
 		private int getTextWidth(String text)
 		{
-			int count = text.length();
-			float[] widths = new float[count];
+			int _count = text.length();
+			float[] widths = new float[_count];
 			paint_text.getTextWidths(text, widths);
 			int textWidth = 0;
-			for (int i = 0; i < count; i++)
+			for (int i = 0; i < _count; i++)
 			{
 				textWidth += widths[i];
 			}
