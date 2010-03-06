@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">wardrive</string>
     <string name="GPS_LABEL_ME">ME</string>
+    <string name="MENU_LIST_LABEL">List current WiFis</string>
     <string name="MENU_QUIT_LABEL">Quit</string>
     <string name="MENU_STATS_LABEL">Statistics</string>
     <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFis</string>
@@ -17,6 +18,12 @@
     <string name="MENU_SERVICE_LABEL">Service ON/OFF</string>
     <string name="MENU_KML_EXPORT_LABEL">Export to KML</string>
     <string name="MENU_SYNC_ONLINE_DB">Send to online DB</string>
+    <string name="MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION">Send all WiFis? (No will send only new ones)</string>
+    <string name="MENU_TOGGLE_NOTIFICATIONS_ENABLED">Notifications enabled</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS">GPS Times</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_1">Short (3s, 3m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_2">Medium (10s, 10m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_3">Long (30s, 50m)</string>
     <string name="MESSAGE_STARTING_KML_EXPORT">Starting KML export...</string>
     <string name="MESSAGE_STARTING_SYNC_ONLINE">Sending to online database...</string>
     <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML file exported</string>
@@ -33,4 +40,14 @@
     <string name="GPS_ENABLED">GPS enabled</string>
     <string name="GPS_DISABLED">GPS disabled</string>
     <string name="GPS_STATUS">GPS status:</string>
+    <string name="WIFI_FILTER_DIALOG_TITLE">WiFi Filter</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">Filter Enabled</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_INVERSE">Filter Inverse</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_REGEXP">Filter regexp (java style)</string>
+    <string name="OK">Ok</string>
+    <string name="THIS_REGEXP_IS_AN_INVALID_ONE">is an invalid regexp</string>
+    <string name="MENU_LIST_ITEM_DELETE_LABEL">Delete this item</string>
+    <string name="LIST_ITEM_DELETE_CONFIRM">Are you sure to delete this item?</string>
+    <string name="YES">Yes</string>
+    <string name="NO">No</string>
 </resources>

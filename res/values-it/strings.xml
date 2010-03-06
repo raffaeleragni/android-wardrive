@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">wardrive</string>
     <string name="GPS_LABEL_ME">IO</string>
+    <string name="MENU_LIST_LABEL">Lista Wifi visibili</string>
     <string name="MENU_QUIT_LABEL">Esci</string>
     <string name="MENU_STATS_LABEL">Statistiche</string>
     <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFi</string>
@@ -16,7 +17,13 @@
     <string name="MENU_DELETE_WARNING_LABEL">Verranno cancellati tutti i dati finora salvati. Continuare?</string>
     <string name="MENU_SERVICE_LABEL">Servizio ON/OFF</string>
     <string name="MENU_KML_EXPORT_LABEL">Esporta in KML</string>
-    <string name="MENU_SYNC_ONLINE_DB">Invia a databse online</string>
+    <string name="MENU_SYNC_ONLINE_DB">Invia a database online</string>
+    <string name="MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION">Inviare tutte le WiFi? (Rispondendo No verranno inviate soltanto quelle nuove)</string>
+    <string name="MENU_TOGGLE_NOTIFICATIONS_ENABLED">Notifiche abilitate</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS">Tempi scansione GPS</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_1">Veloce (3s, 3m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_2">Medio (10s, 10m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_3">Lento (30s, 50m)</string>
     <string name="MESSAGE_STARTING_KML_EXPORT">Inizio esportazione KML...</string>
     <string name="MESSAGE_STARTING_SYNC_ONLINE">Invio al database online...</string>
     <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">File KML esportato</string>
@@ -33,4 +40,14 @@
     <string name="GPS_ENABLED">GPS abilitato</string>
     <string name="GPS_DISABLED">GPS disabilitato</string>
     <string name="GPS_STATUS">Stato GPS:</string>
+    <string name="WIFI_FILTER_DIALOG_TITLE">Filtro WiFi</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">Filtro abilitato</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_INVERSE">Filtro al contrario</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_REGEXP">Espressione regolare per filtraggio (stile java)</string>
+    <string name="OK">Ok</string>
+    <string name="THIS_REGEXP_IS_AN_INVALID_ONE">non è un\'espressione regolare</string>
+    <string name="MENU_LIST_ITEM_DELETE_LABEL">Elimina questo elemento</string>
+    <string name="LIST_ITEM_DELETE_CONFIRM">Si è sicuri di eliminare questo elemento?</string>
+    <string name="YES">Si</string>
+    <string name="NO">No</string>
 </resources>
