@@ -214,7 +214,7 @@ public class Main extends MapActivity implements LocationListener
 			mapview.getOverlays().add(overlays_closed);
 			mapview.getOverlays().add(overlays_opened);
 			mapview.getOverlays().add(overlays_me);
-
+			
 			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.DATABASE_FULL_PATH, null);
 			if (database != null)
 			{
@@ -237,6 +237,7 @@ public class Main extends MapActivity implements LocationListener
 		catch (Exception e)
 		{
 			notify_error(e);
+			finish();
 		}
 	}
 
@@ -388,10 +389,18 @@ public class Main extends MapActivity implements LocationListener
 		{
 			case R.menu_id.QUIT:
 			{
-				service_binder.stop_services();
-				stopService(service_intent);
-				save_service_tstamp();
-				save_app_tstamp();
+                if (service_binder != null)
+                {
+                    service_binder.stop_services();
+                }
+
+                if (service_intent != null)
+                {
+                    stopService(service_intent);
+                }
+                
+                save_service_tstamp();
+                save_app_tstamp();
 
 				finish();
 
@@ -449,13 +458,13 @@ public class Main extends MapActivity implements LocationListener
 				service = !service;
 				if (service)
 				{
-					service_binder.start_services();
-					startService(service_intent);
+					if (service_binder != null) service_binder.start_services();
+					if (service_intent != null) startService(service_intent);
 				}
 				else
 				{
-					service_binder.stop_services();
-					stopService(service_intent);
+					if (service_binder != null) service_binder.stop_services();
+					if (service_intent != null) stopService(service_intent);
 					save_service_tstamp();
 				}
 				break;
@@ -518,6 +527,11 @@ public class Main extends MapActivity implements LocationListener
                 showDialog(Constants.DIALOG_FILTER);
                 break;
             }
+//            case R.menu_id.LIST:
+//            {
+//                
+//                break;
+//            }
 		}
 		return false;
 	}

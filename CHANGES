@@ -181,4 +181,8 @@ v2.17
 v2.18
 
     - Android SDK version required grows from 3 to 4, Now supports any screen format
+
+v2.19
+
+    - Fixed bug: couldn't write new files on sdcard, corrected permissions.
     

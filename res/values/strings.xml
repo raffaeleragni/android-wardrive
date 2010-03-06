@@ -2,6 +2,7 @@
 <resources>
     <string name="app_name">wardrive</string>
     <string name="GPS_LABEL_ME">ME</string>
+    <string name="MENU_LIST_LABEL">List current WiFis</string>
     <string name="MENU_QUIT_LABEL">Quit</string>
     <string name="MENU_STATS_LABEL">Statistics</string>
     <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFis</string>

@@ -1,14 +1,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 	<item android:id="@+menu_id/SERVICE" android:title="@string/MENU_SERVICE_LABEL"
 		android:icon="@drawable/ic_menu_manage" />
+	<!--<item android:id="@+menu_id/LIST" android:title="@string/MENU_LIST_LABEL"
+		android:icon="@drawable/ic_menu_mylocation" />-->
 	<item android:id="@+menu_id/STATS" android:title="@string/MENU_STATS_LABEL"
 		android:icon="@drawable/ic_menu_view" />
-	<item android:id="@+menu_id/SYNC_ONLINE_DB" android:title="@string/MENU_SYNC_ONLINE_DB"
-		android:icon="@drawable/ic_menu_refresh"></item>
 	<item android:id="@+menu_id/KML_EXPORT" android:title="@string/MENU_KML_EXPORT_LABEL"
 		android:icon="@drawable/ic_menu_save"></item>
 	<item android:id="@+menu_id/QUIT" android:title="@string/MENU_QUIT_LABEL"
 		android:icon="@drawable/ic_menu_close_clear_cancel" />
+	<item android:id="@+menu_id/SYNC_ONLINE_DB" android:title="@string/MENU_SYNC_ONLINE_DB"
+		android:icon="@drawable/ic_menu_refresh"></item>
 	<item android:title="@string/MENU_CHANGE_GPS_SERVICE_TIMERS"
 		android:id="@+menu_id/CHANGE_GPS_SERVICE_TIMERS">
 		<menu>
@@ -22,9 +24,7 @@
 			</group>
 		</menu>
 	</item>
-	<item android:title="@string/MENU_TOGGLE_NOTIFICATIONS_ENABLED"
-		android:id="@+menu_id/NOTIFICATIONS_ENABLED" android:enabled="true"
-		android:checkable="true" android:checked="false" android:visible="true" />
+    <item android:id="@+menu_id/FILTER_DIALOG" android:title="@string/WIFI_FILTER_DIALOG_TITLE"/>
 	<item android:title="@string/MENU_TOGGLE_MAP_MODE_LABEL"
 		android:id="@+menu_id/MAP_MODE" android:enabled="true"
 		android:checkable="true" android:checked="false" android:visible="true" />
@@ -40,7 +40,9 @@
 	<item android:id="@+menu_id/SHOW_CLOSED" android:title="@string/MENU_SHOW_CLOSED_LABEL"
 		android:enabled="true" android:checkable="true" android:checked="false"
 		android:visible="true"></item>
-    <item android:id="@+menu_id/FILTER_DIALOG" android:title="@string/WIFI_FILTER_DIALOG_TITLE"/>
+	<item android:title="@string/MENU_TOGGLE_NOTIFICATIONS_ENABLED"
+		android:id="@+menu_id/NOTIFICATIONS_ENABLED" android:enabled="true"
+		android:checkable="true" android:checked="false" android:visible="true" />
 	<item android:id="@+menu_id/ABOUT" android:title="@string/MENU_ABOUT_LABEL"/>
 	<item android:id="@+menu_id/DELETE" android:title="@string/MENU_DELETE_LABEL" />
 </menu>
