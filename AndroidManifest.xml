@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="ki.wardrive" android:versionCode="34" android:versionName="2.19" xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest package="ki.wardrive" android:versionCode="35" android:versionName="3.0" xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<uses-sdk android:minSdkVersion="4" />
 	
@@ -11,6 +11,7 @@
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
+		<activity android:name=".ListWifiActivity"  android:label="@string/MENU_LIST_LABEL"/>
 		<service android:name="ScanService"></service>
 	</application>
 	

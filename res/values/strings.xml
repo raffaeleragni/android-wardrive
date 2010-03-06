@@ -64,4 +64,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="WIFI_FILTER_DIALOG_FILTER_REGEXP">Filter regexp (java style)</string>
     <string name="OK">Ok</string>
     <string name="THIS_REGEXP_IS_AN_INVALID_ONE">is an invalid regexp</string>
+    <string name="MENU_LIST_ITEM_DELETE_LABEL">Delete this item</string>
+    <string name="LIST_ITEM_DELETE_CONFIRM">Are you sure to delete this item?</string>
+    <string name="YES">Yes</string>
+    <string name="NO">No</string>
 </resources>

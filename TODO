@@ -1,14 +1,2 @@
 
- - Display AP info in someway. Filter/Search result list, find ones closest to
-   the user, focus on them.
-
- - Add driving directions + distance to selected AP.
- 
- - Make APs selectable on map.
-
-[WEB]
-Things to do when appengine gets better:
- 
- - queries with lat+lon directly
- 
- - query to fetch only new data (to sync on the phone)
+ - Add driving directions + distance to selected AP. (to the list activity)

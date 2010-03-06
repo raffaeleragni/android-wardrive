@@ -527,11 +527,24 @@ public class Main extends MapActivity implements LocationListener
                 showDialog(Constants.DIALOG_FILTER);
                 break;
             }
-//            case R.menu_id.LIST:
-//            {
-//                
-//                break;
-//            }
+            case R.menu_id.LIST:
+            {
+            	GeoPoint top_left = mapview.getProjection().fromPixels(0, 0);
+				GeoPoint bottom_right = mapview.getProjection().fromPixels(mapview.getWidth(), mapview.getHeight());
+            	
+				Bundle b = new Bundle();
+				b.putInt("minlat", top_left.getLatitudeE6());
+            	b.putInt("minlon", top_left.getLongitudeE6());
+            	b.putInt("maxlat", bottom_right.getLatitudeE6());
+            	b.putInt("maxlon", bottom_right.getLongitudeE6());
+           	
+            	Intent i = new Intent(this, ListWifiActivity.class);
+            	i.putExtras(b);
+            	
+                startActivity(i);
+                
+                break;
+            }
 		}
 		return false;
 	}
@@ -666,14 +679,14 @@ public class Main extends MapActivity implements LocationListener
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getText(R.string.MENU_DELETE_WARNING_LABEL));
 				builder.setCancelable(false);
-				builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				builder.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener()
 				{
 					public void onClick(DialogInterface dialog, int id)
 					{
 						delete_all_wifi();
 					}
 				});
-				builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+				builder.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener()
 				{
 					public void onClick(DialogInterface dialog, int id)
 					{
@@ -696,7 +709,7 @@ public class Main extends MapActivity implements LocationListener
 				AlertDialog.Builder builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getText(R.string.MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION));
 				builder.setCancelable(false);
-				builder.setPositiveButton("Yes", new DialogInterface.OnClickListener()
+				builder.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener()
 				{
 					public void onClick(DialogInterface dialog, int id)
 					{
@@ -708,7 +721,7 @@ public class Main extends MapActivity implements LocationListener
 						}
 					}
 				});
-				builder.setNegativeButton("No", new DialogInterface.OnClickListener()
+				builder.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener()
 				{
 					public void onClick(DialogInterface dialog, int id)
 					{
@@ -1082,7 +1095,7 @@ public class Main extends MapActivity implements LocationListener
 				lon_to = lon_from;
 				lon_from = x;
 			}
-			return new String[] { "" + lat_from, "" + lat_to, "" + lon_from, "" + lon_to };
+			return new String[] { String.valueOf(lat_from), String.valueOf(lat_to), String.valueOf(lon_from), String.valueOf(lon_to) };
 		}
 
 		private int getTextWidth(String text)

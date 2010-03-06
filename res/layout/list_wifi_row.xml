@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <TextView
+    	android:id="@+id/f1"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+    />
+
+    <TextView
+    	android:id="@+id/f2"
+        android:textSize="10sp"
+        android:layout_height="wrap_content"
+    />
+    <TextView
+    	android:id="@+id/f3"
+        android:textSize="10sp"
+        android:layout_height="wrap_content"
+    />
+    
+    <TableRow>
+    	<TextView
+	    	android:id="@+id/fpos"
+	        android:textSize="10sp"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="Position: "
+	    />	 
+	    <TextView
+	    	android:id="@+id/f4"
+	        android:textSize="10sp"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	    />	        
+	    <TextView
+	    	android:id="@+id/fcomma"
+	        android:textSize="10sp"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text=", "
+	    />	        
+	    <TextView
+	    	android:id="@+id/f5"
+	        android:textSize="10sp"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	    />		
+    </TableRow>
+    
+</TableLayout>

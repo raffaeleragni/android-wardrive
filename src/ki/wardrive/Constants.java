@@ -111,6 +111,8 @@ public class Constants
 	public static final int DIALOG_SYNC_ALL = DIALOG_SYNC_PROGRESS + 1;
     
     public static final int DIALOG_FILTER = DIALOG_SYNC_ALL + 1;
+    
+    public static final int DIALOG_DELETE_SINGLE_WIFI = DIALOG_FILTER + 1;
 	
 	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
 	                        

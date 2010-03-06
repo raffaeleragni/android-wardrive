@@ -186,3 +186,8 @@ v2.19
 
     - Fixed bug: couldn't write new files on sdcard, corrected permissions.
     
+v3.0
+
+    - All actually visible wifis can now be listed
+    - Possible operations on single item: delete
+    
