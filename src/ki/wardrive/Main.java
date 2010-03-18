@@ -60,6 +60,7 @@ import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapView;
+import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
 
 /**
@@ -103,6 +104,8 @@ public class Main extends MapActivity implements LocationListener
 	private Overlays overlays_opened;
 
 	private Overlays overlays_me;
+	
+	private ScaleOverlay overlay_scale;
 
 	public boolean show_labels = false;
 
@@ -113,6 +116,8 @@ public class Main extends MapActivity implements LocationListener
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
+	
+	public boolean show_scale = true;
 
     private boolean filter_enabled = false;
 
@@ -189,7 +194,8 @@ public class Main extends MapActivity implements LocationListener
             filter_enabled = settings.getBoolean(Constants.CONF_FILTER_ENABLED, filter_enabled);
             filter_inverse = settings.getBoolean(Constants.CONF_FILTER_INVERSE, filter_inverse);
             filter_regexp = settings.getString(Constants.CONF_FILTER_REGEXP, filter_regexp);
-
+            show_scale = settings.getBoolean(Constants.CONF_SHOW_SCALE, show_scale);
+            
 			GeoPoint point = new GeoPoint(settings.getInt(Constants.LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(
 					Constants.LAST_LON, Constants.DEFAULT_LON));
 
@@ -206,14 +212,17 @@ public class Main extends MapActivity implements LocationListener
 			overlays_closed = new Overlays(Constants.OTYPE_CLOSED_WIFI, d);
 			overlays_opened = new Overlays(Constants.OTYPE_OPEN_WIFI, d);
 			overlays_me = new Overlays(Constants.OTYPE_MY_LOCATION, d);
+			overlay_scale = new ScaleOverlay();
 
 			overlays_closed.show_labels = show_labels;
 			overlays_opened.show_labels = show_labels;
 			overlays_me.show_labels = show_labels;
+			overlay_scale.show_scale = show_scale;
 
 			mapview.getOverlays().add(overlays_closed);
 			mapview.getOverlays().add(overlays_opened);
 			mapview.getOverlays().add(overlays_me);
+			mapview.getOverlays().add(overlay_scale);			
 			
 			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.DATABASE_FULL_PATH, null);
 			if (database != null)
@@ -301,6 +310,7 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putBoolean(Constants.CONF_NOTIFICATIONS_ENABLED, notifications_enabled);
             settings_editor.putBoolean(Constants.CONF_FILTER_ENABLED, filter_enabled);
             settings_editor.putBoolean(Constants.CONF_FILTER_INVERSE, filter_inverse);
+			settings_editor.putBoolean(Constants.CONF_SHOW_SCALE, show_scale);
             settings_editor.putString(Constants.CONF_FILTER_REGEXP, filter_regexp);
 			settings_editor.putInt(Constants.CONF_GPS_TIMES, gps_times);
 			GeoPoint p = mapview.getProjection().fromPixels(mapview.getWidth() / 2, mapview.getHeight() / 2);
@@ -832,6 +842,37 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Rendering
 	//
+	
+	public class ScaleOverlay extends Overlay
+	{
+		public static final int BAR_WIDTH = 300;
+		
+		public boolean show_scale = true;
+		
+		public Paint paint;
+		
+		public TextPaint paintText;
+		
+		public ScaleOverlay()
+		{
+		}
+		
+		@Override
+		public void draw(Canvas canvas, MapView mapView, boolean shadow)
+		{
+			if (!show_scale)
+			{
+				return;
+			}
+			
+			// TODO: finish here
+			
+			int x = mapview.getWidth() - 100;
+			int y = mapview.getHeight() - 100;
+			canvas.drawLine(x, y, x + BAR_WIDTH, y, paint);
+			canvas.drawText(String.valueOf(5000) + "km", x + 10, y - 10, paintText);			
+		}
+	}
 
 	public class Overlays extends ItemizedOverlay<OverlayItem>
 	{

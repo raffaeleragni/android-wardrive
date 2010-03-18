@@ -90,6 +90,8 @@ public class Constants
 
     public static final String CONF_FILTER_REGEXP = "filter_regexp";
 
+    public static final String CONF_SHOW_SCALE = "show_scale";
+
 	public static final int EVENT_KML_EXPORT_DONE = 0;
 
 	public static final int EVENT_SYNC_ONLINE_PROGRESS = 1;

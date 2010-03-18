@@ -190,4 +190,8 @@ v3.0
 
     - All actually visible wifis can now be listed
     - Possible operations on single item: delete
-    
+
+v3.1
+
+	- Added the scale bar
+	
