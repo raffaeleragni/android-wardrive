@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="ki.wardrive" android:versionCode="36" android:versionName="3.1" xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest
+	package="ki.wardrive"
+	android:versionCode="36"
+	android:versionName="3.1"
+	xmlns:android="http://schemas.android.com/apk/res/android">
 
-	<uses-sdk android:minSdkVersion="4" />
+	<uses-sdk android:minSdkVersion="4"/>
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<uses-library android:name="com.google.android.maps" />
@@ -18,13 +22,11 @@
 	<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
 	<uses-permission android:name="android.permission.ACCESS_GPS" />
-	
 	<uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
 	<uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
-	
 	<uses-permission android:name="android.permission.INTERNET" />
-	
 	<uses-permission android:name="android.permission.WAKE_LOCK" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
 
 	<supports-screens
 		android:smallScreens="true" 
@@ -32,8 +34,5 @@
 		android:largeScreens="true" 
 		android:anyDensity="true"
 	/>
-	
 
-
-<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
 </manifest> 
