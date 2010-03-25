@@ -50,4 +50,5 @@
     <string name="LIST_ITEM_DELETE_CONFIRM">Si è sicuri di eliminare questo elemento?</string>
     <string name="YES">Si</string>
     <string name="NO">No</string>
+    <string name="MENU_TOGGLE_SCALE_LABEL">Scala della mappa</string>
 </resources>

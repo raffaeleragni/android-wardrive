@@ -68,4 +68,5 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="LIST_ITEM_DELETE_CONFIRM">Are you sure to delete this item?</string>
     <string name="YES">Yes</string>
     <string name="NO">No</string>
+    <string name="MENU_TOGGLE_SCALE_LABEL">Map scale</string>
 </resources>

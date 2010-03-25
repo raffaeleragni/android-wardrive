@@ -117,7 +117,7 @@ public class Main extends MapActivity implements LocationListener
 
 	public boolean show_closed = false;
 	
-	public boolean show_scale = true;
+	public boolean show_scale = false;
 
     private boolean filter_enabled = false;
 
@@ -363,6 +363,7 @@ public class Main extends MapActivity implements LocationListener
 		menu.findItem(R.menu_id.SHOW_CLOSED).setChecked(show_closed);
 		menu.findItem(R.menu_id.SHOW_OPEN).setChecked(show_open);
 		menu.findItem(R.menu_id.NOTIFICATIONS_ENABLED).setChecked(notifications_enabled);
+		menu.findItem(R.menu_id.SCALE).setChecked(show_scale);
 
 		switch (gps_times)
 		{
@@ -554,6 +555,14 @@ public class Main extends MapActivity implements LocationListener
                 startActivity(i);
                 
                 break;
+            }
+            case R.menu_id.SCALE:
+            {
+            	show_scale = !show_scale;
+				overlay_scale.show_scale = show_scale;
+				item.setChecked(show_scale);
+				mapview.invalidate();
+            	break;
             }
 		}
 		return false;
@@ -845,7 +854,9 @@ public class Main extends MapActivity implements LocationListener
 	
 	public class ScaleOverlay extends Overlay
 	{
-		public static final int BAR_WIDTH = 300;
+		public static final int BAR_WIDTH = 120;
+		
+		public static final int BAR_TEETH = 10;
 		
 		public boolean show_scale = true;
 		
@@ -855,6 +866,14 @@ public class Main extends MapActivity implements LocationListener
 		
 		public ScaleOverlay()
 		{
+			paint = new Paint();
+			paint.setAntiAlias(true);
+
+			paintText = new TextPaint();
+			paintText.setARGB(255, 0, 0, 0);
+			paintText.setAntiAlias(true);
+			paintText.setStrokeWidth(3);
+			paintText.setTextSize(14);
 		}
 		
 		@Override
@@ -867,10 +886,18 @@ public class Main extends MapActivity implements LocationListener
 			
 			// TODO: finish here
 			
-			int x = mapview.getWidth() - 100;
-			int y = mapview.getHeight() - 100;
+			String distance = "5000km";
+			
+			
+			int x = 10;
+			int y = mapview.getHeight() - 50;
+			
 			canvas.drawLine(x, y, x + BAR_WIDTH, y, paint);
-			canvas.drawText(String.valueOf(5000) + "km", x + 10, y - 10, paintText);			
+			
+			canvas.drawLine(x, y + 2, x, y - BAR_TEETH, paint);
+			canvas.drawLine(x + BAR_WIDTH, y + 2, x + BAR_WIDTH, y - BAR_TEETH, paint);
+			
+			canvas.drawText(distance, x + 5, y - 5, paintText);			
 		}
 	}
 
