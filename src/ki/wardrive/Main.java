@@ -20,6 +20,7 @@ package ki.wardrive;
 
 import java.io.File;
 import java.net.URL;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -884,20 +885,43 @@ public class Main extends MapActivity implements LocationListener
 				return;
 			}
 			
-			// TODO: finish here
+			int x1 = 10, x2 = 10 + BAR_WIDTH;
+			int y = mapview.getHeight() - 48;
 			
-			String distance = "5000km";
+			GeoPoint g1 = mapview.getProjection().fromPixels(x1, y);
+			GeoPoint g2 = mapview.getProjection().fromPixels(x2, y);
+			double lon1 = Math.toRadians((double) g1.getLongitudeE6() / 1000000);
+			double lat1 = Math.toRadians((double) g1.getLatitudeE6() / 1000000);
+			double lon2 = Math.toRadians((double) g2.getLongitudeE6() / 1000000);
+			double lat2 = Math.toRadians((double) g2.getLatitudeE6() / 1000000);
 			
+			// From: http://www.movable-type.co.uk/scripts/latlong.html
+			int R = 6371000;
+			double dLat = lat2 - lat1;
+			double dLon = lon2 - lon1;
+			double a = 	Math.sin(dLat/2) * Math.sin(dLat/2) +
+	        			Math.cos(lat1) * Math.cos(lat2) *
+	        			Math.sin(dLon/2) * Math.sin(dLon/2);
+			double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+			double d = R * c;
 			
-			int x = 10;
-			int y = mapview.getHeight() - 50;
+			String distance;
+			if (d > 1000)
+			{
+				d /= 1000;
+				distance = "" + new DecimalFormat("#.##").format(d) + "km";
+			}
+			else
+			{
+				distance = "" + new DecimalFormat("#").format(d) + "m";	
+			}
 			
-			canvas.drawLine(x, y, x + BAR_WIDTH, y, paint);
+			canvas.drawLine(x1, y, x2, y, paint);
 			
-			canvas.drawLine(x, y + 2, x, y - BAR_TEETH, paint);
-			canvas.drawLine(x + BAR_WIDTH, y + 2, x + BAR_WIDTH, y - BAR_TEETH, paint);
+			canvas.drawLine(x1, y + 2, x1, y - BAR_TEETH, paint);
+			canvas.drawLine(x2, y + 2, x2, y - BAR_TEETH, paint);
 			
-			canvas.drawText(distance, x + 5, y - 5, paintText);			
+			canvas.drawText(distance, x1 + 5, y - 5, paintText);			
 		}
 	}
 
