@@ -14,6 +14,8 @@ public class WigleUploader
 	private static final String _URL = "http://www.wigle.net/gps/gps/main/confirmfile/";
 	
 	private static final String BOUNDARY = "----MultiPartBoundary";
+	
+	private static final String NL = "\r\n";
 
 	public static boolean upload(String username, String password, File file)
 	{
@@ -34,9 +36,9 @@ public class WigleUploader
 	    	conn.setRequestProperty("Content-Type","multipart/form-data;boundary="+BOUNDARY);
 	    	conn.connect();
 	    	DataOutputStream dos = new DataOutputStream(conn.getOutputStream());
-	    	dos.writeBytes("--"+BOUNDARY+"\nContent-Disposition: form-data; name=\"observer\"\n\n"+username+"\n");
-	    	dos.writeBytes("--"+BOUNDARY+"\nContent-Disposition: form-data; name=\"password\"\n\n"+password+"\n");
-	    	dos.writeBytes("--"+BOUNDARY+"\nContent-Disposition: form-data; name=\"stumblefile\";filename=\"wardrive.kml\"\nContent-Type: application/octet-stream\n\n");
+	    	dos.writeBytes("--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"observer\""+NL+NL+username+NL);
+	    	dos.writeBytes("--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"password\""+NL+NL+password+NL);
+	    	dos.writeBytes("--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"stumblefile\";filename=\"wardrive.kml\""+NL+"Content-Type: application/octet-stream"+NL+NL);
 	    	int ct;
 	    	byte[] buf = new byte[10240];
 			BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
@@ -46,8 +48,8 @@ public class WigleUploader
 	    		dos.write(buf, 0, ct);
 	    	}
 	    	fis.close();
-	    	dos.writeBytes("\n--"+BOUNDARY+"\nContent-Disposition: form-data; name=\"Send\"\n\nSend");
-	    	dos.writeBytes("\n--"+BOUNDARY+"--\n");
+	    	dos.writeBytes(NL+"--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"Send\""+NL+NL+"Send");
+	    	dos.writeBytes(NL+"--"+BOUNDARY+"--"+NL);
 	    	dos.flush();
 	    	dos.close();
 	    	DataInputStream dis = new DataInputStream(conn.getInputStream());
@@ -56,7 +58,7 @@ public class WigleUploader
 	    	dis.close();
 	    	conn.disconnect();
 	    	String response = new String(data, 0, ct);
-    		return response.matches("uploaded succesfully");
+    		return response.matches(".*uploaded successfully.*");
 		}
 		catch (Exception e)
 		{
