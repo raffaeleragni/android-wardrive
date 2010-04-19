@@ -13,7 +13,7 @@ public class WigleUploader
 {
 	private static final String _URL = "http://www.wigle.net/gps/gps/main/confirmfile/";
 	
-	private static final String BOUNDARY = "*****MultiPartBoundary";
+	private static final String BOUNDARY = "----MultiPartBoundary";
 
 	public static boolean upload(String username, String password, File file)
 	{
@@ -40,8 +40,9 @@ public class WigleUploader
 	    	int ct;
 	    	byte[] buf = new byte[10240];
 			BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
-	    	while((ct = fis.read(buf)) > 0)
+	    	while(fis.available() > 0)
 	    	{
+	    		ct = fis.read(buf);
 	    		dos.write(buf, 0, ct);
 	    	}
 	    	fis.close();
