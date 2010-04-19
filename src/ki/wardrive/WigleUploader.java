@@ -45,6 +45,7 @@ public class WigleUploader
 	    		dos.write(buf, 0, ct);
 	    	}
 	    	fis.close();
+	    	dos.writeBytes("\n--"+BOUNDARY+"\nContent-Disposition: form-data; name=\"Send\"\n\nSend");
 	    	dos.writeBytes("\n--"+BOUNDARY+"--\n");
 	    	dos.flush();
 	    	dos.close();
