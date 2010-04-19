@@ -45,7 +45,7 @@ public class ListWifiActivity extends ListActivity
     {
         super.onCreate(icicle);
         
-        database = SQLiteDatabase.openDatabase(DBTableNetworks.DATABASE_FULL_PATH, null, SQLiteDatabase.OPEN_READWRITE);
+        database = SQLiteDatabase.openDatabase(DBTableNetworks.getDBFullPath(), null, SQLiteDatabase.OPEN_READWRITE);
         if (database == null)
         {
         	finish();

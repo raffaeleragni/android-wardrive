@@ -131,6 +131,10 @@ public class Main extends MapActivity implements LocationListener
 	private boolean notifications_enabled = false;
 
 	private ProgressDialog progressDialog;
+	
+	private String wigle_username = null;
+	
+	private String wigle_password = null;
 
 	//
 	// DB Related
@@ -196,6 +200,8 @@ public class Main extends MapActivity implements LocationListener
             filter_inverse = settings.getBoolean(Constants.CONF_FILTER_INVERSE, filter_inverse);
             filter_regexp = settings.getString(Constants.CONF_FILTER_REGEXP, filter_regexp);
             show_scale = settings.getBoolean(Constants.CONF_SHOW_SCALE, show_scale);
+            wigle_username = settings.getString(Constants.CONF_WIGLE_USERNAME, wigle_username);
+            wigle_password = settings.getString(Constants.CONF_WIGLE_PASSWORD, wigle_password);
             
 			GeoPoint point = new GeoPoint(settings.getInt(Constants.LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(
 					Constants.LAST_LON, Constants.DEFAULT_LON));
@@ -225,7 +231,7 @@ public class Main extends MapActivity implements LocationListener
 			mapview.getOverlays().add(overlays_me);
 			mapview.getOverlays().add(overlay_scale);			
 			
-			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.DATABASE_FULL_PATH, null);
+			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.getDBFullPath(), null);
 			if (database != null)
 			{
 				database.execSQL(DBTableNetworks.CREATE_TABLE_NETWORKS);
@@ -317,6 +323,8 @@ public class Main extends MapActivity implements LocationListener
 			GeoPoint p = mapview.getProjection().fromPixels(mapview.getWidth() / 2, mapview.getHeight() / 2);
 			settings_editor.putInt(Constants.LAST_LAT, p.getLatitudeE6());
 			settings_editor.putInt(Constants.LAST_LON, p.getLongitudeE6());
+			settings_editor.putString(Constants.CONF_WIGLE_USERNAME, wigle_username);
+			settings_editor.putString(Constants.CONF_WIGLE_PASSWORD, wigle_password);
 			settings_editor.commit();
 
 			save_app_tstamp();
@@ -565,6 +573,17 @@ public class Main extends MapActivity implements LocationListener
 				mapview.invalidate();
             	break;
             }
+            case R.menu_id.SEND_TO_WIGLE:
+            {
+            	Toast.makeText(Main.this, R.string.MESSAGE_STARTING_SEND_TO_WIGLE, Toast.LENGTH_SHORT).show();
+				new Thread(wigle_send_proc).start();
+            	break;
+            }
+            case R.menu_id.WIGLE_ACCOUNT_SETTINGS:
+            {
+            	showDialog(Constants.DIALOG_WIGLE_ACCOUNT);
+            	break;
+            }
 		}
 		return false;
 	}
@@ -582,14 +601,45 @@ public class Main extends MapActivity implements LocationListener
             mapview.invalidate();
         }
     };
+    
+    private WigleAccountDialog.WigleAccountDialogOKListener wigle_account_ok_listener = new WigleAccountDialog.WigleAccountDialogOKListener()
+    {
+    	public void ok(String username, String password)
+    	{
+    		Main.this.wigle_username = username;
+    		Main.this.wigle_password = password;
+    	}
+    };
 
 	private Runnable kml_export_proc = new Runnable()
 	{
 		public void run()
 		{
-			if (KMLExport.export(database, new File(Constants.KML_EXPORT_FILE)))
+			if (KMLExport.export(database, new File(Constants.getKMLExportFileName())))
 			{
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_DONE));
+			}
+		}
+	};
+	
+	private Runnable wigle_send_proc = new Runnable()
+	{
+		public void run()
+		{
+			String fname = Constants.getKMLExportFileName();
+			File f = new File(fname);
+			if (!f.exists())
+			{
+				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND));
+			}
+			
+			if (WigleUploader.upload(Main.this.wigle_username, Main.this.wigle_password, f))
+			{
+				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_SEND_TO_WIGLE_OK));
+			}
+			else
+			{
+				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_SEND_TO_WIGLE_ERROR));
 			}
 		}
 	};
@@ -671,6 +721,22 @@ public class Main extends MapActivity implements LocationListener
 				case Constants.EVENT_NOTIFY_ERROR:
 				{
 					notify_error((Exception) msg.getData().getSerializable("exception"));
+					break;
+				}
+				
+				case Constants.EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND:
+				{
+					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND, Toast.LENGTH_SHORT).show();
+					break;
+				}
+				case Constants.EVENT_SEND_TO_WIGLE_ERROR:
+				{
+					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_ERROR, Toast.LENGTH_SHORT).show();
+					break;
+				}
+				case Constants.EVENT_SEND_TO_WIGLE_OK:
+				{
+					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_OK, Toast.LENGTH_SHORT).show();
 					break;
 				}
 			}
@@ -760,6 +826,11 @@ public class Main extends MapActivity implements LocationListener
             case Constants.DIALOG_FILTER:
             {
                 return new WifiFillterDialog(this, filter_enabled, filter_inverse, filter_regexp, wifi_filter_ok_listener);
+            }
+            
+            case Constants.DIALOG_WIGLE_ACCOUNT:
+            {
+                return new WigleAccountDialog(this, wigle_username, wigle_password, wigle_account_ok_listener);
             }
 		}
 

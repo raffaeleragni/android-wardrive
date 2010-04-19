@@ -18,9 +18,17 @@
  */
 package ki.wardrive;
 
+import java.io.File;
+
+import android.os.Environment;
+
 public class DBTableNetworks
 {
-	public static final String DATABASE_FULL_PATH = "/sdcard/wardrive.db3";
+	public static String getDBFullPath()
+	{
+         File f = new File(Environment.getExternalStorageDirectory(), "wardrive.db3");
+         return f.getAbsolutePath();
+	}
 
 	public static final String TABLE_NETWORKS = "networks";
 

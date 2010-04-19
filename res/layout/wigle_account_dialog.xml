@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+     android:orientation="vertical" android:stretchColumns="0"
+     android:layout_gravity="center_vertical|center_horizontal"
+     android:layout_height="wrap_content" android:layout_width="wrap_content">
+
+     <TableRow>
+          <TextView
+              android:textColor="#ffffff"
+              android:text="@string/WIGLE_ACCOUNT_DIALOG_USERNAME"
+              android:textSize="16px"
+              android:layout_marginLeft="6dip"
+              android:layout_gravity="center_vertical"
+          />
+          
+     </TableRow>
+
+     <TableRow android:layout_width="fill_parent">
+          <EditText
+              android:id="@+id/wad_editUsername" android:maxWidth="250dip" android:width="250dip" android:minHeight="45dip"/>
+     </TableRow>
+     
+     <TableRow>
+          <TextView
+              android:textColor="#ffffff"
+              android:text="@string/WIGLE_ACCOUNT_DIALOG_PASSWORD"
+              android:textSize="16px"
+              android:layout_marginLeft="6dip"
+              android:layout_gravity="center_vertical"
+          />
+          
+     </TableRow>
+
+     <TableRow android:layout_width="fill_parent">
+          <EditText
+              android:id="@+id/wad_editPassword" android:maxWidth="250dip" android:width="250dip" android:minHeight="45dip"/>
+     </TableRow>
+
+     <TableRow>
+        <Button
+            android:id="@+id/wad_buttonOK"
+            android:text="@string/OK"
+            android:layout_gravity="center_horizontal" android:width="55dip"/>
+     </TableRow>
+
+</TableLayout>

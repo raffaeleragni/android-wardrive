@@ -18,16 +18,22 @@
  */
 package ki.wardrive;
 
+import java.io.File;
+
+import android.os.Environment;
+
 public class Constants
 {
 	public static final String SYNC_ONLINE_URL = "http://wardrivedb.appspot.com/main";
 
 	public static final int SYNC_ONLINE_BUFFER = 20;
 
-	public static final String DATABASE_FULL_PATH = "/sdcard/wardrive.db3";
-
-	public static final String KML_EXPORT_FILE = "/sdcard/wardrive.kml";
-
+	public static String getKMLExportFileName()
+	{
+         File f = new File(Environment.getExternalStorageDirectory(), "wardrive.kml");
+         return f.getAbsolutePath();
+	}
+	
 	public static final int DEFAULT_LAT = 0;
 
 	public static final int DEFAULT_LON = 0;
@@ -91,6 +97,10 @@ public class Constants
     public static final String CONF_FILTER_REGEXP = "filter_regexp";
 
     public static final String CONF_SHOW_SCALE = "show_scale";
+    
+    public static final String CONF_WIGLE_USERNAME = "wigle_username";
+    
+    public static final String CONF_WIGLE_PASSWORD = "wigle_password";
 
 	public static final int EVENT_KML_EXPORT_DONE = 0;
 
@@ -101,6 +111,12 @@ public class Constants
 	public static final int EVENT_SYNC_ONLINE_DONE = 2;
 
 	public static final int EVENT_NOTIFY_ERROR = 3;
+
+	public static final int EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND = 4;
+
+	public static final int EVENT_SEND_TO_WIGLE_ERROR = 5;
+	
+	public static final int EVENT_SEND_TO_WIGLE_OK = 6;
 
 	public static final int DIALOG_STATS = 0;
 
@@ -115,6 +131,8 @@ public class Constants
     public static final int DIALOG_FILTER = DIALOG_SYNC_ALL + 1;
     
     public static final int DIALOG_DELETE_SINGLE_WIFI = DIALOG_FILTER + 1;
+    
+    public static final int DIALOG_WIGLE_ACCOUNT = DIALOG_DELETE_SINGLE_WIFI + 1;
 	
 	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
 	                        

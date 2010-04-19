@@ -51,4 +51,13 @@
     <string name="YES">Si</string>
     <string name="NO">No</string>
     <string name="MENU_TOGGLE_SCALE_LABEL">Scala della mappa</string>
+    <string name="MENU_SEND_TO_WIGLE">Invia wardrive.kml su wigle</string>
+    <string name="MENU_WIGLE_ACCOUNT_SETTINGS">Preferenze account Wigle</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_TITLE">Account Wigle</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_USERNAME">Username</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_PASSWORD">Password</string>
+    <string name="MESSAGE_STARTING_SEND_TO_WIGLE">Invio del file wardrive.kml attuale a Wigle</string>
+	<string name="MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND">"wardrive.kml" non trovato. Assicurarsi di esportarlo prima di tentare un invio.</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_ERROR">Errore ricevuto dal server.</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_OK">Invio a Wigle eseguito con successo.</string>
 </resources>

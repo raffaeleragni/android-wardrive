@@ -118,7 +118,7 @@ public class ScanService extends Service
 		{
 			location_manager = location_manager == null ? (LocationManager) getSystemService(LOCATION_SERVICE) : location_manager;
 			wifi_manager = wifi_manager == null ? (WifiManager) getSystemService(Context.WIFI_SERVICE) : wifi_manager;
-			database = database == null ? SQLiteDatabase.openOrCreateDatabase(Constants.DATABASE_FULL_PATH, null) : database;
+			database = database == null ? SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.getDBFullPath(), null) : database;
 
 			if (database != null)
 			{

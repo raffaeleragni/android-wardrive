@@ -69,4 +69,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
     <string name="YES">Yes</string>
     <string name="NO">No</string>
     <string name="MENU_TOGGLE_SCALE_LABEL">Map scale</string>
+    <string name="MENU_SEND_TO_WIGLE">Send saved wardrive.kml to wigle</string>
+    <string name="MENU_WIGLE_ACCOUNT_SETTINGS">Wigle account settings</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_TITLE">Wigle account</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_USERNAME">Username</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_PASSWORD">Password</string>
+    <string name="MESSAGE_STARTING_SEND_TO_WIGLE">Sending actual wardrive.kml to wigle</string>
+	<string name="MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND">"wardrive.kml" not found. Export the file before sending.</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_ERROR">Error received from server.</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_OK">Uploaded correctly to wigle.</string>
 </resources>

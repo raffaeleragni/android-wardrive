@@ -35,6 +35,8 @@ import android.util.Log;
  */
 public class KMLExport
 {
+	private static Object LOCK = new Object();
+	
 	private static final String STYLE_RED = "<styleUrl>#red</styleUrl>";
 	
 	private static final String STYLE_YELLOW = "<styleUrl>#yellow</styleUrl>";
@@ -89,81 +91,84 @@ public class KMLExport
 
 	public static boolean export(SQLiteDatabase database, File file)
 	{
-		try
+		synchronized (LOCK)
 		{
-			if (file.exists())
-			{
-				file.delete();
-			}
-			file.createNewFile();
-
-			FileWriter fw = null;
 			try
 			{
-				fw = new FileWriter(file);
-				fw.append(ROOT_START);
-
-				Cursor c = null;
+				if (file.exists())
+				{
+					file.delete();
+				}
+				file.createNewFile();
+	
+				FileWriter fw = null;
 				try
 				{
-					fw.append(FOLDER_1);
-
-					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION, null,
-							null, null, null);
-
-					if (c != null && c.moveToFirst())
+					fw = new FileWriter(file);
+					fw.append(ROOT_START);
+	
+					Cursor c = null;
+					try
 					{
-						do
+						fw.append(FOLDER_1);
+	
+						c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION, null,
+								null, null, null);
+	
+						if (c != null && c.moveToFirst())
 						{
-							write_mark(c, fw);
+							do
+							{
+								write_mark(c, fw);
+							}
+							while (c.moveToNext());
 						}
-						while (c.moveToNext());
+	
+						fw.append(FOLDER_2);
+	
+						c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION, null,
+								null, null, null);
+	
+						if (c != null && c.moveToFirst())
+						{
+							do
+							{
+								write_mark(c, fw);
+							}
+							while (c.moveToNext());
+						}
+	
+						fw.append(FOLDER_END);
 					}
-
-					fw.append(FOLDER_2);
-
-					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION, null,
-							null, null, null);
-
-					if (c != null && c.moveToFirst())
+					finally
 					{
-						do
-						{
-							write_mark(c, fw);
-						}
-						while (c.moveToNext());
+						destroy_cursor(c);
 					}
-
-					fw.append(FOLDER_END);
+	
+					fw.append(ROOT_END);
 				}
 				finally
 				{
-					destroy_cursor(c);
+					if (fw != null)
+					{
+						fw.close();
+					}
 				}
-
-				fw.append(ROOT_END);
+	
+				return true;
 			}
-			finally
+			catch (Exception e)
 			{
-				if (fw != null)
-				{
-					fw.close();
-				}
+				Log.e(KMLExport.class.getName(), "", e);
 			}
-
-			return true;
-		}
-		catch (Exception e)
-		{
-			Log.e(KMLExport.class.getName(), "", e);
 		}
 		return false;
 	}
