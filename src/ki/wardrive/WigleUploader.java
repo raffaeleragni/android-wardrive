@@ -52,10 +52,10 @@ public class WigleUploader
 	    	dos.close();
 	    	DataInputStream dis = new DataInputStream(conn.getInputStream());
 	    	byte[] data = new byte[10240];
-	    	dis.read(data);
+	    	ct = dis.read(data);
 	    	dis.close();
 	    	conn.disconnect();
-	    	String response = new String(data);
+	    	String response = new String(data, 0, ct);
     		return response.matches("uploaded succesfully");
 		}
 		catch (Exception e)
