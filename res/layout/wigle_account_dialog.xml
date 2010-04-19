@@ -27,6 +27,7 @@
               android:textSize="16px"
               android:layout_marginLeft="6dip"
               android:layout_gravity="center_vertical"
+              android:password="true"
           />
           
      </TableRow>
