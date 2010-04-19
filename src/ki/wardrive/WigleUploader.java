@@ -58,7 +58,7 @@ public class WigleUploader
 	    	dis.close();
 	    	conn.disconnect();
 	    	String response = new String(data, 0, ct);
-    		return response.matches(".*uploaded successfully.*");
+    		return response.indexOf("uploaded successfully") != -1;
 		}
 		catch (Exception e)
 		{
