@@ -57,6 +57,8 @@ GNU General Public License for more details.
 \n\n
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+Chinese translation by http://goapk.com
     ]]></string>
     <string name="WIFI_FILTER_DIALOG_TITLE">WiFi Filter</string>
     <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">Filter Enabled</string>

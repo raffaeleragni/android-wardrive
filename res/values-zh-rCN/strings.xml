@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">wardrive</string>
+    <string name="GPS_LABEL_ME">ME</string>
+    <string name="MENU_LIST_LABEL">列出当前WiFi热点</string>
+    <string name="MENU_QUIT_LABEL">退出</string>
+    <string name="MENU_STATS_LABEL">统计</string>
+    <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFi热点</string>
+    <string name="MENU_TOGGLE_LABELS_LABEL">标签</string>
+    <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">跟随</string>
+    <string name="MENU_TOGGLE_MAP_MODE_LABEL">地图</string>
+    <string name="MENU_ABOUT_LABEL">关于</string>
+    <string name="MENU_SHOW_OPEN_LABEL">打开</string>
+    <string name="MENU_SHOW_CLOSED_LABEL">关闭</string>
+    <string name="MENU_OPTIONS_LABEL">选项</string>
+    <string name="MENU_DELETE_LABEL">删除全部</string>
+    <string name="MENU_DELETE_WARNING_LABEL">将删除所有收集的数据，继续？</string>
+    <string name="MENU_SERVICE_LABEL">服务 启用/关闭</string>
+    <string name="MENU_KML_EXPORT_LABEL">导出到KML</string>
+    <string name="MENU_SYNC_ONLINE_DB">发送到在线数据库</string>
+    <string name="MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION">发送所有WiFi热点？ (选否则仅发送新增的)</string>
+    <string name="MENU_TOGGLE_NOTIFICATIONS_ENABLED">启用通知</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS">GPS 时间</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_1">短 (3秒, 3分)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_2">中 (10秒, 10分)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_3">长 (30秒, 50分)</string>
+    <string name="MESSAGE_STARTING_KML_EXPORT">开始导出KML...</string>
+    <string name="MESSAGE_STARTING_SYNC_ONLINE">正在发送到在线数据库...</string>
+    <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML文件已导出</string>
+    <string name="MESSAGE_SUCCESFULLY_SYNC_ONLINE">发送到数据库完成，上传的项目: </string>
+    <string name="MESSAGE_STATISTICS">统计:</string>
+    <string name="MESSAGE_STATISTICS_COUNT">\n数据库中含有的WIFI热点数: </string>
+    <string name="MESSAGE_STATISTICS_OPEN">\n哪些是开启的: </string>
+    <string name="MESSAGE_STATISTICS_CLOSED">\n哪些是关闭的: </string>
+    <string name="MESSAGE_STATISTICS_LASTAPP_TSTAMP">\n上一次运行程序:</string>
+    <string name="MESSAGE_STATISTICS_LASTSERVICE_TSTAMP">\n上一次运行服务:</string>
+    <string name="MESSAGE_STATISTICS_NEW_WIFIS">\n相比上一次运行新增的WiFi热点数:</string>
+    <string name="SERVICE_STARTED">wardrive 服务开始</string>
+    <string name="SERVICE_STOPPED">wardrive 服务停止</string>
+    <string name="GPS_ENABLED">GPS 开启</string>
+    <string name="GPS_DISABLED">GPS 禁用</string>
+    <string name="GPS_STATUS">GPS 状态:</string>
+    <string name="ABOUT_BOX"><![CDATA[
+wardrive - Android的驾驶攻击软件\n
+版权所有 (C) 2009 Raffaele Ragni\n
+http://code.google.com/p/wardrive-android/\n
+\n
+这一程序是自由软件，你可以遵照自由软件基金会出版的GNU通用公共许可证
+条款来修改和重新发布这一程序。或者用许可证的第二版，或者（根据你的
+选择）用任何更新的版本。
+
+
+
+发布这一程序的目的是希望它有用，但没有任何担保。甚至没有适合特定
+目的隐含的担保。更详细的情况请参阅GNU通用公共许可证。
+
+
+
+你应该已经和程序一起收到一份GNU通用公共许可证的副本。如果还没有，请
+查看：<http://www.gnu.org/licenses/>.    
+
+
+ 安智网汉化（http://goapk.com）
+]]></string>
+    <string name="WIFI_FILTER_DIALOG_TITLE">WiFi过滤器</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">启用过滤器</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_INVERSE">方向过滤器</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_REGEXP">正则表达式过滤器(JAVA风格)</string>
+    <string name="OK">确定</string>
+    <string name="THIS_REGEXP_IS_AN_INVALID_ONE">不是一个有效的正则表达式</string>
+    <string name="MENU_LIST_ITEM_DELETE_LABEL">删除这个项目</string>
+    <string name="LIST_ITEM_DELETE_CONFIRM">确定删除这个项目？</string>
+    <string name="YES">是</string>
+    <string name="NO">否</string>
+    <string name="MENU_TOGGLE_SCALE_LABEL">地图比例尺</string>
+    <string name="MENU_SEND_TO_WIGLE">发送已保存的wardrive.kml到wigle</string>
+    <string name="MENU_WIGLE_ACCOUNT_SETTINGS">Wigle账户设置</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_TITLE">Wigle账户</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_USERNAME">用户名</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_PASSWORD">密码</string>
+    <string name="MESSAGE_STARTING_SEND_TO_WIGLE">发送当前的wardrive.kml到wigle</string>
+        <string name="MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND">"wardrive.kml"未找到。请在发送前先到处这个文件。</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_ERROR">从服务器接受出错。</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_OK">上传到wigle已完成。</string>
+</resources>

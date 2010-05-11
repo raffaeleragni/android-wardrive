@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">wardrive</string>
+    <string name="GPS_LABEL_ME">ME</string>
+    <string name="MENU_LIST_LABEL">列出目前WiFi熱點</string>
+    <string name="MENU_QUIT_LABEL">結束</string>
+    <string name="MENU_STATS_LABEL">統計</string>
+    <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFi熱點</string>
+    <string name="MENU_TOGGLE_LABELS_LABEL">標籤</string>
+    <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">跟隨</string>
+    <string name="MENU_TOGGLE_MAP_MODE_LABEL">地圖</string>
+    <string name="MENU_ABOUT_LABEL">關於</string>
+    <string name="MENU_SHOW_OPEN_LABEL">開啟</string>
+    <string name="MENU_SHOW_CLOSED_LABEL">關閉</string>
+    <string name="MENU_OPTIONS_LABEL">選項</string>
+    <string name="MENU_DELETE_LABEL">刪除全部</string>
+    <string name="MENU_DELETE_WARNING_LABEL">將刪除所有收集的資料，繼續？</string>
+    <string name="MENU_SERVICE_LABEL">服務 啟用/關閉</string>
+    <string name="MENU_KML_EXPORT_LABEL">匯出到KML</string>
+    <string name="MENU_SYNC_ONLINE_DB">傳送到連線資料庫</string>
+    <string name="MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION">傳送所有WiFi熱點？ (選否則僅傳送新增的)</string>
+    <string name="MENU_TOGGLE_NOTIFICATIONS_ENABLED">啟用通知</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS">GPS 時間</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_1">短 (3秒, 3分)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_2">中 (10秒, 10分)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_3">長 (30秒, 50分)</string>
+    <string name="MESSAGE_STARTING_KML_EXPORT">開始匯出KML...</string>
+    <string name="MESSAGE_STARTING_SYNC_ONLINE">正在傳送到連線資料庫...</string>
+    <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML檔案已匯出</string>
+    <string name="MESSAGE_SUCCESFULLY_SYNC_ONLINE">傳送到資料庫完成，上傳的項目: </string>
+    <string name="MESSAGE_STATISTICS">統計:</string>
+    <string name="MESSAGE_STATISTICS_COUNT">\n資料庫中含有的WIFI熱點數: </string>
+    <string name="MESSAGE_STATISTICS_OPEN">\n哪些是開啟的: </string>
+    <string name="MESSAGE_STATISTICS_CLOSED">\n哪些是關閉的: </string>
+    <string name="MESSAGE_STATISTICS_LASTAPP_TSTAMP">\n上一次執行程式:</string>
+    <string name="MESSAGE_STATISTICS_LASTSERVICE_TSTAMP">\n上一次執行服務:</string>
+    <string name="MESSAGE_STATISTICS_NEW_WIFIS">\n相比上一次執行新增的WiFi熱點數:</string>
+    <string name="SERVICE_STARTED">wardrive 服務開始</string>
+    <string name="SERVICE_STOPPED">wardrive 服務停止</string>
+    <string name="GPS_ENABLED">GPS 開啟</string>
+    <string name="GPS_DISABLED">GPS 禁用</string>
+    <string name="GPS_STATUS">GPS 狀態:</string>
+    <string name="ABOUT_BOX"><![CDATA[
+wardrive - Android的駕駛攻擊軟體\n
+版權所有 (C) 2009 Raffaele Ragni\n
+http://code.google.com/p/wardrive-android/\n
+\n
+這一程式是自由軟體，你可以遵照自由軟體基金會出版的GNU通用公共授權
+條款來修改和重新發佈這一程式。或者用授權的第二版，或者（根據你的
+選取）用任何更新的版本。
+
+
+
+發佈這一程式的目的是希望它有用，但沒有任何擔保。甚至沒有適合特定
+目的隱含的擔保。更細節的情況請參閱GNU通用公共授權。
+
+
+
+你應該已經和程式一起收到一份GNU通用公共授權的副本。如果還沒有，請
+檢視：<http://www.gnu.org/licenses/>.    
+
+安智網中文化（http://goapk.com）
+]]></string>
+    <string name="WIFI_FILTER_DIALOG_TITLE">WiFi過濾器</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">啟用過濾器</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_INVERSE">方向過濾器</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_REGEXP">正則運算式過濾器(JAVA風格)</string>
+    <string name="OK">確定</string>
+    <string name="THIS_REGEXP_IS_AN_INVALID_ONE">不是一個有效的正則運算式</string>
+    <string name="MENU_LIST_ITEM_DELETE_LABEL">刪除這個項目</string>
+    <string name="LIST_ITEM_DELETE_CONFIRM">確定刪除這個項目？</string>
+    <string name="YES">是</string>
+    <string name="NO">否</string>
+    <string name="MENU_TOGGLE_SCALE_LABEL">地圖比例尺</string>
+    <string name="MENU_SEND_TO_WIGLE">傳送已儲存的wardrive.kml到wigle</string>
+    <string name="MENU_WIGLE_ACCOUNT_SETTINGS">Wigle賬戶設定</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_TITLE">Wigle賬戶</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_USERNAME">使用者名</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_PASSWORD">密碼</string>
+    <string name="MESSAGE_STARTING_SEND_TO_WIGLE">傳送目前的wardrive.kml到wigle</string>
+        <string name="MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND">"wardrive.kml"未找到。請在傳送前先到處這個檔案。</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_ERROR">從伺服器接受錯誤。</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_OK">上傳到wigle已完成。</string>
+</resources>
