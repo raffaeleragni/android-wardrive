@@ -22,6 +22,7 @@ import java.io.File;
 import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.AlertDialog;
@@ -80,7 +81,7 @@ public class Main extends MapActivity implements LocationListener
 	// Program related
 	//
 
-	private DateFormat df = DateFormat.getDateInstance();
+	private DateFormat df = DateFormat.getDateInstance(DateFormat.FULL);
 	
 	private SharedPreferences settings;
 
@@ -871,7 +872,11 @@ public class Main extends MapActivity implements LocationListener
 						+ settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0) });
 				c.moveToFirst();
 				last = c.getInt(0);
-
+				
+				SimpleDateFormat tf = new SimpleDateFormat("HH:mm:ss");
+				Date lastapp = new Date(settings.getLong(Constants.CONF_LASTAPP_TSTAMP, 0));
+				Date lastservice = new Date(settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0));
+						
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
 				sb.append(" " + total);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
@@ -881,9 +886,9 @@ public class Main extends MapActivity implements LocationListener
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_NEW_WIFIS));
 				sb.append(" " + last);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTAPP_TSTAMP));
-				sb.append("\n    " + df.format(new Date(settings.getLong(Constants.CONF_LASTAPP_TSTAMP, 0))));
+				sb.append("\n    " + df.format(lastapp) + " " + tf.format(lastapp));
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTSERVICE_TSTAMP));
-				sb.append("\n    " + df.format(new Date(settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0))));
+				sb.append("\n    " + df.format(lastservice) + " " + tf.format(lastservice));
 			}
 			finally
 			{
