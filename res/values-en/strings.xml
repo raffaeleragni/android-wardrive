@@ -51,7 +51,7 @@
     <string name="YES">Yes</string>
     <string name="NO">No</string>
     <string name="MENU_TOGGLE_SCALE_LABEL">Map scale</string>
-    <string name="MENU_SEND_TO_WIGLE">Send saved wardrive.kml to wigle</string>
+    <string name="MENU_SEND_TO_WIGLE">Send wardrive.kml to wigle</string>
     <string name="MENU_WIGLE_ACCOUNT_SETTINGS">Wigle account settings</string>
     <string name="WIGLE_ACCOUNT_DIALOG_TITLE">Wigle account</string>
     <string name="WIGLE_ACCOUNT_DIALOG_USERNAME">Username</string>
