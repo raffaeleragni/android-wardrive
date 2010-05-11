@@ -20,8 +20,8 @@ package ki.wardrive;
 
 import java.io.File;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import android.app.AlertDialog;
@@ -80,6 +80,8 @@ public class Main extends MapActivity implements LocationListener
 	// Program related
 	//
 
+	private DateFormat df = DateFormat.getDateInstance();
+	
 	private SharedPreferences settings;
 
 	private SharedPreferences.Editor settings_editor;
@@ -95,8 +97,6 @@ public class Main extends MapActivity implements LocationListener
 	//
 	// Interface Related
 	//
-
-    private static final String DATE_FORMAT = "dd/MM/yyyy HH:mm:ss";
 
 	private MapView mapview;
 
@@ -872,8 +872,6 @@ public class Main extends MapActivity implements LocationListener
 				c.moveToFirst();
 				last = c.getInt(0);
 
-                SimpleDateFormat sdf = new SimpleDateFormat(DATE_FORMAT);
-
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_COUNT));
 				sb.append(" " + total);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_OPEN));
@@ -883,9 +881,9 @@ public class Main extends MapActivity implements LocationListener
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_NEW_WIFIS));
 				sb.append(" " + last);
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTAPP_TSTAMP));
-				sb.append("\n    " + sdf.format(new Date(settings.getLong(Constants.CONF_LASTAPP_TSTAMP, 0))));
+				sb.append("\n    " + df.format(new Date(settings.getLong(Constants.CONF_LASTAPP_TSTAMP, 0))));
 				sb.append(getResources().getString(R.string.MESSAGE_STATISTICS_LASTSERVICE_TSTAMP));
-				sb.append("\n    " + sdf.format(new Date(settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0))));
+				sb.append("\n    " + df.format(new Date(settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0))));
 			}
 			finally
 			{
