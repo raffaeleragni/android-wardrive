@@ -26,6 +26,9 @@ import java.util.Date;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 
 /**
@@ -89,7 +92,7 @@ public class KMLExport
 	
 	private static final DateFormat df = DateFormat.getDateTimeInstance();
 
-	public static boolean export(SQLiteDatabase database, File file)
+	public static boolean export(SQLiteDatabase database, File file, Handler message_handler)
 	{
 		synchronized (LOCK)
 		{
@@ -107,7 +110,9 @@ public class KMLExport
 					fw = new FileWriter(file);
 					fw.append(ROOT_START);
 	
-					Cursor c = null;
+					Bundle b;
+					Message msg;
+					Cursor c = null, c2 = null;
 					try
 					{
 						fw.append(FOLDER_1);
@@ -118,19 +123,7 @@ public class KMLExport
 								DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
 								DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION, null,
 								null, null, null);
-	
-						if (c != null && c.moveToFirst())
-						{
-							do
-							{
-								write_mark(c, fw);
-							}
-							while (c.moveToNext());
-						}
-	
-						fw.append(FOLDER_2);
-	
-						c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
+						c2 = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
 								DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
 								DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
 								DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
@@ -142,8 +135,31 @@ public class KMLExport
 							do
 							{
 								write_mark(c, fw);
+								msg = Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_PROGRESS);
+								b = new Bundle();
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT, (int) (((double) (c
+										.getPosition()+c2.getPosition()) / (double) (c.getCount()+c2.getCount())) * 100));
+								msg.setData(b);
+								message_handler.sendMessage(msg);
 							}
 							while (c.moveToNext());
+						}
+	
+						fw.append(FOLDER_2);
+	
+						if (c2 != null && c2.moveToFirst())
+						{
+							do
+							{
+								write_mark(c2, fw);
+								msg = Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_PROGRESS);
+								b = new Bundle();
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT, (int) (((double) (c
+										.getPosition()+c2.getPosition()) / (double) (c.getCount()+c2.getCount())) * 100));
+								msg.setData(b);
+								message_handler.sendMessage(msg);
+							}
+							while (c2.moveToNext());
 						}
 	
 						fw.append(FOLDER_END);

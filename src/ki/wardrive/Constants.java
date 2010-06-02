@@ -118,6 +118,10 @@ public class Constants
 	
 	public static final int EVENT_SEND_TO_WIGLE_OK = 6;
 
+	public static final int EVENT_KML_EXPORT_PROGRESS = 7;
+	
+	public static final String EVENT_KML_EXPORT_PROGRESS_PAR_COUNT = "exported_count";
+	
 	public static final int DIALOG_STATS = 0;
 
 	public static final int DIALOG_ABOUT = DIALOG_STATS + 1;
@@ -133,6 +137,8 @@ public class Constants
     public static final int DIALOG_DELETE_SINGLE_WIFI = DIALOG_FILTER + 1;
     
     public static final int DIALOG_WIGLE_ACCOUNT = DIALOG_DELETE_SINGLE_WIFI + 1;
+	
+	public static final int DIALOG_EXPORT_KML_PROGRESS = DIALOG_WIGLE_ACCOUNT + 1;
 	
 	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
 	                        

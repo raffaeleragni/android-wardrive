@@ -202,4 +202,8 @@ v3.2
 v3.3
 
 	- Added chinese translations
+
+v3.4
+
+	- Added progress bar for KML exporting
 	

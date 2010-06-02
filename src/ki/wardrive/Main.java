@@ -128,10 +128,14 @@ public class Main extends MapActivity implements LocationListener
     private String filter_regexp = null;
 
 	private boolean sending_sync = false;
+	
+	private boolean exporting_kml = false;
 
 	private boolean notifications_enabled = false;
 
 	private ProgressDialog progressDialog;
+	
+	private ProgressDialog kmlProgressDialog;
 	
 	private String wigle_username = null;
 	
@@ -497,9 +501,12 @@ public class Main extends MapActivity implements LocationListener
 			}
 			case R.menu_id.KML_EXPORT:
 			{
-				Toast.makeText(Main.this, R.string.MESSAGE_STARTING_KML_EXPORT, Toast.LENGTH_SHORT).show();
-				new Thread(kml_export_proc).start();
-
+				if (!exporting_kml)
+				{
+					new Thread(kml_export_proc).start();
+				}
+				showDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
+				
 				break;
 			}
 			case R.menu_id.SYNC_ONLINE_DB:
@@ -616,8 +623,10 @@ public class Main extends MapActivity implements LocationListener
 	{
 		public void run()
 		{
-			if (KMLExport.export(database, new File(Constants.getKMLExportFileName())))
+			exporting_kml = true;
+			if (KMLExport.export(database, new File(Constants.getKMLExportFileName()), message_handler))
 			{
+				exporting_kml = false;
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_DONE));
 			}
 		}
@@ -691,6 +700,11 @@ public class Main extends MapActivity implements LocationListener
 			{
 				case Constants.EVENT_KML_EXPORT_DONE:
 				{
+					exporting_kml = false;
+					if (kmlProgressDialog.isShowing())
+					{
+						dismissDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
+					}
 					Toast.makeText(Main.this, R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML, Toast.LENGTH_SHORT).show();
 					break;
 				}
@@ -739,6 +753,13 @@ public class Main extends MapActivity implements LocationListener
 				{
 					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_OK, Toast.LENGTH_SHORT).show();
 					break;
+				}
+				case Constants.EVENT_KML_EXPORT_PROGRESS:
+				{
+					if (kmlProgressDialog.isShowing())
+					{
+						kmlProgressDialog.setProgress(msg.getData().getInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT));
+					}
 				}
 			}
 		}
@@ -790,6 +811,15 @@ public class Main extends MapActivity implements LocationListener
 				progressDialog.setProgress(0);
 				progressDialog.setCancelable(true);
 				return progressDialog;
+			}
+			case Constants.DIALOG_EXPORT_KML_PROGRESS:
+			{
+				kmlProgressDialog = new ProgressDialog(this);
+				kmlProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				kmlProgressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_KML_EXPORT));
+				kmlProgressDialog.setProgress(0);
+				kmlProgressDialog.setCancelable(true);
+				return kmlProgressDialog;
 			}
 			case Constants.DIALOG_SYNC_ALL:
 			{
