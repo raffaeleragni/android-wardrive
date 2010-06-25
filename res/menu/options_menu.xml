@@ -24,6 +24,7 @@
 	</item>
 	<item android:id="@+menu_id/SEND_TO_WIGLE" android:title="@string/MENU_SEND_TO_WIGLE"/>
 	<item android:id="@+menu_id/WIGLE_ACCOUNT_SETTINGS" android:title="@string/MENU_WIGLE_ACCOUNT_SETTINGS"/>
+	<item android:id="@+menu_id/KML_EXPORT_PATH" android:title="@string/MENU_KML_EXPORT_PATH"></item>
 	<item android:id="@+menu_id/SYNC_ONLINE_DB" android:title="@string/MENU_SYNC_ONLINE_DB"/>
     <item android:id="@+menu_id/FILTER_DIALOG" android:title="@string/WIFI_FILTER_DIALOG_TITLE"/>
 	<item android:id="@+menu_id/SCALE" android:title="@string/MENU_TOGGLE_SCALE_LABEL"
@@ -49,4 +50,4 @@
 		android:checkable="true" android:checked="false" android:visible="true" />
 	<item android:id="@+menu_id/ABOUT" android:title="@string/MENU_ABOUT_LABEL"/>
 	<item android:id="@+menu_id/DELETE" android:title="@string/MENU_DELETE_LABEL" />
-</menu>
+	</menu>

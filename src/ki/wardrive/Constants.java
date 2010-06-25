@@ -101,6 +101,8 @@ public class Constants
     public static final String CONF_WIGLE_USERNAME = "wigle_username";
     
     public static final String CONF_WIGLE_PASSWORD = "wigle_password";
+    
+    public static final String CONF_KML_EXPORT_PATH = "kml_export_path";
 
 	public static final int EVENT_KML_EXPORT_DONE = 0;
 
@@ -139,6 +141,8 @@ public class Constants
     public static final int DIALOG_WIGLE_ACCOUNT = DIALOG_DELETE_SINGLE_WIFI + 1;
 	
 	public static final int DIALOG_EXPORT_KML_PROGRESS = DIALOG_WIGLE_ACCOUNT + 1;
+	
+	public static final int DIALOG_KML_EXPORT_PATH = DIALOG_EXPORT_KML_PROGRESS + 1;
 	
 	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
 	                        

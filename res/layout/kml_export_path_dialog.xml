@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<TableLayout android:id="@+id/TableLayout01" xmlns:android="http://schemas.android.com/apk/res/android" android:layout_gravity="center_vertical|center_horizontal" android:layout_height="wrap_content" android:layout_width="wrap_content" android:stretchColumns="0">
+	<TableRow android:id="@+id/TableRow01" android:layout_width="fill_parent">
+		
+		<EditText android:id="@+id/kepd_editPath" android:layout_width="fill_parent"></EditText>
+	
+</TableRow><TableRow android:id="@+id/TableRow02" android:layout_width="wrap_content" android:layout_height="wrap_content"><TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:textColor="#FF0000" android:id="@+id/kepd_errorMsg"></TextView>
+</TableRow>
+
+	<TableRow android:id="@+id/TableRow03" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_gravity="center_horizontal">
+		<Button android:text="@string/OK" android:id="@+id/kepd_buttonOK" android:layout_width="wrap_content" android:layout_height="wrap_content"></Button>
+s	</TableRow>
+</TableLayout>

@@ -45,6 +45,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.Message;
@@ -140,6 +141,8 @@ public class Main extends MapActivity implements LocationListener
 	private String wigle_username = null;
 	
 	private String wigle_password = null;
+	
+	private String kml_export_path = null;
 
 	//
 	// DB Related
@@ -207,6 +210,7 @@ public class Main extends MapActivity implements LocationListener
             show_scale = settings.getBoolean(Constants.CONF_SHOW_SCALE, show_scale);
             wigle_username = settings.getString(Constants.CONF_WIGLE_USERNAME, wigle_username);
             wigle_password = settings.getString(Constants.CONF_WIGLE_PASSWORD, wigle_password);
+            kml_export_path = settings.getString(Constants.CONF_KML_EXPORT_PATH, kml_export_path);
             
 			GeoPoint point = new GeoPoint(settings.getInt(Constants.LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(
 					Constants.LAST_LON, Constants.DEFAULT_LON));
@@ -288,7 +292,7 @@ public class Main extends MapActivity implements LocationListener
 	protected void onStart()
 	{
 		super.onStart();
-
+		
 		try
 		{
 			if (location_manager != null)
@@ -330,6 +334,7 @@ public class Main extends MapActivity implements LocationListener
 			settings_editor.putInt(Constants.LAST_LON, p.getLongitudeE6());
 			settings_editor.putString(Constants.CONF_WIGLE_USERNAME, wigle_username);
 			settings_editor.putString(Constants.CONF_WIGLE_PASSWORD, wigle_password);
+			settings_editor.putString(Constants.CONF_KML_EXPORT_PATH, kml_export_path);
 			settings_editor.commit();
 
 			save_app_tstamp();
@@ -592,6 +597,11 @@ public class Main extends MapActivity implements LocationListener
             	showDialog(Constants.DIALOG_WIGLE_ACCOUNT);
             	break;
             }
+            case R.menu_id.KML_EXPORT_PATH:
+            {
+            	showDialog(Constants.DIALOG_KML_EXPORT_PATH);
+            	break;
+            }
 		}
 		return false;
 	}
@@ -618,13 +628,27 @@ public class Main extends MapActivity implements LocationListener
     		Main.this.wigle_password = password;
     	}
     };
+    
+    private KMLExportPathDialog.KMLExportPathDialogOKListener kml_export_path_ok_listener = new KMLExportPathDialog.KMLExportPathDialogOKListener()
+    {
+		public void ok(String path)
+		{
+			Main.this.kml_export_path = path;
+		}
+	};
 
 	private Runnable kml_export_proc = new Runnable()
 	{
 		public void run()
 		{
 			exporting_kml = true;
-			if (KMLExport.export(database, new File(Constants.getKMLExportFileName()), message_handler))
+			String path = "";
+			if( kml_export_path != null )
+				path = kml_export_path + "/wardrive.kml";
+			else
+				path = "wardrive.kml";
+			
+			if (KMLExport.export(database, new File( Environment.getExternalStorageDirectory(), path), message_handler))
 			{
 				exporting_kml = false;
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_DONE));
@@ -636,8 +660,13 @@ public class Main extends MapActivity implements LocationListener
 	{
 		public void run()
 		{
-			String fname = Constants.getKMLExportFileName();
-			File f = new File(fname);
+			String path = "";
+			if( kml_export_path != null )
+				path = kml_export_path + "/wardrive.kml";
+			else
+				path = "wardrive.kml";
+			
+			File f = new File( Environment.getExternalStorageDirectory(), path);
 			if (!f.exists())
 			{
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND));
@@ -862,6 +891,11 @@ public class Main extends MapActivity implements LocationListener
             case Constants.DIALOG_WIGLE_ACCOUNT:
             {
                 return new WigleAccountDialog(this, wigle_username, wigle_password, wigle_account_ok_listener);
+            }
+            
+            case Constants.DIALOG_KML_EXPORT_PATH:
+            {
+            	return new KMLExportPathDialog(this, kml_export_path, kml_export_path_ok_listener);
             }
 		}
 

@@ -60,7 +60,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 \n\n
 Chinese translation by http://goapk.com
 \n\n
-Updated Polish translations by Tomasz \'Zen\' Napierala 
+Updated Polish translations by Tomasz \'Zen\' Napierala
+\n\n
+German translations by Marco Fester
+\n\n
+Enhancement patches from:\n
+Nick (ncoutsos)
     ]]></string>
     <string name="WIFI_FILTER_DIALOG_TITLE">WiFi Filter</string>
     <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">Filter Enabled</string>
@@ -82,4 +87,7 @@ Updated Polish translations by Tomasz \'Zen\' Napierala
 	<string name="MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND">"wardrive.kml" not found. Export the file before sending.</string>
     <string name="MESSAGE_SEND_TO_WIGLE_ERROR">Error received from server.</string>
     <string name="MESSAGE_SEND_TO_WIGLE_OK">Uploaded correctly to wigle.</string>
+	<string name="MENU_KML_EXPORT_PATH">KML Export Path</string>
+	<string name="KML_EXPORT_PATH_DIALOG_TITLE">KML Export Path</string>
+	<string name="KML_EXPORT_PATH_DIALOG_ERROR">Invalid path specified.</string>
 </resources>
