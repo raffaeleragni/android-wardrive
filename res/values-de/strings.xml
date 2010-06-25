@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">wardrive</string>
+    <string name="GPS_LABEL_ME">ME</string>
+    <string name="MENU_LIST_LABEL">Zeige aktuelle WiFis</string>
+    <string name="MENU_QUIT_LABEL">Beenden</string>
+    <string name="MENU_STATS_LABEL">Statistik</string>
+    <string name="MENU_MAX_WIFI_VISIBLE_LABEL">WiFis</string>
+    <string name="MENU_TOGGLE_LABELS_LABEL">Labels</string>
+    <string name="MENU_TOGGLE_FOLLOW_ME_LABEL">Folgen</string>
+    <string name="MENU_TOGGLE_MAP_MODE_LABEL">Karte</string>
+    <string name="MENU_ABOUT_LABEL">Über</string>
+    <string name="MENU_SHOW_OPEN_LABEL">Offen</string>
+    <string name="MENU_SHOW_CLOSED_LABEL">Geschlossen</string>
+    <string name="MENU_OPTIONS_LABEL">Optionen</string>
+    <string name="MENU_DELETE_LABEL">Lösche Alle</string>
+    <string name="MENU_DELETE_WARNING_LABEL">Dies löscht ALLE gesammelten
+Daten, fortfahren?</string>
+    <string name="MENU_SERVICE_LABEL">Service An/Aus</string>
+    <string name="MENU_KML_EXPORT_LABEL">Exportiere zu KML</string>
+    <string name="MENU_SYNC_ONLINE_DB">Sende zur Online DB</string>
+    <string name="MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION">Sende alle WiFis?
+(Nein, wenn sie nur neue senden wollen)</string>
+    <string name="MENU_TOGGLE_NOTIFICATIONS_ENABLED">Benachrichtigungen
+aktivieren</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS">GPS Zeiten</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_1">Kurz (3s, 3m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_2">Mittel (10s, 10m)</string>
+    <string name="MENU_CHANGE_GPS_SERVICE_TIMERS_3">Lang (30s, 50m)</string>
+    <string name="MESSAGE_STARTING_KML_EXPORT">Beginne KML Export...</string>
+    <string name="MESSAGE_STARTING_SYNC_ONLINE">Sende zur Online
+Datenbank...</string>
+    <string name="MESSAGE_SUCCESFULLY_EXPORTED_KML">KML Datei
+exportiert</string>
+    <string name="MESSAGE_SUCCESFULLY_SYNC_ONLINE">Senden an Datenbank
+vollständig, hoch geladene Artikel: </string>
+    <string name="MESSAGE_STATISTICS">Statistik:</string>
+    <string name="MESSAGE_STATISTICS_COUNT">\nGesammte WiFis in der DB:
+</string>
+    <string name="MESSAGE_STATISTICS_OPEN">\nDavon offen: </string>
+    <string name="MESSAGE_STATISTICS_CLOSED">\nDavon geschlossene: </string>
+    <string name="MESSAGE_STATISTICS_LASTAPP_TSTAMP">\nletztes mal
+Anwendung ausgeführt:</string>
+    <string name="MESSAGE_STATISTICS_LASTSERVICE_TSTAMP">\nletztes mal
+Service ausgeführt:</string>
+    <string name="MESSAGE_STATISTICS_NEW_WIFIS">\nNeue WiFi seit dem
+letzten ausführen:</string>
+    <string name="SERVICE_STARTED">wardrive Service gestartet</string>
+    <string name="SERVICE_STOPPED">wardrive Service gestoppt</string>
+    <string name="GPS_ENABLED">GPS aktiviert</string>
+    <string name="GPS_DISABLED">GPS deaktiviert</string>
+    <string name="GPS_STATUS">GPS status:</string>
+    <string name="WIFI_FILTER_DIALOG_TITLE">WiFi Filter</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">Filter Aktiviert</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_INVERSE">Filter Umgekehrt</string>
+    <string name="WIFI_FILTER_DIALOG_FILTER_REGEXP">Filter regexp (java
+style)</string>
+    <string name="OK">Ok</string>
+    <string name="THIS_REGEXP_IS_AN_INVALID_ONE">ist ein ungültiger
+regexp</string>
+    <string name="MENU_LIST_ITEM_DELETE_LABEL">Löscht diesen Artikel</string>
+    <string name="LIST_ITEM_DELETE_CONFIRM">Sind Sie sicher, um diesen
+Artikel zu löschen?</string>
+    <string name="YES">Ja</string>
+    <string name="NO">Nein</string>
+    <string name="MENU_TOGGLE_SCALE_LABEL">Karten Maßstab</string>
+    <string name="MENU_SEND_TO_WIGLE">Sende wardrive.kml zu wigle</string>
+    <string name="MENU_WIGLE_ACCOUNT_SETTINGS">Wigle Account
+Einstellungen</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_TITLE">Wigle Account</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_USERNAME">Benutzername</string>
+    <string name="WIGLE_ACCOUNT_DIALOG_PASSWORD">Passwort</string>
+    <string name="MESSAGE_STARTING_SEND_TO_WIGLE">Sende tatsächlichen
+wardrive.kml zu wigle</string>
+	<string name="MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND">"wardrive.kml" nicht
+gefunden. Exportieren Sie die Datei vor dem Senden.</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_ERROR">Fehler vom Server
+erhalten.</string>
+    <string name="MESSAGE_SEND_TO_WIGLE_OK">Fehlerfrei zu wigle
+hochgeladen.</string>
+</resources>
