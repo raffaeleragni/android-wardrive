@@ -58,14 +58,13 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 \n\n
-Chinese translation by http://goapk.com
-\n\n
-Updated Polish translations by Tomasz \'Zen\' Napierala
-\n\n
-German translations by Marco Fester
+Translations by:
+\n  Chinese: http://goapk.com
+\n  German: Marco Fester alias COOLover
+\n  Polish: Tomasz \'Zen\' Napierala
 \n\n
 Enhancement patches from:\n
-Nick (ncoutsos)
+  Nick (ncoutsos)
     ]]></string>
     <string name="WIFI_FILTER_DIALOG_TITLE">WiFi Filter</string>
     <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">Filter Enabled</string>
