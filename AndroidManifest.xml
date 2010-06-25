@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 	package="ki.wardrive"
-	android:versionCode="39"
-	android:versionName="3.4"
+	android:versionCode="40"
+	android:versionName="3.5"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<uses-sdk android:minSdkVersion="4"/>
