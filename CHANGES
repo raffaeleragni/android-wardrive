@@ -211,4 +211,5 @@ v3.5
 
 	- Added translations for German
 	- Updated translations for Polish
+	- Wifi spots are dimensioned parametrically from the signal level they have been scanned
 	

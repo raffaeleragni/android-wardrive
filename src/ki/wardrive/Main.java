@@ -40,6 +40,7 @@ import android.graphics.Canvas;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
+import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -1065,11 +1066,13 @@ public class Main extends MapActivity implements LocationListener
 
 	public class Overlays extends ItemizedOverlay<OverlayItem>
 	{
-		private static final int CIRCLE_RADIUS = 4;
+		private static final int CIRCLE_RADIUS = 8;
 
-		private static final int INFO_WINDOW_HEIGHT = 16;
+		private static final int INFO_WINDOW_HEIGHT = 18;
 
 		private Paint paint_circle;
+		
+		private Paint paint_circle_stroke;
 
 		private TextPaint paint_text;
 
@@ -1108,12 +1111,17 @@ public class Main extends MapActivity implements LocationListener
 
 			paint_circle = new Paint();
 			paint_circle.setAntiAlias(true);
+			
+			paint_circle_stroke = new Paint();
+			paint_circle_stroke.setStyle(Style.STROKE);
+			paint_circle_stroke.setStrokeWidth(1);
+			paint_circle_stroke.setAntiAlias(true);
 
 			paint_text = new TextPaint();
 			paint_text.setARGB(255, 255, 255, 255);
 			paint_text.setAntiAlias(true);
 			paint_text.setStrokeWidth(3);
-			paint_text.setTextSize(14);
+			paint_text.setTextSize(15);
 		}
 
 		@Override
@@ -1153,7 +1161,7 @@ public class Main extends MapActivity implements LocationListener
 					if (last_location != null)
 					{
 						draw_single(canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
-								.getLongitude() * 1E6)), getResources().getString(R.string.GPS_LABEL_ME));
+								.getLongitude() * 1E6)), getResources().getString(R.string.GPS_LABEL_ME), 0);
 					}
 					return;
 				}
@@ -1166,7 +1174,8 @@ public class Main extends MapActivity implements LocationListener
 				{
 					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LAT,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID,
-							DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES }, DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
+							DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL },
+							DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
 							+ " and "
 							+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
 									: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
@@ -1198,18 +1207,21 @@ public class Main extends MapActivity implements LocationListener
 								if (cap == null || cap.length() == 0)
 								{
 									paint_circle.setARGB(192, 0, 200, 0);
+									paint_circle_stroke.setARGB(192, 0, 200, 0);
 								}
 								else if (cap.contains("WEP"))
 								{
 									paint_circle.setARGB(192, 235, 160, 23);
+									paint_circle_stroke.setARGB(192, 235, 160, 23);
 								}
 								else
 								{
 									paint_circle.setARGB(96, 255, 0, 0);
+									paint_circle_stroke.setARGB(96, 255, 0, 0);
 								}
 
 								draw_single(canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
-										(int) (c.getDouble(1) * 1E6)), ssid);
+										(int) (c.getDouble(1) * 1E6)), ssid, c.getInt(4));
 							}
 							while (c.moveToNext());
 						}
@@ -1287,17 +1299,20 @@ public class Main extends MapActivity implements LocationListener
 			}
 		}
 
-		private void draw_single(Canvas canvas, MapView mapView, GeoPoint geo_point, String title)
+		private void draw_single(Canvas canvas, MapView mapView, GeoPoint geo_point, String title, int level)
 		{
 			point = mapView.getProjection().toPixels(geo_point, point);
-			canvas.drawCircle(point.x, point.y, CIRCLE_RADIUS, paint_circle);
+			int bigness = CIRCLE_RADIUS - (-level)/12;
+			bigness = bigness < 1 ? 0 : bigness;
+			canvas.drawCircle(point.x, point.y, (int) CIRCLE_RADIUS, paint_circle_stroke);
+			canvas.drawCircle(point.x, point.y, bigness, paint_circle);
 
 			if (show_labels && title != null && title.length() > 0)
 			{
 				rect = new RectF(0, 0, getTextWidth(title) + 4 * 2, INFO_WINDOW_HEIGHT);
-				rect.offset(point.x + 2, point.y + 2);
+				rect.offset(point.x + 5, point.y + 5);
 				canvas.drawRect(rect, paint_circle);
-				canvas.drawText(title, point.x + 6, point.y + 14, paint_text);
+				canvas.drawText(title, point.x + 9, point.y + 19, paint_text);
 			}
 		}
 
