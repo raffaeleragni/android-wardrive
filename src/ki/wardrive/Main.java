@@ -1066,7 +1066,7 @@ public class Main extends MapActivity implements LocationListener
 
 	public class Overlays extends ItemizedOverlay<OverlayItem>
 	{
-		private static final int CIRCLE_RADIUS = 8;
+		private static final int CIRCLE_RADIUS = 9;
 
 		private static final int INFO_WINDOW_HEIGHT = 18;
 
