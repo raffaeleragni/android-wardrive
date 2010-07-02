@@ -40,27 +40,6 @@
     <string name="GPS_ENABLED">GPS 開啟</string>
     <string name="GPS_DISABLED">GPS 禁用</string>
     <string name="GPS_STATUS">GPS 狀態:</string>
-    <string name="ABOUT_BOX"><![CDATA[
-wardrive - Android的駕駛攻擊軟體\n
-版權所有 (C) 2009 Raffaele Ragni\n
-http://code.google.com/p/wardrive-android/\n
-\n
-這一程式是自由軟體，你可以遵照自由軟體基金會出版的GNU通用公共授權
-條款來修改和重新發佈這一程式。或者用授權的第二版，或者（根據你的
-選取）用任何更新的版本。
-
-
-
-發佈這一程式的目的是希望它有用，但沒有任何擔保。甚至沒有適合特定
-目的隱含的擔保。更細節的情況請參閱GNU通用公共授權。
-
-
-
-你應該已經和程式一起收到一份GNU通用公共授權的副本。如果還沒有，請
-檢視：<http://www.gnu.org/licenses/>.    
-
-安智網中文化（http://goapk.com）
-]]></string>
     <string name="WIFI_FILTER_DIALOG_TITLE">WiFi過濾器</string>
     <string name="WIFI_FILTER_DIALOG_FILTER_ENABLED">啟用過濾器</string>
     <string name="WIFI_FILTER_DIALOG_FILTER_INVERSE">方向過濾器</string>
