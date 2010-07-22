@@ -216,3 +216,9 @@ v3.5
 v3.6
     
     - Added translations for French
+    
+v3.7
+
+	- Added notification status for the background service
+	- KML export now differentiates between open, wep, and other
+	

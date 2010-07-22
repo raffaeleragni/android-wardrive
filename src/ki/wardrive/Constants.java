@@ -124,6 +124,8 @@ public class Constants
 	
 	public static final String EVENT_KML_EXPORT_PROGRESS_PAR_COUNT = "exported_count";
 	
+	public static final String EVENT_KML_EXPORT_PROGRESS_PAR_TOTAL = "exported_total";
+	
 	public static final int DIALOG_STATS = 0;
 
 	public static final int DIALOG_ABOUT = DIALOG_STATS + 1;

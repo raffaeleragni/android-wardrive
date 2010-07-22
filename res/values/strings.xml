@@ -90,4 +90,6 @@ Enhancement patches from:\n
 	<string name="MENU_KML_EXPORT_PATH">KML Export Path</string>
 	<string name="KML_EXPORT_PATH_DIALOG_TITLE">KML Export Path</string>
 	<string name="KML_EXPORT_PATH_DIALOG_ERROR">Invalid path specified.</string>
+	<string name="OVERLAY_SERVICE_ON">Service: ON</string>
+	<string name="OVERLAY_SERVICE_OFF">Service: OFF</string>
 </resources>

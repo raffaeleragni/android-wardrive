@@ -65,8 +65,12 @@ public class DBTableNetworks
 	public static final String TABLE_NETWORKS_LOCATION_BETWEEN = "lat >= ? and lat <= ? and lon >= ? and lon <= ?";
 
 	public static final String TABLE_NETWORKS_OPEN_CONDITION = "capabilities = ''";
+	
+	public static final String TABLE_NETWORKS_WEP_CONDITION = "capabilities like '%WEP%'";
 
 	public static final String TABLE_NETWORKS_CLOSED_CONDITION = "capabilities <> ''";
+	
+	public static final String TABLE_NETWORKS_ONLY_CLOSED_CONDITION = "capabilities <> '' and capabilities not like '%WEP%'";
 
 	public static final String SELECT_COUNT_WIFIS = "select count(bssid) from networks";
 

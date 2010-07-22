@@ -60,4 +60,6 @@
 	<string name="MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND">"wardrive.kml" not found. Export the file before sending.</string>
     <string name="MESSAGE_SEND_TO_WIGLE_ERROR">Error received from server.</string>
     <string name="MESSAGE_SEND_TO_WIGLE_OK">Uploaded correctly to wigle.</string>
+	<string name="OVERLAY_SERVICE_ON">Service: ON</string>
+	<string name="OVERLAY_SERVICE_OFF">Service: OFF</string>
 </resources>

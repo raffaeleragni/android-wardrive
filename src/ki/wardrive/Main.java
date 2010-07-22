@@ -37,6 +37,7 @@ import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.RectF;
@@ -108,6 +109,8 @@ public class Main extends MapActivity implements LocationListener
 	private Overlays overlays_opened;
 
 	private Overlays overlays_me;
+	
+	private ExtraInfoOverlay overlay_extra;
 	
 	private ScaleOverlay overlay_scale;
 
@@ -229,6 +232,7 @@ public class Main extends MapActivity implements LocationListener
 			overlays_closed = new Overlays(Constants.OTYPE_CLOSED_WIFI, d);
 			overlays_opened = new Overlays(Constants.OTYPE_OPEN_WIFI, d);
 			overlays_me = new Overlays(Constants.OTYPE_MY_LOCATION, d);
+			overlay_extra = new ExtraInfoOverlay();
 			overlay_scale = new ScaleOverlay();
 
 			overlays_closed.show_labels = show_labels;
@@ -239,6 +243,7 @@ public class Main extends MapActivity implements LocationListener
 			mapview.getOverlays().add(overlays_closed);
 			mapview.getOverlays().add(overlays_opened);
 			mapview.getOverlays().add(overlays_me);
+			mapview.getOverlays().add(overlay_extra);	
 			mapview.getOverlays().add(overlay_scale);			
 			
 			database = SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.getDBFullPath(), null);
@@ -498,6 +503,7 @@ public class Main extends MapActivity implements LocationListener
 					if (service_intent != null) stopService(service_intent);
 					save_service_tstamp();
 				}
+				mapview.invalidate();
 				break;
 			}
 			case R.menu_id.DELETE:
@@ -788,7 +794,10 @@ public class Main extends MapActivity implements LocationListener
 				{
 					if (kmlProgressDialog.isShowing())
 					{
-						kmlProgressDialog.setProgress(msg.getData().getInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT));
+						int count = msg.getData().getInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT);
+						int total = msg.getData().getInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_TOTAL);
+						kmlProgressDialog.setMax(total);
+						kmlProgressDialog.setProgress(count);
 					}
 				}
 			}
@@ -992,6 +1001,33 @@ public class Main extends MapActivity implements LocationListener
 	// Rendering
 	//
 	
+	public class ExtraInfoOverlay extends Overlay
+	{
+		public Paint paint;
+		public TextPaint paintText;
+		private final int RED = Color.argb(255, 255, 0, 0);
+		private final int GREEN = Color.argb(255, 0, 255, 0);
+		
+		public ExtraInfoOverlay()
+		{
+			paint = new Paint();
+			paint.setAntiAlias(true);
+			paintText = new TextPaint();
+			paintText.setARGB(255, 0, 0, 0);
+			paintText.setAntiAlias(true);
+			paintText.setStrokeWidth(3);
+			paintText.setTextSize(18);
+		}
+		
+		@Override
+		public void draw(Canvas canvas, MapView mapView, boolean shadow)
+		{
+			paint.setColor(service ? GREEN : RED);
+			canvas.drawCircle(20, 25, 8, paint);
+			canvas.drawText(getText(service ? R.string.OVERLAY_SERVICE_ON : R.string.OVERLAY_SERVICE_OFF).toString(), 35, 30, paintText);
+		}
+	}
+	
 	public class ScaleOverlay extends Overlay
 	{
 		public static final int BAR_WIDTH = 120;
@@ -1140,7 +1176,7 @@ public class Main extends MapActivity implements LocationListener
 		public void draw(Canvas canvas, MapView mapView, boolean shadow)
 		{
 			try
-			{
+			{				
 				if (type == Constants.OTYPE_OPEN_WIFI && !show_open)
 				{
 					return;
@@ -1160,7 +1196,7 @@ public class Main extends MapActivity implements LocationListener
 				{
 					if (last_location != null)
 					{
-						draw_single(canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
+						draw_single(false, canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
 								.getLongitude() * 1E6)), getResources().getString(R.string.GPS_LABEL_ME), 0);
 					}
 					return;
@@ -1220,7 +1256,7 @@ public class Main extends MapActivity implements LocationListener
 									paint_circle_stroke.setARGB(96, 255, 0, 0);
 								}
 
-								draw_single(canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
+								draw_single(true, canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
 										(int) (c.getDouble(1) * 1E6)), ssid, c.getInt(4));
 							}
 							while (c.moveToNext());
@@ -1299,10 +1335,11 @@ public class Main extends MapActivity implements LocationListener
 			}
 		}
 
-		private void draw_single(Canvas canvas, MapView mapView, GeoPoint geo_point, String title, int level)
+		private void draw_single(boolean iswifi, Canvas canvas, MapView mapView, GeoPoint geo_point, String title, int level)
 		{
 			point = mapView.getProjection().toPixels(geo_point, point);
 			int bigness = CIRCLE_RADIUS - (-level)/12;
+			bigness = iswifi ? bigness : bigness / 3;
 			bigness = bigness < 1 ? 0 : bigness;
 			canvas.drawCircle(point.x, point.y, (int) CIRCLE_RADIUS, paint_circle_stroke);
 			canvas.drawCircle(point.x, point.y, bigness, paint_circle);

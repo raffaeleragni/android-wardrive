@@ -86,7 +86,9 @@ public class KMLExport
 
 	private static final String FOLDER_1 = "\n<Folder><name>Open WiFis</name>";
 
-	private static final String FOLDER_2 = "\n</Folder><Folder><name>Closed WiFis</name>";
+	private static final String FOLDER_2 = "\n</Folder><Folder><name>WEP WiFis</name>";
+
+	private static final String FOLDER_3 = "\n</Folder><Folder><name>Closed WiFis</name>";
 
 	private static final String FOLDER_END = "\n</Folder>";
 	
@@ -112,7 +114,7 @@ public class KMLExport
 	
 					Bundle b;
 					Message msg;
-					Cursor c = null, c2 = null;
+					Cursor c = null, c2 = null, c3 = null;
 					try
 					{
 						fw.append(FOLDER_1);
@@ -127,7 +129,13 @@ public class KMLExport
 								DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
 								DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
 								DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
-								DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION, null,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_WEP_CONDITION, null,
+								null, null, null);
+						c3 = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_SSID, DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_FREQUENCY, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_LAT, DBTableNetworks.TABLE_NETWORKS_FIELD_LON,
+								DBTableNetworks.TABLE_NETWORKS_FIELD_ALT, DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_ONLY_CLOSED_CONDITION, null,
 								null, null, null);
 	
 						if (c != null && c.moveToFirst())
@@ -137,8 +145,8 @@ public class KMLExport
 								write_mark(c, fw);
 								msg = Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_PROGRESS);
 								b = new Bundle();
-								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT, (int) (((double) (c
-										.getPosition()+c2.getPosition()) / (double) (c.getCount()+c2.getCount())) * 100));
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT, c.getPosition()+c2.getPosition()+c3.getPosition());
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_TOTAL, c.getCount()+c2.getCount()+c3.getCount());
 								msg.setData(b);
 								message_handler.sendMessage(msg);
 							}
@@ -154,12 +162,29 @@ public class KMLExport
 								write_mark(c2, fw);
 								msg = Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_PROGRESS);
 								b = new Bundle();
-								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT, (int) (((double) (c
-										.getPosition()+c2.getPosition()) / (double) (c.getCount()+c2.getCount())) * 100));
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT, c.getPosition()+c2.getPosition()+c3.getPosition());
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_TOTAL, c.getCount()+c2.getCount()+c3.getCount());
 								msg.setData(b);
 								message_handler.sendMessage(msg);
 							}
 							while (c2.moveToNext());
+						}
+						
+						fw.append(FOLDER_3);
+						
+						if (c3 != null && c3.moveToFirst())
+						{
+							do
+							{
+								write_mark(c3, fw);
+								msg = Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_PROGRESS);
+								b = new Bundle();
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT, c.getPosition()+c2.getPosition()+c3.getPosition());
+								b.putInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_TOTAL, c.getCount()+c2.getCount()+c3.getCount());
+								msg.setData(b);
+								message_handler.sendMessage(msg);
+							}
+							while (c3.moveToNext());
 						}
 	
 						fw.append(FOLDER_END);
