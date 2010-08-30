@@ -521,19 +521,20 @@ public class Main extends MapActivity implements LocationListener
 				
 				break;
 			}
-			case R.menu_id.SYNC_ONLINE_DB:
-			{
-				if (!sending_sync)
-				{
-					showDialog(Constants.DIALOG_SYNC_ALL);
-				}
-				else
-				{
-					showDialog(Constants.DIALOG_SYNC_PROGRESS);
-				}
-
-				break;
-			}
+			// Web Database is being dismantled
+//			case R.menu_id.SYNC_ONLINE_DB:
+//			{
+//				if (!sending_sync)
+//				{
+//					showDialog(Constants.DIALOG_SYNC_ALL);
+//				}
+//				else
+//				{
+//					showDialog(Constants.DIALOG_SYNC_PROGRESS);
+//				}
+//
+//				break;
+//			}
 			case R.menu_id.NOTIFICATIONS_ENABLED:
 			{
 				notifications_enabled = !notifications_enabled;
@@ -1106,6 +1107,8 @@ public class Main extends MapActivity implements LocationListener
 
 		private static final int INFO_WINDOW_HEIGHT = 18;
 
+		private static final int TEXT_SIZE = 12;
+
 		private Paint paint_circle;
 		
 		private Paint paint_circle_stroke;
@@ -1137,6 +1140,8 @@ public class Main extends MapActivity implements LocationListener
 		private double avg_lon = 0;
 
 		private int zoom_divider = 1;
+		
+		private Double sizeRatio = null;
 
 		public Overlays(int type, Drawable d)
 		{
@@ -1157,7 +1162,7 @@ public class Main extends MapActivity implements LocationListener
 			paint_text.setARGB(255, 255, 255, 255);
 			paint_text.setAntiAlias(true);
 			paint_text.setStrokeWidth(3);
-			paint_text.setTextSize(15);
+			paint_text.setTextSize(TEXT_SIZE);
 		}
 
 		@Override
@@ -1175,6 +1180,14 @@ public class Main extends MapActivity implements LocationListener
 		@Override
 		public void draw(Canvas canvas, MapView mapView, boolean shadow)
 		{
+			// Lazy calculation for the size ratio
+			if (sizeRatio == null)
+			{
+				int lesserMeasure = canvas.getWidth() > canvas.getHeight() ? canvas.getWidth() : canvas.getHeight();
+				sizeRatio = ((double) lesserMeasure) / 460d;
+				paint_text.setTextSize((int)(TEXT_SIZE * sizeRatio));
+			}
+			
 			try
 			{				
 				if (type == Constants.OTYPE_OPEN_WIFI && !show_open)
@@ -1338,18 +1351,19 @@ public class Main extends MapActivity implements LocationListener
 		private void draw_single(boolean iswifi, Canvas canvas, MapView mapView, GeoPoint geo_point, String title, int level)
 		{
 			point = mapView.getProjection().toPixels(geo_point, point);
-			int bigness = CIRCLE_RADIUS - (-level)/12;
-			bigness = iswifi ? bigness : bigness / 3;
+			int bigness = (int) (CIRCLE_RADIUS) - (-level)/12;
+			bigness = iswifi ? bigness : bigness / 2;
 			bigness = bigness < 1 ? 0 : bigness;
-			canvas.drawCircle(point.x, point.y, (int) CIRCLE_RADIUS, paint_circle_stroke);
-			canvas.drawCircle(point.x, point.y, bigness, paint_circle);
+			
+			canvas.drawCircle(point.x, point.y, (int) (CIRCLE_RADIUS*sizeRatio), paint_circle_stroke);
+			canvas.drawCircle(point.x, point.y, (int)(bigness*sizeRatio), paint_circle);
 
 			if (show_labels && title != null && title.length() > 0)
 			{
-				rect = new RectF(0, 0, getTextWidth(title) + 4 * 2, INFO_WINDOW_HEIGHT);
-				rect.offset(point.x + 5, point.y + 5);
+				rect = new RectF(0, 0, getTextWidth(title) + 4 * 2, (int)(INFO_WINDOW_HEIGHT * sizeRatio));
+				rect.offset(point.x + (int)(5*sizeRatio), point.y + (int)(5*sizeRatio));
 				canvas.drawRect(rect, paint_circle);
-				canvas.drawText(title, point.x + 9, point.y + 19, paint_text);
+				canvas.drawText(title, point.x + 9, point.y + (int)(19*sizeRatio), paint_text);
 			}
 		}
 

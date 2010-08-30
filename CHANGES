@@ -222,3 +222,9 @@ v3.7
 	- Added notification status for the background service
 	- KML export now differentiates between open, wep, and other
 	
+v3.8
+
+	- Wifi APs are not proportioned to the screen size
+	- Added Russian translations
+	- Dismantling online application
+	
