@@ -44,12 +44,13 @@ public class WigleUploader
 		    	dos.writeBytes("--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"password\""+NL+NL+password+NL);
 		    	dos.writeBytes("--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"stumblefile\";filename=\"wardrive.kml\""+NL+"Content-Type: application/octet-stream"+NL+NL);
 		    	int ct;
-		    	byte[] buf = new byte[10240];
-				BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file));
+		    	byte[] buf = new byte[1240];
+				BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file), 1024);
 		    	while(fis.available() > 0)
 		    	{
 		    		ct = fis.read(buf);
 		    		dos.write(buf, 0, ct);
+		    		dos.flush();
 		    	}
 		    	fis.close();
 		    	dos.writeBytes(NL+"--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"Send\""+NL+NL+"Send");
