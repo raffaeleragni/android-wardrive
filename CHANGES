@@ -228,3 +228,8 @@ v3.8
 	- Added Russian translations
 	- Dismantling online application
 	
+v3.9
+
+	- Added accuracy filter: wifi scannings work only on accuracy less than 50 meters
+	- Added Spanish translations
+	

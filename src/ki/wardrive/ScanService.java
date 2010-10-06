@@ -223,7 +223,8 @@ public class ScanService extends Service
 
 		public void onLocationChanged(Location location)
 		{
-			if (location != null)
+			// Accept only accuracy under 50 meters to actually scan wifis
+			if (location != null && location.getAccuracy() < 50 && location.hasAccuracy())
 			{
 				try
 				{
