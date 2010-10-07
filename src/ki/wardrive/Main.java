@@ -135,12 +135,16 @@ public class Main extends MapActivity implements LocationListener
 	private boolean sending_sync = false;
 	
 	private boolean exporting_kml = false;
+	
+	private boolean sending_wigle = false;
 
 	private boolean notifications_enabled = false;
 
 	private ProgressDialog progressDialog;
 	
 	private ProgressDialog kmlProgressDialog;
+	
+	private ProgressDialog wigleProgressDialog;
 	
 	private String wigle_username = null;
 	
@@ -521,20 +525,6 @@ public class Main extends MapActivity implements LocationListener
 				
 				break;
 			}
-			// Web Database is being dismantled
-//			case R.menu_id.SYNC_ONLINE_DB:
-//			{
-//				if (!sending_sync)
-//				{
-//					showDialog(Constants.DIALOG_SYNC_ALL);
-//				}
-//				else
-//				{
-//					showDialog(Constants.DIALOG_SYNC_PROGRESS);
-//				}
-//
-//				break;
-//			}
 			case R.menu_id.NOTIFICATIONS_ENABLED:
 			{
 				notifications_enabled = !notifications_enabled;
@@ -596,8 +586,12 @@ public class Main extends MapActivity implements LocationListener
             }
             case R.menu_id.SEND_TO_WIGLE:
             {
-            	Toast.makeText(Main.this, R.string.MESSAGE_STARTING_SEND_TO_WIGLE, Toast.LENGTH_SHORT).show();
-				new Thread(wigle_send_proc).start();
+            	if (!sending_wigle)
+				{
+            		new Thread(wigle_send_proc).start();
+				}
+				showDialog(Constants.DIALOG_WIGLE_UPLOAD);
+				
             	break;
             }
             case R.menu_id.WIGLE_ACCOUNT_SETTINGS:
@@ -668,6 +662,7 @@ public class Main extends MapActivity implements LocationListener
 	{
 		public void run()
 		{
+			sending_wigle = true;
 			String path = "";
 			if( kml_export_path != null )
 				path = kml_export_path + "/wardrive.kml";
@@ -678,14 +673,18 @@ public class Main extends MapActivity implements LocationListener
 			if (!f.exists())
 			{
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND));
+				sending_wigle = false;
+				return;
 			}
 			
-			if (WigleUploader.upload(Main.this.wigle_username, Main.this.wigle_password, f))
+			if (WigleUploader.upload(Main.this.wigle_username, Main.this.wigle_password, f, message_handler))
 			{
+				sending_wigle = false;
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_SEND_TO_WIGLE_OK));
 			}
 			else
 			{
+				sending_wigle = false;
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_SEND_TO_WIGLE_ERROR));
 			}
 		}
@@ -778,27 +777,44 @@ public class Main extends MapActivity implements LocationListener
 				
 				case Constants.EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND:
 				{
+					sending_wigle = false;
 					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND, Toast.LENGTH_SHORT).show();
 					break;
 				}
 				case Constants.EVENT_SEND_TO_WIGLE_ERROR:
 				{
+					sending_wigle = false;
 					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_ERROR, Toast.LENGTH_SHORT).show();
 					break;
 				}
 				case Constants.EVENT_SEND_TO_WIGLE_OK:
 				{
+					sending_wigle = false;
+					if (wigleProgressDialog.isShowing())
+					{
+						dismissDialog(Constants.DIALOG_WIGLE_UPLOAD);
+					}
 					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_OK, Toast.LENGTH_SHORT).show();
 					break;
 				}
 				case Constants.EVENT_KML_EXPORT_PROGRESS:
 				{
-					if (kmlProgressDialog.isShowing())
+					if (kmlProgressDialog != null && kmlProgressDialog.isShowing())
 					{
 						int count = msg.getData().getInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT);
 						int total = msg.getData().getInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_TOTAL);
 						kmlProgressDialog.setMax(total);
 						kmlProgressDialog.setProgress(count);
+					}
+				}
+				case Constants.EVENT_WIGLE_UPLOAD_PROGRESS:
+				{
+					if (wigleProgressDialog != null && wigleProgressDialog.isShowing())
+					{
+						int count = msg.getData().getInt(Constants.EVENT_WIGLE_UPLOAD_PROGRESS_PAR_COUNT);
+						int total = msg.getData().getInt(Constants.EVENT_WIGLE_UPLOAD_PROGRESS_PAR_TOTAL);
+						wigleProgressDialog.setMax(total);
+						wigleProgressDialog.setProgress(count);
 					}
 				}
 			}
@@ -907,6 +923,16 @@ public class Main extends MapActivity implements LocationListener
             case Constants.DIALOG_KML_EXPORT_PATH:
             {
             	return new KMLExportPathDialog(this, kml_export_path, kml_export_path_ok_listener);
+            }
+            
+            case Constants.DIALOG_WIGLE_UPLOAD:
+            {
+            	wigleProgressDialog = new ProgressDialog(this);
+				wigleProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
+				wigleProgressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SEND_TO_WIGLE));
+				wigleProgressDialog.setProgress(0);
+				wigleProgressDialog.setCancelable(true);
+				return wigleProgressDialog;
             }
 		}
 

@@ -106,25 +106,31 @@ public class Constants
 
 	public static final int EVENT_KML_EXPORT_DONE = 0;
 
-	public static final int EVENT_SYNC_ONLINE_PROGRESS = 1;
+	public static final int EVENT_SYNC_ONLINE_PROGRESS = EVENT_KML_EXPORT_DONE + 1;
 
 	public static final String EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT = "inserted_count";
 
-	public static final int EVENT_SYNC_ONLINE_DONE = 2;
+	public static final int EVENT_SYNC_ONLINE_DONE = EVENT_SYNC_ONLINE_PROGRESS + 1;
 
-	public static final int EVENT_NOTIFY_ERROR = 3;
+	public static final int EVENT_NOTIFY_ERROR = EVENT_SYNC_ONLINE_DONE + 1;
 
-	public static final int EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND = 4;
+	public static final int EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND = EVENT_NOTIFY_ERROR + 1;
 
-	public static final int EVENT_SEND_TO_WIGLE_ERROR = 5;
+	public static final int EVENT_SEND_TO_WIGLE_ERROR = EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND + 1;
 	
-	public static final int EVENT_SEND_TO_WIGLE_OK = 6;
+	public static final int EVENT_SEND_TO_WIGLE_OK = EVENT_SEND_TO_WIGLE_ERROR + 1;
 
-	public static final int EVENT_KML_EXPORT_PROGRESS = 7;
+	public static final int EVENT_KML_EXPORT_PROGRESS = EVENT_SEND_TO_WIGLE_OK + 1;
+	
+	public static final int EVENT_WIGLE_UPLOAD_PROGRESS = EVENT_KML_EXPORT_PROGRESS + 1;
 	
 	public static final String EVENT_KML_EXPORT_PROGRESS_PAR_COUNT = "exported_count";
 	
 	public static final String EVENT_KML_EXPORT_PROGRESS_PAR_TOTAL = "exported_total";
+	
+	public static final String EVENT_WIGLE_UPLOAD_PROGRESS_PAR_COUNT = "exported_count";
+	
+	public static final String EVENT_WIGLE_UPLOAD_PROGRESS_PAR_TOTAL = "exported_total";
 	
 	public static final int DIALOG_STATS = 0;
 
@@ -145,6 +151,8 @@ public class Constants
 	public static final int DIALOG_EXPORT_KML_PROGRESS = DIALOG_WIGLE_ACCOUNT + 1;
 	
 	public static final int DIALOG_KML_EXPORT_PATH = DIALOG_EXPORT_KML_PROGRESS + 1;
+	
+	public static final int DIALOG_WIGLE_UPLOAD = DIALOG_KML_EXPORT_PATH + 1;
 	
 	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
 	                        

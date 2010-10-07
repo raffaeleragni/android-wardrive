@@ -9,6 +9,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.logging.Logger;
 
+import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+
 public class WigleUploader
 {
 	private static Object LOCK = new Object();
@@ -19,7 +23,7 @@ public class WigleUploader
 	
 	private static final String NL = "\r\n";
 
-	public static boolean upload(String username, String password, File file)
+	public static boolean upload(String username, String password, File file, Handler message_handler)
 	{
 		if (username == null || username.length() == 0 || password == null || password.length() == 0)
 		{
@@ -30,11 +34,14 @@ public class WigleUploader
 		{
 			try
 			{
+				Message msg;
+				Bundle b;
 		        URL url = new URL(_URL);
 		        HttpURLConnection conn = (HttpURLConnection)url.openConnection();
 		    	conn.setDoInput(true);
 		    	conn.setDoOutput(true);
 		    	conn.setUseCaches(false);
+		    	conn.setChunkedStreamingMode(1);
 		    	conn.setRequestMethod("POST");
 		    	conn.setRequestProperty("User-Agent","wardrive");
 		    	conn.setRequestProperty("Content-Type","multipart/form-data;boundary="+BOUNDARY);
@@ -44,6 +51,8 @@ public class WigleUploader
 		    	dos.writeBytes("--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"password\""+NL+NL+password+NL);
 		    	dos.writeBytes("--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"stumblefile\";filename=\"wardrive.kml\""+NL+"Content-Type: application/octet-stream"+NL+NL);
 		    	int ct;
+		    	long readbytes = 0;
+		    	long filelength = file.length();
 		    	byte[] buf = new byte[1240];
 				BufferedInputStream fis = new BufferedInputStream(new FileInputStream(file), 1024);
 		    	while(fis.available() > 0)
@@ -51,6 +60,14 @@ public class WigleUploader
 		    		ct = fis.read(buf);
 		    		dos.write(buf, 0, ct);
 		    		dos.flush();
+		    		
+		    		readbytes += ct;
+		    		msg = Message.obtain(message_handler, Constants.EVENT_WIGLE_UPLOAD_PROGRESS);
+					b = new Bundle();
+					b.putInt(Constants.EVENT_WIGLE_UPLOAD_PROGRESS_PAR_COUNT, (int) readbytes);
+					b.putInt(Constants.EVENT_WIGLE_UPLOAD_PROGRESS_PAR_TOTAL, (int) filelength);
+					msg.setData(b);
+					message_handler.sendMessage(msg);
 		    	}
 		    	fis.close();
 		    	dos.writeBytes(NL+"--"+BOUNDARY+NL+"Content-Disposition: form-data; name=\"Send\""+NL+NL+"Send");
