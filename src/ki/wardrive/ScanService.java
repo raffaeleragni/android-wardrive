@@ -63,6 +63,8 @@ public class ScanService extends Service
 	private int gps_seconds = Constants.SERVICE_GPS_EVENT_WAIT;
 
 	private int gps_meters = Constants.SERVICE_GPS_EVENT_METERS;
+	
+	private int NOTIFICATION_ELEMENT = 100;
 
 	private class IScanServiceImpl extends Binder implements IScanService
 	{
@@ -145,10 +147,16 @@ public class ScanService extends Service
 
 			started = true;
 			
-			if (started)
-			{
-				Toast.makeText(this, R.string.SERVICE_STARTED, Toast.LENGTH_SHORT).show();
-			}
+			Toast.makeText(this, R.string.SERVICE_STARTED, Toast.LENGTH_SHORT).show();
+			
+			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			Notification n = new Notification(R.drawable.icon, getText(R.string.app_name), System.currentTimeMillis());
+			n.flags |= Notification.FLAG_ONGOING_EVENT;
+			Context context = getApplicationContext();
+			Intent notificationIntent = new Intent(this, Main.class);
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+			n.setLatestEventInfo(context, getText(R.string.app_name), "", contentIntent);
+			nm.notify(NOTIFICATION_ELEMENT, n);
 		}
 		catch (Exception e)
 		{
@@ -195,11 +203,9 @@ public class ScanService extends Service
 			}
 
 			started = false;
-			
-			if (!started)
-			{
-				Toast.makeText(this, R.string.SERVICE_STOPPED, Toast.LENGTH_SHORT).show();
-			}
+			Toast.makeText(this, R.string.SERVICE_STOPPED, Toast.LENGTH_SHORT).show();
+			NotificationManager nm = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+			nm.cancel(NOTIFICATION_ELEMENT);
 		}
 		catch (Exception e)
 		{
