@@ -62,4 +62,38 @@
     <string name="MESSAGE_SEND_TO_WIGLE_OK">Invio a Wigle eseguito con successo.</string>
 	<string name="OVERLAY_SERVICE_ON">Servizio attivo</string>
 	<string name="OVERLAY_SERVICE_OFF">Servizio non attivo</string>
+	
+	
+	<!-- Preferences activity -->
+	<string name="layout_preferences_group_scanning">Scansione</string>
+	<string name="layout_preferences_gpsScanInterval">Tempi scansione GPS</string>
+	<string name="layout_preferences_gpsScanInterval_detail">Frequenza della scansione</string>
+	<string-array name="layout_preferences_gpsScanInterval_labels">
+		<item>Veloce (3s, 3m)</item>
+		<item>Medio (10s, 10m)</item>
+		<item>Lento (30s, 50m)</item>
+	</string-array>
+	<string-array name="layout_preferences_gpsScanInterval_values">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>
+	<string name="layout_preferences_group_wigleSettings">Account WiGLE</string>
+	<string name="layout_preferences_wigleUpload_accountDetails_username">Username</string>
+	<string name="layout_preferences_wigleUpload_accountDetails_password">Password</string>
+	<string name="layout_preferences_group_mapOptions">Opzioni della mappa</string>
+	<string name="layout_preferences_wifiFilterEnabled">Filtro WiFi Abilitato</string>
+	<string name="layout_preferences_wifiFilter">Filtro WiFi</string>
+	<string name="layout_preferences_wifiFilter_detail">Espressione regolare stile java</string>
+	<string name="layout_preferences_wifiFilterInverted">Filtro WiFi invertito</string>
+	<string name="layout_preferences_mapScale">Mostra scala</string>
+	<string name="layout_preferences_mapSat">Mappa dal satellite</string>
+	<string name="layout_preferences_followMe">Segui la mia posizione</string>
+	<string name="layout_preferences_showAPLabels">Mostra etichette WiFi</string>
+	<string name="layout_preferences_showOpenAPs">Mostra WiFi aperte</string>
+	<string name="layout_preferences_showClosedAPs">Mostra WiFi chiuse</string>
+	<string name="layout_preferences_showWEPAPs">Mostra WiFi WEP</string>
+	<string name="layout_preferences_group_exportingAndOther">Esportazione e altro</string>
+	<string name="layout_preferences_kmlExportPath">Percorso esportazione KML</string>
+	<string name="layout_preferences_notificationsEnabled">Notifica ogni nuova WiFi</string>
 </resources>

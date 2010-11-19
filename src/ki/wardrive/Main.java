@@ -39,9 +39,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Paint.Style;
 import android.graphics.Point;
 import android.graphics.RectF;
-import android.graphics.Paint.Style;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationListener;
@@ -53,6 +53,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
+import android.preference.PreferenceManager;
 import android.text.TextPaint;
 import android.util.Log;
 import android.view.Menu;
@@ -108,6 +109,8 @@ public class Main extends MapActivity implements LocationListener
 
 	private Overlays overlays_opened;
 
+	private Overlays overlays_wep;
+
 	private Overlays overlays_me;
 	
 	private ExtraInfoOverlay overlay_extra;
@@ -118,11 +121,13 @@ public class Main extends MapActivity implements LocationListener
 
 	public boolean follow_me = true;
 
-	public boolean map_mode = false;
+	public boolean map_sat = false;
 
 	public boolean show_open = true;
 
 	public boolean show_closed = false;
+	
+	public boolean show_wep = false;
 	
 	public boolean show_scale = false;
 
@@ -189,6 +194,49 @@ public class Main extends MapActivity implements LocationListener
 		}
 	};
 
+	private void reloadSettings()
+	{
+		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+		
+		String s_gps_times = prefs.getString("gpsTimes", "0");
+		gps_times = Integer.parseInt(s_gps_times);
+        filter_enabled = prefs.getBoolean("wifiFilterEnabled", false);
+        filter_inverse = prefs.getBoolean("wifiFilterInverse", false);
+        filter_regexp = prefs.getString("wifiFilter", "");
+		show_labels = prefs.getBoolean("showAPLabels", true);
+		follow_me = prefs.getBoolean("followMe", true);
+		show_open = prefs.getBoolean("showOpenAPs", true);
+		show_closed = prefs.getBoolean("showClosedAPs", false);
+		show_wep = prefs.getBoolean("showWEPAPs", false);
+        show_scale = prefs.getBoolean("mapScale", show_scale);
+		map_sat = prefs.getBoolean("mapSat", false);
+		notifications_enabled = prefs.getBoolean("notificationsEnabled", false);
+        wigle_username = prefs.getString("wigleUsername", "");
+        wigle_password = prefs.getString("wiglePassword", "");
+        kml_export_path = prefs.getString("kmlExportPath", "");
+        
+        // Update overlays booleans - Labels
+        overlays_closed.show_labels = show_labels;
+		overlays_opened.show_labels = show_labels;
+		overlays_wep.show_labels = show_labels;
+		overlays_me.show_labels = show_labels;
+        // Update overlays booleans - Scale
+		overlay_scale.show_scale = show_scale;
+
+		// Update service options from here
+		if (service_binder != null)
+		{
+			service_binder.setNotificationsEnabled(notifications_enabled);
+			service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
+		}
+		
+		// Update map preferences
+		mapview.setSatellite(map_sat);
+		
+		// Redraw map and overlays
+		mapview.invalidate();
+	}
+	
 	//
 	// Status change
 	//
@@ -202,50 +250,29 @@ public class Main extends MapActivity implements LocationListener
 
 		try
 		{
+			// Saved GPS location & zoom, init MapView
 			settings = getPreferences(MODE_PRIVATE);
 			settings_editor = settings.edit();
-
-			show_labels = settings.getBoolean(Constants.CONF_SHOW_LABELS, show_labels);
-			follow_me = settings.getBoolean(Constants.CONF_FOLLOW, follow_me);
-			map_mode = settings.getBoolean(Constants.CONF_MAP_MODE, map_mode);
-			show_open = settings.getBoolean(Constants.CONF_SHOW_OPEN, show_open);
-			show_closed = settings.getBoolean(Constants.CONF_SHOW_CLOSED, show_closed);
-			notifications_enabled = settings.getBoolean(Constants.CONF_NOTIFICATIONS_ENABLED, notifications_enabled);
-			gps_times = settings.getInt(Constants.CONF_GPS_TIMES, gps_times);
-            filter_enabled = settings.getBoolean(Constants.CONF_FILTER_ENABLED, filter_enabled);
-            filter_inverse = settings.getBoolean(Constants.CONF_FILTER_INVERSE, filter_inverse);
-            filter_regexp = settings.getString(Constants.CONF_FILTER_REGEXP, filter_regexp);
-            show_scale = settings.getBoolean(Constants.CONF_SHOW_SCALE, show_scale);
-            wigle_username = settings.getString(Constants.CONF_WIGLE_USERNAME, wigle_username);
-            wigle_password = settings.getString(Constants.CONF_WIGLE_PASSWORD, wigle_password);
-            kml_export_path = settings.getString(Constants.CONF_KML_EXPORT_PATH, kml_export_path);
-            
 			GeoPoint point = new GeoPoint(settings.getInt(Constants.LAST_LAT, Constants.DEFAULT_LAT), settings.getInt(
 					Constants.LAST_LON, Constants.DEFAULT_LON));
-
 			mapview = (MapView) findViewById(R.id.mapview);
 			mapview.getController().animateTo(point);
 			mapview.getController().setZoom(settings.getInt(Constants.ZOOM_LEVEL, Constants.DEFAULT_ZOOM_LEVEL));
 			mapview.setBuiltInZoomControls(true);
 			mapview.setClickable(true);
 			mapview.setLongClickable(true);
-			mapview.setSatellite(map_mode);
 
 			Drawable d = getResources().getDrawable(R.drawable.empty);
-
 			overlays_closed = new Overlays(Constants.OTYPE_CLOSED_WIFI, d);
 			overlays_opened = new Overlays(Constants.OTYPE_OPEN_WIFI, d);
+			overlays_wep = new Overlays(Constants.OTYPE_WEP, d);
 			overlays_me = new Overlays(Constants.OTYPE_MY_LOCATION, d);
 			overlay_extra = new ExtraInfoOverlay();
 			overlay_scale = new ScaleOverlay();
 
-			overlays_closed.show_labels = show_labels;
-			overlays_opened.show_labels = show_labels;
-			overlays_me.show_labels = show_labels;
-			overlay_scale.show_scale = show_scale;
-
 			mapview.getOverlays().add(overlays_closed);
 			mapview.getOverlays().add(overlays_opened);
+			mapview.getOverlays().add(overlays_wep);
 			mapview.getOverlays().add(overlays_me);
 			mapview.getOverlays().add(overlay_extra);	
 			mapview.getOverlays().add(overlay_scale);			
@@ -256,7 +283,7 @@ public class Main extends MapActivity implements LocationListener
 				database.execSQL(DBTableNetworks.CREATE_TABLE_NETWORKS);
 				database.execSQL(DBTableNetworks.CREATE_INDEX_LATLON);
 				database.execSQL(DBTableNetworks.CREATE_INDEX_CAPABILITIES);
-				database.execSQL(DBTableNetworks.OPTIMIZATION_SQL);
+				// This may give problems: database.execSQL(DBTableNetworks.OPTIMIZATION_SQL);
 			}
 
 			service_intent = new Intent();
@@ -264,6 +291,9 @@ public class Main extends MapActivity implements LocationListener
 			bindService(service_intent, service_connection, Context.BIND_AUTO_CREATE);
 			startService(service_intent);
 
+			// Reload settings also sets variables on overlays and on the service
+			reloadSettings();
+			
 			location_manager = (LocationManager) getSystemService(LOCATION_SERVICE);
 
 			PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
@@ -282,18 +312,14 @@ public class Main extends MapActivity implements LocationListener
 		super.onResume();
 
 		if (wake_lock != null && !wake_lock.isHeld())
-		{
 			wake_lock.acquire();
-		}
 	}
 
 	@Override
 	protected void onPause()
 	{
 		if (wake_lock != null && wake_lock.isHeld())
-		{
 			wake_lock.release();
-		}
 
 		super.onPause();
 	}
@@ -306,10 +332,8 @@ public class Main extends MapActivity implements LocationListener
 		try
 		{
 			if (location_manager != null)
-			{
 				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, Constants.MAPS_GPS_EVENT_WAIT,
 						Constants.MAPS_GPS_EVENT_METERS, Main.this);
-			}
 		}
 		catch (Exception e)
 		{
@@ -323,28 +347,12 @@ public class Main extends MapActivity implements LocationListener
 		try
 		{
 			if (location_manager != null)
-			{
 				location_manager.removeUpdates(Main.this);
-			}
 
 			settings_editor.putInt(Constants.ZOOM_LEVEL, mapview.getZoomLevel());
-			settings_editor.putBoolean(Constants.CONF_SHOW_LABELS, show_labels);
-			settings_editor.putBoolean(Constants.CONF_FOLLOW, follow_me);
-			settings_editor.putBoolean(Constants.CONF_MAP_MODE, map_mode);
-			settings_editor.putBoolean(Constants.CONF_SHOW_OPEN, show_open);
-			settings_editor.putBoolean(Constants.CONF_SHOW_CLOSED, show_closed);
-			settings_editor.putBoolean(Constants.CONF_NOTIFICATIONS_ENABLED, notifications_enabled);
-            settings_editor.putBoolean(Constants.CONF_FILTER_ENABLED, filter_enabled);
-            settings_editor.putBoolean(Constants.CONF_FILTER_INVERSE, filter_inverse);
-			settings_editor.putBoolean(Constants.CONF_SHOW_SCALE, show_scale);
-            settings_editor.putString(Constants.CONF_FILTER_REGEXP, filter_regexp);
-			settings_editor.putInt(Constants.CONF_GPS_TIMES, gps_times);
 			GeoPoint p = mapview.getProjection().fromPixels(mapview.getWidth() / 2, mapview.getHeight() / 2);
 			settings_editor.putInt(Constants.LAST_LAT, p.getLatitudeE6());
 			settings_editor.putInt(Constants.LAST_LON, p.getLongitudeE6());
-			settings_editor.putString(Constants.CONF_WIGLE_USERNAME, wigle_username);
-			settings_editor.putString(Constants.CONF_WIGLE_PASSWORD, wigle_password);
-			settings_editor.putString(Constants.CONF_KML_EXPORT_PATH, kml_export_path);
 			settings_editor.commit();
 
 			save_app_tstamp();
@@ -386,33 +394,6 @@ public class Main extends MapActivity implements LocationListener
 	{
 		MenuInflater mi = getMenuInflater();
 		mi.inflate(R.menu.options_menu, menu);
-		menu.findItem(R.menu_id.FOLLOW).setChecked(follow_me);
-		menu.findItem(R.menu_id.MAP_MODE).setChecked(map_mode);
-		menu.findItem(R.menu_id.LABELS).setChecked(show_labels);
-		menu.findItem(R.menu_id.SHOW_CLOSED).setChecked(show_closed);
-		menu.findItem(R.menu_id.SHOW_OPEN).setChecked(show_open);
-		menu.findItem(R.menu_id.NOTIFICATIONS_ENABLED).setChecked(notifications_enabled);
-		menu.findItem(R.menu_id.SCALE).setChecked(show_scale);
-
-		switch (gps_times)
-		{
-			case 0:
-			{
-				menu.findItem(R.menu_id.CHANGE_GPS_SERVICE_TIMERS_1).setChecked(true);
-				break;
-			}
-			case 1:
-			{
-				menu.findItem(R.menu_id.CHANGE_GPS_SERVICE_TIMERS_2).setChecked(true);
-				break;
-			}
-			case 2:
-			{
-				menu.findItem(R.menu_id.CHANGE_GPS_SERVICE_TIMERS_3).setChecked(true);
-				break;
-			}
-		}
-
 		return true;
 	}
 
@@ -422,222 +403,99 @@ public class Main extends MapActivity implements LocationListener
 		return super.onPrepareOptionsMenu(menu);
 	}
 
+	private final static int REQUEST_PREFERENCES = 1;
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data)
+	{
+		switch (requestCode)
+		{
+			case REQUEST_PREFERENCES:
+				reloadSettings();
+				break;
+		}
+	}
+	
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item)
 	{
 		switch (item.getItemId())
 		{
+			case R.menu_id.PREFERENCES:
+				startActivityForResult(new Intent(getBaseContext(), Preferences.class), REQUEST_PREFERENCES);
+				break;
+				
 			case R.menu_id.QUIT:
-			{
                 if (service_binder != null)
-                {
                     service_binder.stop_services();
-                }
-
                 if (service_intent != null)
-                {
                     stopService(service_intent);
-                }
-                
                 save_service_tstamp();
                 save_app_tstamp();
-
 				finish();
-
-				return true;
-			}
+				break;
+				
 			case R.menu_id.STATS:
-			{
 				showDialog(Constants.DIALOG_STATS);
-				return true;
-			}
-			case R.menu_id.LABELS:
-			{
-				show_labels = !show_labels;
-				overlays_closed.show_labels = show_labels;
-				overlays_opened.show_labels = show_labels;
-				overlays_me.show_labels = show_labels;
-				item.setChecked(show_labels);
-				mapview.invalidate();
 				break;
-			}
-			case R.menu_id.FOLLOW:
-			{
-				follow_me = !follow_me;
-				item.setChecked(follow_me);
-				break;
-			}
-			case R.menu_id.MAP_MODE:
-			{
-				map_mode = !map_mode;
-				item.setChecked(map_mode);
-				mapview.setSatellite(map_mode);
-				break;
-			}
+
 			case R.menu_id.ABOUT:
-			{
 				showDialog(Constants.DIALOG_ABOUT);
 				break;
-			}
-			case R.menu_id.SHOW_OPEN:
-			{
-				show_open = !show_open;
-				item.setChecked(show_open);
-				mapview.invalidate();
-				break;
-			}
-			case R.menu_id.SHOW_CLOSED:
-			{
-				show_closed = !show_closed;
-				item.setChecked(show_closed);
-				mapview.invalidate();
-				break;
-			}
+
 			case R.menu_id.SERVICE:
-			{
 				service = !service;
 				if (service)
 				{
-					if (service_binder != null) service_binder.start_services();
-					if (service_intent != null) startService(service_intent);
+					if (service_binder != null)
+						service_binder.start_services();
+					if (service_intent != null)
+						startService(service_intent);
 				}
 				else
 				{
-					if (service_binder != null) service_binder.stop_services();
-					if (service_intent != null) stopService(service_intent);
+					if (service_binder != null)
+						service_binder.stop_services();
+					if (service_intent != null)
+						stopService(service_intent);
 					save_service_tstamp();
 				}
 				mapview.invalidate();
 				break;
-			}
+
 			case R.menu_id.DELETE:
-			{
 				showDialog(Constants.DIALOG_DELETE_ALL_WIFI);
 				break;
-			}
+
 			case R.menu_id.KML_EXPORT:
-			{
 				if (!exporting_kml)
-				{
 					new Thread(kml_export_proc).start();
-				}
 				showDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
 				
 				break;
-			}
-			case R.menu_id.NOTIFICATIONS_ENABLED:
-			{
-				notifications_enabled = !notifications_enabled;
-				service_binder.setNotificationsEnabled(notifications_enabled);
-				item.setChecked(notifications_enabled);
-				break;
-			}
-			case R.menu_id.CHANGE_GPS_SERVICE_TIMERS_1:
-			{
-				gps_times = 0;
-				item.setChecked(true);
-				service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
-				break;
-			}
-			case R.menu_id.CHANGE_GPS_SERVICE_TIMERS_2:
-			{
-				gps_times = 1;
-				item.setChecked(true);
-				service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
-				break;
-			}
-			case R.menu_id.CHANGE_GPS_SERVICE_TIMERS_3:
-			{
-				gps_times = 2;
-				item.setChecked(true);
-				service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
-				break;
-			}
-            case R.menu_id.FILTER_DIALOG:
-            {
-                showDialog(Constants.DIALOG_FILTER);
-                break;
-            }
+
             case R.menu_id.LIST:
-            {
             	GeoPoint top_left = mapview.getProjection().fromPixels(0, 0);
 				GeoPoint bottom_right = mapview.getProjection().fromPixels(mapview.getWidth(), mapview.getHeight());
-            	
 				Bundle b = new Bundle();
 				b.putInt("minlat", top_left.getLatitudeE6());
             	b.putInt("minlon", top_left.getLongitudeE6());
             	b.putInt("maxlat", bottom_right.getLatitudeE6());
             	b.putInt("maxlon", bottom_right.getLongitudeE6());
-           	
             	Intent i = new Intent(this, ListWifiActivity.class);
             	i.putExtras(b);
-            	
                 startActivity(i);
-                
                 break;
-            }
-            case R.menu_id.SCALE:
-            {
-            	show_scale = !show_scale;
-				overlay_scale.show_scale = show_scale;
-				item.setChecked(show_scale);
-				mapview.invalidate();
-            	break;
-            }
-            case R.menu_id.SEND_TO_WIGLE:
-            {
-            	if (!sending_wigle)
-				{
-            		new Thread(wigle_send_proc).start();
-				}
-				showDialog(Constants.DIALOG_WIGLE_UPLOAD);
-				
-            	break;
-            }
-            case R.menu_id.WIGLE_ACCOUNT_SETTINGS:
-            {
-            	showDialog(Constants.DIALOG_WIGLE_ACCOUNT);
-            	break;
-            }
-            case R.menu_id.KML_EXPORT_PATH:
-            {
-            	showDialog(Constants.DIALOG_KML_EXPORT_PATH);
-            	break;
-            }
-		}
-		return false;
-	}
 
-    //
-    // Called when the filter dialog OK button has been pressed
-    //
-    private WifiFillterDialog.WifiFillterDialogOKListener wifi_filter_ok_listener = new WifiFillterDialog.WifiFillterDialogOKListener()
-    {
-        public void ok(boolean filter_enabled, boolean filter_inverse, String filter_regexp)
-        {
-            Main.this.filter_enabled = filter_enabled;
-            Main.this.filter_inverse = filter_inverse;
-            Main.this.filter_regexp = filter_regexp;
-            mapview.invalidate();
-        }
-    };
-    
-    private WigleAccountDialog.WigleAccountDialogOKListener wigle_account_ok_listener = new WigleAccountDialog.WigleAccountDialogOKListener()
-    {
-    	public void ok(String username, String password)
-    	{
-    		Main.this.wigle_username = username;
-    		Main.this.wigle_password = password;
-    	}
-    };
-    
-    private KMLExportPathDialog.KMLExportPathDialogOKListener kml_export_path_ok_listener = new KMLExportPathDialog.KMLExportPathDialogOKListener()
-    {
-		public void ok(String path)
-		{
-			Main.this.kml_export_path = path;
+            case R.menu_id.SEND_TO_WIGLE:
+            	if (!sending_wigle)
+            		new Thread(wigle_send_proc).start();
+				showDialog(Constants.DIALOG_WIGLE_UPLOAD);
+            	break;
 		}
-	};
+		
+		return true;
+	}
 
 	private Runnable kml_export_proc = new Runnable()
 	{
@@ -735,70 +593,50 @@ public class Main extends MapActivity implements LocationListener
 			switch (msg.what)
 			{
 				case Constants.EVENT_KML_EXPORT_DONE:
-				{
 					exporting_kml = false;
 					if (kmlProgressDialog.isShowing())
-					{
 						dismissDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
-					}
 					Toast.makeText(Main.this, R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML, Toast.LENGTH_SHORT).show();
 					break;
-				}
-
+				
 				case Constants.EVENT_SYNC_ONLINE_PROGRESS:
-				{
 					if (progressDialog.isShowing())
-					{
 						progressDialog.setProgress(msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
-					}
 					break;
-				}
-
+				
 				case Constants.EVENT_SYNC_ONLINE_DONE:
-				{
 					sending_sync = false;
 					if (progressDialog.isShowing())
-					{
 						dismissDialog(Constants.DIALOG_SYNC_PROGRESS);
-					}
 					Toast.makeText(
 							Main.this,
 							getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
 									+ msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT),
 							Toast.LENGTH_SHORT).show();
 					break;
-				}
 
 				case Constants.EVENT_NOTIFY_ERROR:
-				{
 					notify_error((Exception) msg.getData().getSerializable("exception"));
 					break;
-				}
 				
 				case Constants.EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND:
-				{
 					sending_wigle = false;
 					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_FILE_NOT_FOUND, Toast.LENGTH_SHORT).show();
 					break;
-				}
+
 				case Constants.EVENT_SEND_TO_WIGLE_ERROR:
-				{
 					sending_wigle = false;
 					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_ERROR, Toast.LENGTH_SHORT).show();
 					break;
-				}
+
 				case Constants.EVENT_SEND_TO_WIGLE_OK:
-				{
 					sending_wigle = false;
 					if (wigleProgressDialog.isShowing())
-					{
 						dismissDialog(Constants.DIALOG_WIGLE_UPLOAD);
-					}
 					Toast.makeText(Main.this, R.string.MESSAGE_SEND_TO_WIGLE_OK, Toast.LENGTH_SHORT).show();
 					break;
-				}
+
 				case Constants.EVENT_KML_EXPORT_PROGRESS:
-				{
 					if (kmlProgressDialog != null && kmlProgressDialog.isShowing())
 					{
 						int count = msg.getData().getInt(Constants.EVENT_KML_EXPORT_PROGRESS_PAR_COUNT);
@@ -806,9 +644,9 @@ public class Main extends MapActivity implements LocationListener
 						kmlProgressDialog.setMax(total);
 						kmlProgressDialog.setProgress(count);
 					}
-				}
+					break;
+
 				case Constants.EVENT_WIGLE_UPLOAD_PROGRESS:
-				{
 					if (wigleProgressDialog != null && wigleProgressDialog.isShowing())
 					{
 						int count = msg.getData().getInt(Constants.EVENT_WIGLE_UPLOAD_PROGRESS_PAR_COUNT);
@@ -816,7 +654,7 @@ public class Main extends MapActivity implements LocationListener
 						wigleProgressDialog.setMax(total);
 						wigleProgressDialog.setProgress(count);
 					}
-				}
+					break;
 			}
 		}
 	};
@@ -824,23 +662,21 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected Dialog onCreateDialog(int id)
 	{
+		AlertDialog.Builder builder;
 		switch (id)
 		{
 			case Constants.DIALOG_STATS:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder = new AlertDialog.Builder(this);
 				builder.setMessage(print_stats());
 				return builder.create();
-			}
+
 			case Constants.DIALOG_ABOUT:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getText(R.string.ABOUT_BOX));
 				return builder.create();
-			}
+
 			case Constants.DIALOG_DELETE_ALL_WIFI:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getText(R.string.MENU_DELETE_WARNING_LABEL));
 				builder.setCancelable(false);
 				builder.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener()
@@ -858,28 +694,25 @@ public class Main extends MapActivity implements LocationListener
 					}
 				});
 				return builder.create();
-			}
+
 			case Constants.DIALOG_SYNC_PROGRESS:
-			{
 				progressDialog = new ProgressDialog(this);
 				progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				progressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE));
 				progressDialog.setProgress(0);
 				progressDialog.setCancelable(true);
 				return progressDialog;
-			}
+			
 			case Constants.DIALOG_EXPORT_KML_PROGRESS:
-			{
 				kmlProgressDialog = new ProgressDialog(this);
 				kmlProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				kmlProgressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_KML_EXPORT));
 				kmlProgressDialog.setProgress(0);
 				kmlProgressDialog.setCancelable(true);
 				return kmlProgressDialog;
-			}
+
 			case Constants.DIALOG_SYNC_ALL:
-			{
-				AlertDialog.Builder builder = new AlertDialog.Builder(this);
+				builder = new AlertDialog.Builder(this);
 				builder.setMessage(getResources().getText(R.string.MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION));
 				builder.setCancelable(false);
 				builder.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener()
@@ -908,32 +741,14 @@ public class Main extends MapActivity implements LocationListener
 				});
 
 				return builder.create();
-			}
-
-            case Constants.DIALOG_FILTER:
-            {
-                return new WifiFillterDialog(this, filter_enabled, filter_inverse, filter_regexp, wifi_filter_ok_listener);
-            }
-            
-            case Constants.DIALOG_WIGLE_ACCOUNT:
-            {
-                return new WigleAccountDialog(this, wigle_username, wigle_password, wigle_account_ok_listener);
-            }
-            
-            case Constants.DIALOG_KML_EXPORT_PATH:
-            {
-            	return new KMLExportPathDialog(this, kml_export_path, kml_export_path_ok_listener);
-            }
             
             case Constants.DIALOG_WIGLE_UPLOAD:
-            {
             	wigleProgressDialog = new ProgressDialog(this);
 				wigleProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
 				wigleProgressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SEND_TO_WIGLE));
 				wigleProgressDialog.setProgress(0);
 				wigleProgressDialog.setCancelable(true);
 				return wigleProgressDialog;
-            }
 		}
 
 		return super.onCreateDialog(id);
@@ -942,9 +757,7 @@ public class Main extends MapActivity implements LocationListener
 	private void delete_all_wifi()
 	{
 		if (database != null)
-		{
 			database.execSQL(DBTableNetworks.DELETE_ALL_WIFI);
-		}
 	}
 
 	private String print_stats()
@@ -1083,9 +896,7 @@ public class Main extends MapActivity implements LocationListener
 		public void draw(Canvas canvas, MapView mapView, boolean shadow)
 		{
 			if (!show_scale)
-			{
 				return;
-			}
 			
 			int x1 = 10, x2 = 10 + BAR_WIDTH;
 			int y = mapview.getHeight() - 48;
@@ -1114,9 +925,7 @@ public class Main extends MapActivity implements LocationListener
 				distance = "" + new DecimalFormat("#.##").format(d) + "km";
 			}
 			else
-			{
 				distance = "" + new DecimalFormat("#").format(d) + "m";	
-			}
 			
 			canvas.drawLine(x1, y, x2, y, paint);
 			
@@ -1217,43 +1026,55 @@ public class Main extends MapActivity implements LocationListener
 			try
 			{				
 				if (type == Constants.OTYPE_OPEN_WIFI && !show_open)
-				{
 					return;
-				}
 
 				if (type == Constants.OTYPE_CLOSED_WIFI && !show_closed)
-				{
 					return;
-				}
+				
+				if (type == Constants.OTYPE_WEP && !show_wep)
+					return;
 
 				if (database == null)
-				{
 					return;
-				}
 
 				if (type == Constants.OTYPE_MY_LOCATION)
 				{
 					if (last_location != null)
-					{
 						draw_single(false, canvas, mapView, new GeoPoint((int) (last_location.getLatitude() * 1E6), (int) (last_location
 								.getLongitude() * 1E6)), getResources().getString(R.string.GPS_LABEL_ME), 0);
-					}
 					return;
 				}
 
 				GeoPoint top_left = mapView.getProjection().fromPixels(0, 0);
 				GeoPoint bottom_right = mapView.getProjection().fromPixels(mapView.getWidth(), mapView.getHeight());
 
+				String condition = "1";
+				switch (type)
+				{
+					case Constants.OTYPE_OPEN_WIFI:
+						condition = DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION;
+						paint_circle.setARGB(192, 0, 200, 0);
+						paint_circle_stroke.setARGB(192, 0, 200, 0);
+						break;
+					case Constants.OTYPE_CLOSED_WIFI:
+						condition = DBTableNetworks.TABLE_NETWORKS_ONLY_CLOSED_CONDITION;
+						paint_circle.setARGB(96, 255, 0, 0);
+						paint_circle_stroke.setARGB(96, 255, 0, 0);
+						break;
+					case Constants.OTYPE_WEP:
+						condition = DBTableNetworks.TABLE_NETWORKS_WEP_CONDITION;
+						paint_circle.setARGB(192, 235, 160, 23);
+						paint_circle_stroke.setARGB(192, 235, 160, 23);
+						break;
+				}
+				
 				Cursor c = null;
 				try
 				{
 					c = database.query(DBTableNetworks.TABLE_NETWORKS, new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_LAT,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_LON, DBTableNetworks.TABLE_NETWORKS_FIELD_SSID,
 							DBTableNetworks.TABLE_NETWORKS_FIELD_CAPABILITIES, DBTableNetworks.TABLE_NETWORKS_FIELD_LEVEL },
-							DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
-							+ " and "
-							+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
-									: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION), compose_latlon_between(top_left,
+							DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN + " and " + condition, compose_latlon_between(top_left,
 							bottom_right), null, null, null);
 
 					if (c != null && c.moveToFirst())
@@ -1268,32 +1089,9 @@ public class Main extends MapActivity implements LocationListener
                                 if (filter_enabled)
                                 {
                                     boolean matches = ssid.matches(filter_regexp);
-                                    if (matches && filter_inverse)
-                                    {
+                                    if ((matches && filter_inverse) || (!matches && !filter_inverse))
                                         continue;
-                                    }
-                                    else if (!matches && !filter_inverse)
-                                    {
-                                        continue;
-                                    }
                                 }
-
-								String cap = c.getString(3);
-								if (cap == null || cap.length() == 0)
-								{
-									paint_circle.setARGB(192, 0, 200, 0);
-									paint_circle_stroke.setARGB(192, 0, 200, 0);
-								}
-								else if (cap.contains("WEP"))
-								{
-									paint_circle.setARGB(192, 235, 160, 23);
-									paint_circle_stroke.setARGB(192, 235, 160, 23);
-								}
-								else
-								{
-									paint_circle.setARGB(96, 255, 0, 0);
-									paint_circle_stroke.setARGB(96, 255, 0, 0);
-								}
 
 								draw_single(true, canvas, mapView, new GeoPoint((int) (c.getDouble(0) * 1E6),
 										(int) (c.getDouble(1) * 1E6)), ssid, c.getInt(4));
@@ -1302,16 +1100,6 @@ public class Main extends MapActivity implements LocationListener
 						}
 						else
 						{
-							String cap = c.getString(3);
-							if (cap == null || cap.length() == 0)
-							{
-								paint_circle.setARGB(192, 0, 200, 0);
-							}
-							else
-							{
-								paint_circle.setARGB(96, 255, 0, 0);
-							}
-
 							quadrant_w = (mapView.getWidth() / quadrants_x);
 							quadrant_h = (mapView.getHeight() / quadrants_y);
 
@@ -1339,10 +1127,7 @@ public class Main extends MapActivity implements LocationListener
 													new String[] { DBTableNetworks.TABLE_NETWORKS_FIELD_COUNT_ROWID,
 															DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LAT,
 															DBTableNetworks.TABLE_NETWORKS_FIELD_SUM_LON },
-													DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN
-															+ " and "
-															+ (Constants.OTYPE_CLOSED_WIFI == type ? DBTableNetworks.TABLE_NETWORKS_CLOSED_CONDITION
-																	: DBTableNetworks.TABLE_NETWORKS_OPEN_CONDITION),
+													DBTableNetworks.TABLE_NETWORKS_LOCATION_BETWEEN + " and " + condition,
 													compose_latlon_between(top_left, bottom_right), null, null, null);
 
 									if (c != null && c.moveToFirst())
@@ -1353,11 +1138,9 @@ public class Main extends MapActivity implements LocationListener
 									}
 
 									if (count > 0)
-									{
 										draw_sized_item(canvas, mapView, new GeoPoint((int) (avg_lat * 1E6),
 												(int) (avg_lon * 1E6)), count > max_radius_for_quadrant ? max_radius_for_quadrant
 												: count);
-									}
 								}
 							}
 						}
@@ -1473,9 +1256,7 @@ public class Main extends MapActivity implements LocationListener
 		if (c != null)
 		{
 			if (!c.isClosed())
-			{
 				c.close();
-			}
 			c = null;
 		}
 	}

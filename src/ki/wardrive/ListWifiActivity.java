@@ -47,9 +47,7 @@ public class ListWifiActivity extends ListActivity
         
         database = SQLiteDatabase.openDatabase(DBTableNetworks.getDBFullPath(), null, SQLiteDatabase.OPEN_READWRITE);
         if (database == null)
-        {
         	finish();
-        }
         
         Bundle b = getIntent().getExtras();
 

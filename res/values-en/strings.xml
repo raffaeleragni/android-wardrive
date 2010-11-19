@@ -62,4 +62,38 @@
     <string name="MESSAGE_SEND_TO_WIGLE_OK">Uploaded correctly to wigle.</string>
 	<string name="OVERLAY_SERVICE_ON">Service: ON</string>
 	<string name="OVERLAY_SERVICE_OFF">Service: OFF</string>
+	
+	
+	<!-- Preferences activity -->
+	<string name="layout_preferences_group_scanning">Scanning</string>
+	<string name="layout_preferences_gpsScanInterval">GPS Times</string>
+	<string name="layout_preferences_gpsScanInterval_detail">How much frequent will be the WiFi scanning</string>
+	<string-array name="layout_preferences_gpsScanInterval_labels">
+		<item>Short (3s, 3m)</item>
+		<item>Medium (10s, 10m)</item>
+		<item>Long (30s, 50m)</item>
+	</string-array>
+	<string-array name="layout_preferences_gpsScanInterval_values">
+		<item>0</item>
+		<item>1</item>
+		<item>2</item>
+	</string-array>
+	<string name="layout_preferences_group_wigleSettings">WiGLE account settings</string>
+	<string name="layout_preferences_wigleUpload_accountDetails_username">Username</string>
+	<string name="layout_preferences_wigleUpload_accountDetails_password">Password</string>
+	<string name="layout_preferences_group_mapOptions">Map options</string>
+	<string name="layout_preferences_wifiFilterEnabled">WiFi Filter Enabled</string>
+	<string name="layout_preferences_wifiFilter">WiFi Filter Regexp</string>
+	<string name="layout_preferences_wifiFilter_detail">Filter regexp (java style)</string>
+	<string name="layout_preferences_wifiFilterInverted">WiFi Filter Inverted</string>
+	<string name="layout_preferences_mapScale">Show scale</string>
+	<string name="layout_preferences_mapSat">Satellite map</string>
+	<string name="layout_preferences_followMe">Follow my position</string>
+	<string name="layout_preferences_showAPLabels">Show AP labels</string>
+	<string name="layout_preferences_showOpenAPs">Show open</string>
+	<string name="layout_preferences_showClosedAPs">Show closed</string>
+	<string name="layout_preferences_showWEPAPs">Show WEPs</string>
+	<string name="layout_preferences_group_exportingAndOther">Exporting and other</string>
+	<string name="layout_preferences_kmlExportPath">KML Export Path</string>
+	<string name="layout_preferences_notificationsEnabled">Notifications enabled</string>
 </resources>

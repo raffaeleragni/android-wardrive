@@ -40,7 +40,7 @@ public class Constants
 
 	public static final int DEFAULT_ZOOM_LEVEL = 17;
 
-	public static final int MAX_WIFI_VISIBLE = 50;
+	public static final int MAX_WIFI_VISIBLE = 90;
 
 	public static final int QUADRANT_DOTS_SCALING_CONSTANT = 3;
 
@@ -64,45 +64,19 @@ public class Constants
 
 	public static final int OTYPE_CLOSED_WIFI = OTYPE_OPEN_WIFI + 1;
 
+	public static final int OTYPE_WEP = OTYPE_CLOSED_WIFI + 1;
+
 	public static final String LAST_LAT = "last_lat";
 
 	public static final String LAST_LON = "last_lon";
 
 	public static final String ZOOM_LEVEL = "zoom_level";
 
-	public static final String CONF_SHOW_LABELS = "show_labels";
-
-	public static final String CONF_FOLLOW = "follow";
-
-	public static final String CONF_MAP_MODE = "map_mode";
-
-	public static final String CONF_SHOW_OPEN = "show_open";
-
-	public static final String CONF_SHOW_CLOSED = "show_closed";
-
-	public static final String CONF_NOTIFICATIONS_ENABLED = "notifications_enabled";
-
 	public static final String CONF_SYNC_TSTAMP = "sync_tstamp";
 
 	public static final String CONF_LASTAPP_TSTAMP = "lastapp_tstamp";
 
 	public static final String CONF_LASTSERVICE_TSTAMP = "lastservice_tstamp";
-
-	public static final String CONF_GPS_TIMES = "gps_times";
-
-    public static final String CONF_FILTER_ENABLED = "filter_enabled";
-
-    public static final String CONF_FILTER_INVERSE = "filter_inverse";
-
-    public static final String CONF_FILTER_REGEXP = "filter_regexp";
-
-    public static final String CONF_SHOW_SCALE = "show_scale";
-    
-    public static final String CONF_WIGLE_USERNAME = "wigle_username";
-    
-    public static final String CONF_WIGLE_PASSWORD = "wigle_password";
-    
-    public static final String CONF_KML_EXPORT_PATH = "kml_export_path";
 
 	public static final int EVENT_KML_EXPORT_DONE = 0;
 
@@ -142,17 +116,11 @@ public class Constants
 	
 	public static final int DIALOG_SYNC_ALL = DIALOG_SYNC_PROGRESS + 1;
     
-    public static final int DIALOG_FILTER = DIALOG_SYNC_ALL + 1;
+    public static final int DIALOG_DELETE_SINGLE_WIFI = DIALOG_SYNC_PROGRESS + 1;
     
-    public static final int DIALOG_DELETE_SINGLE_WIFI = DIALOG_FILTER + 1;
-    
-    public static final int DIALOG_WIGLE_ACCOUNT = DIALOG_DELETE_SINGLE_WIFI + 1;
+	public static final int DIALOG_EXPORT_KML_PROGRESS = DIALOG_DELETE_SINGLE_WIFI + 1;
 	
-	public static final int DIALOG_EXPORT_KML_PROGRESS = DIALOG_WIGLE_ACCOUNT + 1;
-	
-	public static final int DIALOG_KML_EXPORT_PATH = DIALOG_EXPORT_KML_PROGRESS + 1;
-	
-	public static final int DIALOG_WIGLE_UPLOAD = DIALOG_KML_EXPORT_PATH + 1;
+	public static final int DIALOG_WIGLE_UPLOAD = DIALOG_EXPORT_KML_PROGRESS + 1;
 	
 	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
 	                        

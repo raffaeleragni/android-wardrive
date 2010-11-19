@@ -122,23 +122,14 @@ public class ScanService extends Service
 			wifi_manager = wifi_manager == null ? (WifiManager) getSystemService(Context.WIFI_SERVICE) : wifi_manager;
 			database = database == null ? SQLiteDatabase.openOrCreateDatabase(DBTableNetworks.getDBFullPath(), null) : database;
 
-			if (database != null)
-			{
-				database.execSQL(DBTableNetworks.OPTIMIZATION_SQL);
-			}
-
 			if (location_manager != null)
-			{
 				location_manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, gps_seconds, gps_meters, location_listener);
-			}
 
 			if (wifi_manager != null)
 			{
 				previous_wifi_state = wifi_manager.isWifiEnabled();
 				if (!previous_wifi_state)
-				{
 					wifi_manager.setWifiEnabled(true);
-				}
 
 				IntentFilter i = new IntentFilter();
 				i.addAction(WifiManager.SCAN_RESULTS_AVAILABLE_ACTION);
@@ -186,9 +177,7 @@ public class ScanService extends Service
 			if (wifi_manager != null)
 			{
 				if (wifi_manager.isWifiEnabled() != previous_wifi_state)
-				{
 					wifi_manager.setWifiEnabled(previous_wifi_state);
-				}
 				unregisterReceiver(wifiEvent);
 				wifi_manager = null;
 			}
@@ -196,9 +185,7 @@ public class ScanService extends Service
 			if (database != null)
 			{
 				if (database.isOpen())
-				{
 					database.close();
-				}
 				database = null;
 			}
 
@@ -240,9 +227,7 @@ public class ScanService extends Service
 					}
 
 					if (wifi_manager != null)
-					{
 						wifi_manager.startScan();
-					}
 				}
 				catch (Exception e)
 				{
@@ -280,9 +265,7 @@ public class ScanService extends Service
 					}
 
 					if (added)
-					{
 						notification_bar_message("New WiFi(s) added to database.");
-					}
 				}
 			}
 			catch (Exception e)
@@ -310,9 +293,7 @@ public class ScanService extends Service
 						DBTableNetworks.TABLE_NETWORKS_FIELD_TIMESTAMP }, DBTableNetworks.TABLE_NETWORKS_FIELD_BSSID_EQUALS,
 						new String[] { result.BSSID }, null, null, null);
 				if (!cursor.moveToFirst())
-				{
 					toadd = true;
-				}
 				else
 				{
 					toupdate_values = !cursor.getString(1).equals(result.SSID)
@@ -379,9 +360,7 @@ public class ScanService extends Service
 		if (c != null)
 		{
 			if (!c.isClosed())
-			{
 				c.close();
-			}
 			c = null;
 		}
 	}
@@ -392,18 +371,14 @@ public class ScanService extends Service
 		super.onStart(intent, startId);
 
 		if (!started)
-		{
 			start_services();
-		}
 	}
 
 	@Override
 	public void onDestroy()
 	{
 		if (started)
-		{
 			stop_services();
-		}
 
 		super.onDestroy();
 	}

@@ -5,49 +5,13 @@
 		android:icon="@drawable/ic_menu_mylocation" />
 	<item android:id="@+menu_id/STATS" android:title="@string/MENU_STATS_LABEL"
 		android:icon="@drawable/ic_menu_view" />
-	<item android:id="@+menu_id/KML_EXPORT" android:title="@string/MENU_KML_EXPORT_LABEL"
-		android:icon="@drawable/ic_menu_save"></item>
+	<item android:id="@+menu_id/PREFERENCES" android:title="@string/MENU_OPTIONS_LABEL"
+		android:icon="@drawable/ic_menu_preferences" />
 	<item android:id="@+menu_id/QUIT" android:title="@string/MENU_QUIT_LABEL"
 		android:icon="@drawable/ic_menu_close_clear_cancel" />
-	<item android:title="@string/MENU_CHANGE_GPS_SERVICE_TIMERS"
-		android:id="@+menu_id/CHANGE_GPS_SERVICE_TIMERS">
-		<menu>
-			<group android:checkableBehavior="single">
-				<item android:id="@+menu_id/CHANGE_GPS_SERVICE_TIMERS_1"
-					android:title="@string/MENU_CHANGE_GPS_SERVICE_TIMERS_1"/>
-				<item android:id="@+menu_id/CHANGE_GPS_SERVICE_TIMERS_2"
-					android:title="@string/MENU_CHANGE_GPS_SERVICE_TIMERS_2"/>
-				<item android:id="@+menu_id/CHANGE_GPS_SERVICE_TIMERS_3"
-					android:title="@string/MENU_CHANGE_GPS_SERVICE_TIMERS_3"/>
-			</group>
-		</menu>
-	</item>
+	<item android:id="@+menu_id/KML_EXPORT" android:title="@string/MENU_KML_EXPORT_LABEL"
+		android:icon="@drawable/ic_menu_save"></item>
 	<item android:id="@+menu_id/SEND_TO_WIGLE" android:title="@string/MENU_SEND_TO_WIGLE"/>
-	<item android:id="@+menu_id/WIGLE_ACCOUNT_SETTINGS" android:title="@string/MENU_WIGLE_ACCOUNT_SETTINGS"/>
-	<item android:id="@+menu_id/KML_EXPORT_PATH" android:title="@string/MENU_KML_EXPORT_PATH"></item>
-	<!--<item android:id="@+menu_id/SYNC_ONLINE_DB" android:title="@string/MENU_SYNC_ONLINE_DB"/>-->
-    <item android:id="@+menu_id/FILTER_DIALOG" android:title="@string/WIFI_FILTER_DIALOG_TITLE"/>
-	<item android:id="@+menu_id/SCALE" android:title="@string/MENU_TOGGLE_SCALE_LABEL"
-		android:enabled="true" android:checkable="true" android:checked="false"
-		android:visible="true"></item>
-	<item android:title="@string/MENU_TOGGLE_MAP_MODE_LABEL"
-		android:id="@+menu_id/MAP_MODE" android:enabled="true"
-		android:checkable="true" android:checked="false" android:visible="true" />
-	<item android:id="@+menu_id/LABELS" android:title="@string/MENU_TOGGLE_LABELS_LABEL"
-		android:enabled="true" android:checkable="true" android:checked="false"
-		android:visible="true"></item>
-	<item android:id="@+menu_id/FOLLOW" android:enabled="true"
-		android:checkable="true" android:title="@string/MENU_TOGGLE_FOLLOW_ME_LABEL"
-		android:checked="true" android:visible="true"></item>
-	<item android:id="@+menu_id/SHOW_OPEN" android:title="@string/MENU_SHOW_OPEN_LABEL"
-		android:enabled="true" android:checkable="true" android:checked="true"
-		android:visible="true"></item>
-	<item android:id="@+menu_id/SHOW_CLOSED" android:title="@string/MENU_SHOW_CLOSED_LABEL"
-		android:enabled="true" android:checkable="true" android:checked="false"
-		android:visible="true"></item>
-	<item android:title="@string/MENU_TOGGLE_NOTIFICATIONS_ENABLED"
-		android:id="@+menu_id/NOTIFICATIONS_ENABLED" android:enabled="true"
-		android:checkable="true" android:checked="false" android:visible="true" />
 	<item android:id="@+menu_id/ABOUT" android:title="@string/MENU_ABOUT_LABEL"/>
 	<item android:id="@+menu_id/DELETE" android:title="@string/MENU_DELETE_LABEL" />
-	</menu>
+</menu>

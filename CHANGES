@@ -240,3 +240,9 @@ v 3.10
 v 3.11
 
 	- Added Czech translations
+
+v 3.12
+	
+	- New preferences screen
+	- WEP wifis are differentiated on view selection
+	

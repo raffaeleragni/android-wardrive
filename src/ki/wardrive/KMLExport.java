@@ -101,9 +101,7 @@ public class KMLExport
 			try
 			{
 				if (file.exists())
-				{
 					file.delete();
-				}
 				file.createNewFile();
 	
 				FileWriter fw = null;
@@ -252,9 +250,7 @@ public class KMLExport
 		if (c != null)
 		{
 			if (!c.isClosed())
-			{
 				c.close();
-			}
 			c = null;
 		}
 	}

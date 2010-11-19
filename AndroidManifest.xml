@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest
 	package="ki.wardrive"
-	android:versionCode="46"
-	android:versionName="3.11"
+	android:versionCode="47"
+	android:versionName="3.12"
 	xmlns:android="http://schemas.android.com/apk/res/android">
 
 	<uses-sdk android:minSdkVersion="4"/>
 	
 	<application android:icon="@drawable/icon" android:label="@string/app_name">
 		<uses-library android:name="com.google.android.maps" />
-		<activity android:name=".Main" android:label="@string/app_name">
+		<activity android:name=".Main" android:label="@string/app_name" android:debuggable="true">
 			<intent-filter>
 				<action android:name="android.intent.action.MAIN" />
 				<category android:name="android.intent.category.LAUNCHER" />
 			</intent-filter>
 		</activity>
 		<activity android:name=".ListWifiActivity"  android:label="@string/MENU_LIST_LABEL"/>
+		<activity android:name=".Preferences"  android:label="@string/MENU_OPTIONS_LABEL"/>
 		<service android:name="ScanService"></service>
 	</application>
 	
