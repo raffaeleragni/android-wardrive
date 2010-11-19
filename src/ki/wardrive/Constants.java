@@ -24,10 +24,6 @@ import android.os.Environment;
 
 public class Constants
 {
-	public static final String SYNC_ONLINE_URL = "http://wardrivedb.appspot.com/main";
-
-	public static final int SYNC_ONLINE_BUFFER = 20;
-
 	public static String getKMLExportFileName()
 	{
          File f = new File(Environment.getExternalStorageDirectory(), "wardrive.kml");
@@ -72,21 +68,13 @@ public class Constants
 
 	public static final String ZOOM_LEVEL = "zoom_level";
 
-	public static final String CONF_SYNC_TSTAMP = "sync_tstamp";
-
 	public static final String CONF_LASTAPP_TSTAMP = "lastapp_tstamp";
 
 	public static final String CONF_LASTSERVICE_TSTAMP = "lastservice_tstamp";
 
 	public static final int EVENT_KML_EXPORT_DONE = 0;
 
-	public static final int EVENT_SYNC_ONLINE_PROGRESS = EVENT_KML_EXPORT_DONE + 1;
-
-	public static final String EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT = "inserted_count";
-
-	public static final int EVENT_SYNC_ONLINE_DONE = EVENT_SYNC_ONLINE_PROGRESS + 1;
-
-	public static final int EVENT_NOTIFY_ERROR = EVENT_SYNC_ONLINE_DONE + 1;
+	public static final int EVENT_NOTIFY_ERROR = EVENT_KML_EXPORT_DONE + 1;
 
 	public static final int EVENT_SEND_TO_WIGLE_FILE_NOT_FOUND = EVENT_NOTIFY_ERROR + 1;
 
@@ -112,11 +100,7 @@ public class Constants
 
 	public static final int DIALOG_DELETE_ALL_WIFI = DIALOG_ABOUT + 1;
 
-	public static final int DIALOG_SYNC_PROGRESS = DIALOG_DELETE_ALL_WIFI + 1;
-	
-	public static final int DIALOG_SYNC_ALL = DIALOG_SYNC_PROGRESS + 1;
-    
-    public static final int DIALOG_DELETE_SINGLE_WIFI = DIALOG_SYNC_PROGRESS + 1;
+    public static final int DIALOG_DELETE_SINGLE_WIFI = DIALOG_DELETE_ALL_WIFI + 1;
     
 	public static final int DIALOG_EXPORT_KML_PROGRESS = DIALOG_DELETE_SINGLE_WIFI + 1;
 	

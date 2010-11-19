@@ -19,7 +19,6 @@
 package ki.wardrive;
 
 import java.io.File;
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -136,16 +135,12 @@ public class Main extends MapActivity implements LocationListener
     private boolean filter_inverse = false;
 
     private String filter_regexp = null;
-
-	private boolean sending_sync = false;
 	
 	private boolean exporting_kml = false;
 	
 	private boolean sending_wigle = false;
 
 	private boolean notifications_enabled = false;
-
-	private ProgressDialog progressDialog;
 	
 	private ProgressDialog kmlProgressDialog;
 	
@@ -548,43 +543,6 @@ public class Main extends MapActivity implements LocationListener
 		}
 	};
 
-	private class SyncOnlineProc implements Runnable
-	{
-		public boolean only_new = true;
-
-		public void run()
-		{
-			try
-			{
-				long tstamp = settings.getLong(Constants.CONF_SYNC_TSTAMP, 0);
-				tstamp = only_new ? tstamp : 0;
-				long newtstamp = System.currentTimeMillis();
-
-				URL url = new URL(Constants.SYNC_ONLINE_URL);
-				sending_sync = true;
-				int inserted_count = SyncOnlineExport.export(tstamp, database, url, message_handler);
-				Message msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_DONE);
-				Bundle b = new Bundle();
-				b.putInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT, inserted_count);
-				msg.setData(b);
-				message_handler.sendMessage(msg);
-
-				settings_editor.putLong(Constants.CONF_SYNC_TSTAMP, newtstamp);
-				settings_editor.commit();
-			}
-			catch (Exception e)
-			{
-				Message msg = Message.obtain(message_handler, Constants.EVENT_SYNC_ONLINE_DONE);
-				Bundle b = new Bundle();
-				b.putSerializable("exception", e);
-				msg.setData(b);
-				message_handler.sendMessage(msg);
-			}
-		}
-	}
-
-	private SyncOnlineProc sync_online_proc = new SyncOnlineProc();
-
 	private Handler message_handler = new Handler()
 	{
 		@Override
@@ -599,22 +557,6 @@ public class Main extends MapActivity implements LocationListener
 					Toast.makeText(Main.this, R.string.MESSAGE_SUCCESFULLY_EXPORTED_KML, Toast.LENGTH_SHORT).show();
 					break;
 				
-				case Constants.EVENT_SYNC_ONLINE_PROGRESS:
-					if (progressDialog.isShowing())
-						progressDialog.setProgress(msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT));
-					break;
-				
-				case Constants.EVENT_SYNC_ONLINE_DONE:
-					sending_sync = false;
-					if (progressDialog.isShowing())
-						dismissDialog(Constants.DIALOG_SYNC_PROGRESS);
-					Toast.makeText(
-							Main.this,
-							getResources().getString(R.string.MESSAGE_SUCCESFULLY_SYNC_ONLINE) + " "
-									+ msg.getData().getInt(Constants.EVENT_SYNC_ONLINE_PROGRESS_PAR_INSERTED_COUNT),
-							Toast.LENGTH_SHORT).show();
-					break;
-
 				case Constants.EVENT_NOTIFY_ERROR:
 					notify_error((Exception) msg.getData().getSerializable("exception"));
 					break;
@@ -695,14 +637,6 @@ public class Main extends MapActivity implements LocationListener
 				});
 				return builder.create();
 
-			case Constants.DIALOG_SYNC_PROGRESS:
-				progressDialog = new ProgressDialog(this);
-				progressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
-				progressDialog.setMessage(getResources().getString(R.string.MESSAGE_STARTING_SYNC_ONLINE));
-				progressDialog.setProgress(0);
-				progressDialog.setCancelable(true);
-				return progressDialog;
-			
 			case Constants.DIALOG_EXPORT_KML_PROGRESS:
 				kmlProgressDialog = new ProgressDialog(this);
 				kmlProgressDialog.setProgressStyle(ProgressDialog.STYLE_HORIZONTAL);
@@ -710,37 +644,6 @@ public class Main extends MapActivity implements LocationListener
 				kmlProgressDialog.setProgress(0);
 				kmlProgressDialog.setCancelable(true);
 				return kmlProgressDialog;
-
-			case Constants.DIALOG_SYNC_ALL:
-				builder = new AlertDialog.Builder(this);
-				builder.setMessage(getResources().getText(R.string.MENU_SYNC_ONLINE_DB_SEND_ALL_QUESTION));
-				builder.setCancelable(false);
-				builder.setPositiveButton(getResources().getString(R.string.YES), new DialogInterface.OnClickListener()
-				{
-					public void onClick(DialogInterface dialog, int id)
-					{
-						showDialog(Constants.DIALOG_SYNC_PROGRESS);
-						if (!sending_sync)
-						{
-							sync_online_proc.only_new = false;
-							new Thread(sync_online_proc).start();
-						}
-					}
-				});
-				builder.setNegativeButton(getResources().getString(R.string.NO), new DialogInterface.OnClickListener()
-				{
-					public void onClick(DialogInterface dialog, int id)
-					{
-						showDialog(Constants.DIALOG_SYNC_PROGRESS);
-						if (!sending_sync)
-						{
-							sync_online_proc.only_new = true;
-							new Thread(sync_online_proc).start();
-						}
-					}
-				});
-
-				return builder.create();
             
             case Constants.DIALOG_WIGLE_UPLOAD:
             	wigleProgressDialog = new ProgressDialog(this);
