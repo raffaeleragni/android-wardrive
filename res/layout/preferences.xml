@@ -9,6 +9,18 @@
         	android:defaultValue="0"
         	android:key="gpsTimes"
 		/>
+		<EditTextPreference
+			android:title="@string/layout_preferences_gpsValidAccuracy"
+			android:summary="@string/layout_preferences_gpsValidAccuracy_description"
+        	android:key="gpsValidAccuracy"
+        	android:defaultValue="50"
+		/>
+		<EditTextPreference
+			android:title="@string/layout_preferences_wifiValidStrength"
+			android:summary="@string/layout_preferences_wifiValidStrength_description"
+        	android:key="wifiValidStrength"
+        	android:defaultValue="-99" 
+		/>
 	</PreferenceCategory>
 	<PreferenceCategory android:title="@string/layout_preferences_group_wigleSettings">
 		<EditTextPreference

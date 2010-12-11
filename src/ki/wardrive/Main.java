@@ -151,6 +151,10 @@ public class Main extends MapActivity implements LocationListener
 	private String wigle_password = null;
 	
 	private String kml_export_path = null;
+	
+	private int gps_accuracy = Constants.DEFAULT_GPS_ACCURACY;
+	
+	private int wifi_min_strength = Constants.DEFAULT_WIFI_MIN_STRENGTH_SIGNAL;
 
 	//
 	// DB Related
@@ -209,6 +213,11 @@ public class Main extends MapActivity implements LocationListener
         wigle_username = prefs.getString("wigleUsername", "");
         wigle_password = prefs.getString("wiglePassword", "");
         kml_export_path = prefs.getString("kmlExportPath", "");
+        String sGpsAccuracy = prefs.getString("gpsAccuracy", "50");
+		try{gps_accuracy = Integer.parseInt(sGpsAccuracy);}catch(NumberFormatException e){}
+        String swifi_min_strength = prefs.getString("gpsAccuracy", "50");
+		try{wifi_min_strength = Integer.parseInt(swifi_min_strength);}catch(NumberFormatException e){}
+        		
         
         // Update overlays booleans - Labels
         overlays_closed.show_labels = show_labels;
@@ -223,6 +232,8 @@ public class Main extends MapActivity implements LocationListener
 		{
 			service_binder.setNotificationsEnabled(notifications_enabled);
 			service_binder.setGpsTimes(Constants.GPS_SECONDS[gps_times], Constants.GPS_METERS[gps_times]);
+			service_binder.setGpsAccuracy(gps_accuracy);
+			service_binder.setWiFiMinStrength(wifi_min_strength);
 		}
 		
 		// Update map preferences
@@ -315,6 +326,9 @@ public class Main extends MapActivity implements LocationListener
 	{
 		if (wake_lock != null && wake_lock.isHeld())
 			wake_lock.release();
+		
+		// Ensure closing even when clicked the 'home button'. Service would be running anyway
+		finish();
 
 		super.onPause();
 	}

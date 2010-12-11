@@ -117,4 +117,8 @@ Enhancement patches from:\n
 	<string name="layout_preferences_group_exportingAndOther">Exporting and other</string>
 	<string name="layout_preferences_kmlExportPath">KML Export Path</string>
 	<string name="layout_preferences_notificationsEnabled">Notifications enabled</string>
+	<string name="layout_preferences_gpsValidAccuracy">GPS Accuracy</string>
+	<string name="layout_preferences_gpsValidAccuracy_description">When accuracy is not enough precise, WiFis are NOT scanned.</string>
+	<string name="layout_preferences_wifiValidStrength">WiFi Strength</string>
+	<string name="layout_preferences_wifiValidStrength_description">If wifi strength is lower than specified, WiFis are NOT updated/stored</string>
 </resources>

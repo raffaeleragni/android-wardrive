@@ -64,6 +64,10 @@ public class ScanService extends Service
 
 	private int gps_meters = Constants.SERVICE_GPS_EVENT_METERS;
 	
+	private int gps_accuracy = Constants.DEFAULT_GPS_ACCURACY;
+	
+	private int wifi_min_strength = Constants.DEFAULT_WIFI_MIN_STRENGTH_SIGNAL;
+	
 	private int NOTIFICATION_ELEMENT = 100;
 
 	private class IScanServiceImpl extends Binder implements IScanService
@@ -93,6 +97,26 @@ public class ScanService extends Service
 			gps_seconds = s;
 			gps_meters = m;
 			reset_gps_precision(gps_seconds, gps_meters);
+		}
+		
+		public int getGpsAccuracy()
+		{
+			return gps_accuracy;
+		}
+		
+		public int getWiFiMinStrength()
+		{
+			return wifi_min_strength;
+		}
+		
+		public void setGpsAccuracy(int x)
+		{
+			gps_accuracy = x;
+		}
+		
+		public void setWiFiMinStrength(int x)
+		{
+			wifi_min_strength = x;
 		}
 
 		public void start_services()
@@ -217,7 +241,7 @@ public class ScanService extends Service
 		public void onLocationChanged(Location location)
 		{
 			// Accept only accuracy under 50 meters to actually scan wifis
-			if (location != null && location.getAccuracy() < 50 && location.hasAccuracy())
+			if (location != null && location.getAccuracy() < gps_accuracy && location.hasAccuracy())
 			{
 				try
 				{
@@ -261,7 +285,8 @@ public class ScanService extends Service
 					List<ScanResult> results = wifi_manager.getScanResults();
 					for (ScanResult result : results)
 					{
-						added |= process_wifi_result(result, lat, lon, alt);
+						if (result.level >= wifi_min_strength)
+							added |= process_wifi_result(result, lat, lon, alt);
 					}
 
 					if (added)

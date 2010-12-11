@@ -246,3 +246,8 @@ v 3.12
 	- New preferences screen
 	- WEP wifis are differentiated on view selection
 	
+v 3.13
+
+	- Fixed Issue #84: "Starting multiple times..."
+	- Feature (Issue #83): "RSSI and accuracy filters". Can now specify accuracy levels of GPS in meters.
+	

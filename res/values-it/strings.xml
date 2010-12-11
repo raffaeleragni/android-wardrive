@@ -96,4 +96,8 @@
 	<string name="layout_preferences_group_exportingAndOther">Esportazione e altro</string>
 	<string name="layout_preferences_kmlExportPath">Percorso esportazione KML</string>
 	<string name="layout_preferences_notificationsEnabled">Notifica ogni nuova WiFi</string>
+	<string name="layout_preferences_gpsValidAccuracy">Precisione GPS</string>
+	<string name="layout_preferences_gpsValidAccuracy_description">Quando la precisione non è sufficiente, le WiFi NON vengono archiviate.</string>
+	<string name="layout_preferences_wifiValidStrength">Potenza segnale WiFi</string>
+	<string name="layout_preferences_wifiValidStrength_description">Se il segnale è troppo basso rispetto a quello specificato, le WiFi NON vengono archiviate.</string>
 </resources>

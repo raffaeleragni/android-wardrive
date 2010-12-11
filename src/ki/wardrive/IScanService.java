@@ -27,4 +27,8 @@ public interface IScanService
 	public void setGpsTimes(int s, int m);
 	public void start_services();
 	public void stop_services();
+	public int getGpsAccuracy();
+	public int getWiFiMinStrength();
+	public void setGpsAccuracy(int x);
+	public void setWiFiMinStrength(int x);
 }

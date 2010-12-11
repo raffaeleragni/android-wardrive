@@ -109,4 +109,8 @@ public class Constants
 	public static final int[] GPS_SECONDS = {3000, 10000, 30000};
 	                        
 	public static final int[] GPS_METERS = {3, 10, 50};
+	
+	public static final int DEFAULT_GPS_ACCURACY = 50;
+
+	public static final int DEFAULT_WIFI_MIN_STRENGTH_SIGNAL = -99;
 }
