@@ -328,7 +328,7 @@ public class Main extends MapActivity implements LocationListener
 			wake_lock.release();
 		
 		// Ensure closing even when clicked the 'home button'. Service would be running anyway
-		finish();
+		//TODO: find a clearer method, this one was closing unexpectedly the app: finish();
 
 		super.onPause();
 	}

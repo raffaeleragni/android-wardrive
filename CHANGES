@@ -251,3 +251,7 @@ v 3.13
 	- Fixed Issue #84: "Starting multiple times..."
 	- Feature (Issue #83): "RSSI and accuracy filters". Can now specify accuracy levels of GPS in meters.
 	
+v 3.14
+
+	- Reverted issue #84, was causing too much troubles
+	
