@@ -45,7 +45,7 @@
 		/>
 		<CheckBoxPreference
 			android:title="@string/layout_preferences_wifiFilterInverted"
-        	android:key="wifiFilterInverted"
+        	android:key="wifiFilterInverse"
 		/>
 		<CheckBoxPreference
 			android:title="@string/layout_preferences_mapScale"
