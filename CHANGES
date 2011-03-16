@@ -255,3 +255,6 @@ v 3.14
 
 	- Reverted issue #84, was causing too much troubles
 	
+v 4.0
+
+    - Adapted to API level 8
