@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>ki.wardrive</groupId>
+    <artifactId>wardrive</artifactId>
+    <version>0.1-SNAPSHOT</version>
+    <packaging>apk</packaging>
+    <name>wardrive</name>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.google.android</groupId>
+            <artifactId>android</artifactId>
+            <version>2.2.1</version>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <finalName>${project.artifactId}</finalName>
+        <sourceDirectory>src</sourceDirectory>
+
+        <plugins>
+
+            <plugin>
+                <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                <artifactId>maven-android-plugin</artifactId>
+                <version>2.8.4</version>
+                <configuration>
+                    <sdk>
+                        <!-- platform or api level (api level 4 = platform 1.6)-->
+                        <platform>8</platform>
+                    </sdk>
+                    <emulator>
+                        <!-- the name of the avd device to use for starting the emulator -->
+                        <avd>api8</avd>
+                    </emulator>
+                    <deleteConflictingFiles>true</deleteConflictingFiles>
+                    <undeployBeforeDeploy>true</undeployBeforeDeploy>
+                </configuration>
+                <extensions>true</extensions>
+                <executions>
+                    <execution>
+                        <id>alignApk</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>zipalign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <configuration>
+                    <encoding>${project.build.sourceEncoding}</encoding>
+                </configuration>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+
+</project>
