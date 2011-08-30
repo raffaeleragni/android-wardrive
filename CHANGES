@@ -258,3 +258,7 @@ v 3.14
 v 4.0
 
     - Adapted to API level 8
+    
+v 4.1
+
+    - KML export can now export only the new scanned WiFis

@@ -67,10 +67,18 @@ public class DBTableNetworks
 	public static final String TABLE_NETWORKS_OPEN_CONDITION = "capabilities = ''";
 	
 	public static final String TABLE_NETWORKS_WEP_CONDITION = "upper(capabilities) like upper('%WEP%')";
-
+	
 	public static final String TABLE_NETWORKS_CLOSED_CONDITION = "capabilities <> ''";
 	
 	public static final String TABLE_NETWORKS_ONLY_CLOSED_CONDITION = "capabilities <> '' and upper(capabilities) not like upper('%WEP%')";
+	
+	public static final String TABLE_NETWORKS_OPEN_CONDITION_TSTAMP = "capabilities = '' and timestamp > ?";
+
+	public static final String TABLE_NETWORKS_WEP_CONDITION_TSTAMP = "upper(capabilities) like upper('%WEP%') and timestamp > ?";
+
+	public static final String TABLE_NETWORKS_CLOSED_CONDITION_TSTAMP = "capabilities <> '' and timestamp > ?";
+	
+	public static final String TABLE_NETWORKS_ONLY_CLOSED_CONDITION_TSTAMP = "capabilities <> '' and upper(capabilities) not like upper('%WEP%') and timestamp > ?";
 
 	public static final String SELECT_COUNT_WIFIS = "select count(bssid) from networks";
 

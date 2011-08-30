@@ -62,6 +62,7 @@
     <string name="MESSAGE_SEND_TO_WIGLE_OK">Invio a Wigle eseguito con successo.</string>
 	<string name="OVERLAY_SERVICE_ON">Servizio attivo</string>
 	<string name="OVERLAY_SERVICE_OFF">Servizio non attivo</string>
+	<string name="KML_EXPORT_EXPORT_ALL_QUESTION">Esportare tutte le WiFi?</string>
 	
 	
 	<!-- Preferences activity -->

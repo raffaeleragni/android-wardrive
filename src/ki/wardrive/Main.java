@@ -152,6 +152,8 @@ public class Main extends MapActivity implements LocationListener
 	
 	private String kml_export_path = null;
 	
+	private boolean kml_export_all = true;
+	
 	private int gps_accuracy = Constants.DEFAULT_GPS_ACCURACY;
 	
 	private int wifi_min_strength = Constants.DEFAULT_WIFI_MIN_STRENGTH_SIGNAL;
@@ -478,8 +480,33 @@ public class Main extends MapActivity implements LocationListener
 
 			case R.menu_id.KML_EXPORT:
 				if (!exporting_kml)
-					new Thread(kml_export_proc).start();
-				showDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
+				{
+					new AlertDialog.Builder(this)
+						.setTitle("")
+						.setMessage(R.string.KML_EXPORT_EXPORT_ALL_QUESTION)
+						.setPositiveButton(R.string.YES, new DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface arg0, int arg1)
+							{
+								kml_export_all = true;
+								new Thread(kml_export_proc).start();
+								showDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
+							}
+						})
+						.setNegativeButton(R.string.NO, new DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface arg0, int arg1)
+							{
+								kml_export_all = false;
+								new Thread(kml_export_proc).start();
+								showDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
+							}
+						})
+						.create()
+						.show();
+				}
+				else
+					showDialog(Constants.DIALOG_EXPORT_KML_PROGRESS);
 				
 				break;
 
@@ -517,7 +544,9 @@ public class Main extends MapActivity implements LocationListener
 			else
 				path = "wardrive.kml";
 			
-			if (KMLExport.export(database, new File( Environment.getExternalStorageDirectory(), path), message_handler))
+			long tstamp = settings.getLong(Constants.CONF_LASTSERVICE_TSTAMP, 0);
+			
+			if (KMLExport.export(database, new File( Environment.getExternalStorageDirectory(), path), message_handler, kml_export_all, tstamp))
 			{
 				exporting_kml = false;
 				message_handler.sendMessage(Message.obtain(message_handler, Constants.EVENT_KML_EXPORT_DONE));

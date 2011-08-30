@@ -82,6 +82,7 @@ Enhancement patches from:\n
 	<string name="KML_EXPORT_PATH_DIALOG_ERROR">Invalid path specified.</string>
 	<string name="OVERLAY_SERVICE_ON">Service: ON</string>
 	<string name="OVERLAY_SERVICE_OFF">Service: OFF</string>
+	<string name="KML_EXPORT_EXPORT_ALL_QUESTION">Export all WiFis?</string>
 	
 	
 	
