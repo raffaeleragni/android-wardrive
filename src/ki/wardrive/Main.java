@@ -379,6 +379,8 @@ public class Main extends MapActivity implements LocationListener
 	@Override
 	protected void onDestroy()
 	{
+		unbindService(service_connection);
+		
 		if (database != null)
 		{
 			database.close();

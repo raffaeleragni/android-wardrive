@@ -169,7 +169,7 @@ public class ScanService extends Service
 			n.flags |= Notification.FLAG_ONGOING_EVENT;
 			Context context = getApplicationContext();
 			Intent notificationIntent = new Intent(this, Main.class);
-			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+			PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_CANCEL_CURRENT);
 			n.setLatestEventInfo(context, getText(R.string.app_name), "", contentIntent);
 			nm.notify(NOTIFICATION_ELEMENT, n);
 		}
