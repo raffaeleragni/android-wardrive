@@ -18,15 +18,20 @@
             <artifactId>maps</artifactId> 
             <version>8_r1</version> 
             <type>jar</type> 
-        </dependency> 
+        </dependency>
     </dependencies>
 
     <build>
+        
         <finalName>${project.artifactId}</finalName>
         <sourceDirectory>src</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>res</directory>
+            </resource>
+        </resources>
 
         <plugins>
-
             <plugin>
                 <groupId>com.jayway.maven.plugins.android.generation2</groupId>
                 <artifactId>maven-android-plugin</artifactId>
